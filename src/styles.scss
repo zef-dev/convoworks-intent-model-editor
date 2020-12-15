@@ -1,5 +1,7 @@
 .convo-details {
   position: relative;
+  box-sizing: border-box;
+  
   /* Config */
   @import 'styles/config/variables.scss';
   @import 'styles/config/mixins.scss';
