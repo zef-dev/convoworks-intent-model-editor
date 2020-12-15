@@ -35,7 +35,7 @@ class IntentExample extends Component {
     return (
       <IntentEditor
         intent={{}} // object
-        entities={} // array
+        entities={[]} // array
         systemEntities={[]} // array
         onUpdate={fn} // function
       />
