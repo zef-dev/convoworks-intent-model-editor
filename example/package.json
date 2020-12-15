@@ -1,5 +1,5 @@
 {
-  "name": "@zef-dev/convoworks-intent-model-editor-example",
+  "name": "convoworks-intent-model-editor-example",
   "homepage": ".",
   "version": "0.0.0",
   "private": true,
@@ -10,10 +10,19 @@
     "eject": "node ../node_modules/react-scripts/bin/react-scripts.js eject"
   },
   "dependencies": {
+    "convoworks-intent-model-editor": "link:..",
+    "lodash": "^4.17.20",
+    "node-sass": "^5.0.0",
+    "prettier": "^2.2.1",
+    "rangy": "^1.3.0",
     "react": "link:../node_modules/react",
+    "react-contenteditable": "^3.3.5",
+    "react-cool-onclickoutside": "^1.5.9",
     "react-dom": "link:../node_modules/react-dom",
+    "react-html-parser": "^2.0.2",
+    "react-is": "^17.0.1",
     "react-scripts": "link:../node_modules/react-scripts",
-    "@zef-dev/convoworks-intent-model-editor": "link:.."
+    "react-svg": "^11.1.4"
   },
   "devDependencies": {
     "@babel/plugin-syntax-object-rest-spread": "^7.8.3"

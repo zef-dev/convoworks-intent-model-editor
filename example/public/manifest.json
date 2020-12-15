@@ -1,6 +1,6 @@
 {
-  "short_name": "@zef-dev/convoworks-intent-model-editor",
-  "name": "@zef-dev/convoworks-intent-model-editor",
+  "short_name": "convoworks-intent-model-editor",
+  "name": "convoworks-intent-model-editor",
   "icons": [
     {
       "src": "favicon.ico",
