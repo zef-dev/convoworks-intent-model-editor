@@ -90,7 +90,7 @@ ol li {
 	background-color: $color-gray--lighter;
 	color: rgba(26, 26, 26, 0.7);
 	font-size: 0.875rem;
-	font-weight: $semibold;
+	font-weight: $font-weight--semibold;
 	line-height: 2.29;
 	height: 2rem;
 }
@@ -150,27 +150,27 @@ p {
 \*------------------------------------*/
 
 .light {
-	font-weight: $light;
+	font-weight: $font-weight--light;
+}
+
+.medium {
+	font-weight: $font-weight--medium;
 }
 
 .semibold {
-	font-weight: $semibold;
-}
-
-.demibold {
-	font-weight: $demibold;
+	font-weight: $font-weight--semibold;
 }
 
 .bold {
-	font-weight: $bold;
+	font-weight: $font-weight--bold;
 }
 
 .extrabold {
-	font-weight: $extrabold;
+	font-weight: $font-weight--extrabold;
 }
 
-.black {
-	font-weight: $black;
+.heavy {
+	font-weight: $font-weight--heavy;
 }
 
 .font-style-italic {

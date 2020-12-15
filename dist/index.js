@@ -693,7 +693,7 @@ var Utterance = function Utterance(props) {
       data.handleActive(data.index);
     }
   }, !valid && /*#__PURE__*/React__default.createElement("legend", {
-    "class": "item__error"
+    className: "item__error"
   }, "Utterances shall begin with alphabetic characters from a to Z. The untterance may not contain other characters then alphabetic characters. The utterance shall not contain any numbers at all."), /*#__PURE__*/React__default.createElement("div", {
     className: "item__main"
   }, /*#__PURE__*/React__default.createElement(Input, {

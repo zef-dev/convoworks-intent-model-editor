@@ -39,7 +39,7 @@ const Utterance = (props) => {
 				data.handleActive(data.index);
 			}}
 		>
-			{!valid && <legend class="item__error">Utterances shall begin with alphabetic characters from a to Z. The untterance may not contain other characters then alphabetic characters. The utterance shall not contain any numbers at all.</legend>}
+			{!valid && <legend className="item__error">Utterances shall begin with alphabetic characters from a to Z. The untterance may not contain other characters then alphabetic characters. The utterance shall not contain any numbers at all.</legend>}
 			<div className="item__main">
 				<Input
 					model={data.model}
