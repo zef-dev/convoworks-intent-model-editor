@@ -2,25 +2,55 @@
 
 > Intent and entity editors for the Convoworks framework
 
-[![NPM](https://img.shields.io/npm/v/convoworks-intent-model-editor.svg)](https://www.npmjs.com/package/convoworks-intent-model-editor) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/convoworks-intent-model-editor.svg)](https://www.npmjs.com/package/@zef-dev/convoworks-intent-model-editor) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Install
 
+### npm
+
 ```bash
-npm install --save convoworks-intent-model-editor
+npm install --save @zef-dev/convoworks-intent-model-editor
+```
+
+### yarn
+
+```bash
+yarn add @zef-dev/convoworks-intent-model-editor
 ```
 
 ## Usage
 
+#### React example
+
 ```jsx
 import React, { Component } from 'react'
+import {
+  IntentEditor,
+  EntityEditor
+} from '@zef-dev/convoworks-intent-model-editor'
+import '@zef-dev/convoworks-intent-model-editor/dist/index.css'
 
-import MyComponent from 'convoworks-intent-model-editor'
-import 'convoworks-intent-model-editor/dist/index.css'
-
-class Example extends Component {
+class IntentExample extends Component {
   render() {
-    return <MyComponent />
+    return (
+      <IntentEditor
+        intent={{}} // object
+        entities={} // array
+        systemEntities={[]} // array
+        onUpdate={fn} // function
+      />
+    )
+  }
+}
+
+class EntityExample extends Component {
+  render() {
+    return (
+      <EntityEditor
+        entity={{}} // object
+        onUpdate={fn} // function 
+      />
+    )
   }
 }
 ```
