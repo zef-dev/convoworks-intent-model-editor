@@ -1,10 +1,332 @@
 import React, { useState, useRef, useEffect } from 'react';
+import 'lodash';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
-import 'lodash';
 import ContentEditable from 'react-contenteditable';
 import reactHtmlParser from 'react-html-parser';
+
+function IconTrash() {
+  return /*#__PURE__*/React.createElement("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    width: "16",
+    height: "16",
+    viewBox: "0 0 16 16"
+  }, /*#__PURE__*/React.createElement("g", {
+    fill: "none",
+    "fill-rule": "evenodd",
+    stroke: "#1A1A1A",
+    "stroke-linecap": "round",
+    "stroke-linejoin": "round"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M2.4 6.5v7c0 1.105.835 2 1.867 2h7.466c1.032 0 1.867-.895 1.867-2v-7M1.467 3.5h13.066M6.133 3.5v-3h3.734v3M8 7.5v5M10.8 7.5v5M5.2 7.5v5"
+  })));
+}
+
+const EntityValue = props => {
+  const [value, setValue] = useState(props.item.value);
+  const [synonyms, setSynonyms] = useState(props.item.synonyms);
+  const [newSynonym, setNewSynonym] = useState('');
+  const [remove, setRemove] = useState(false);
+  const synonymInput = useRef(null);
+  useEffect(() => {
+    props.handleUpdate([...props.values], props.index, {
+      value: value,
+      synonyms: synonyms
+    });
+  }, [value, synonyms]);
+  useEffect(() => {
+    if (newSynonym) {
+      if (synonyms) {
+        setSynonyms([...synonyms, newSynonym]);
+      } else {
+        setSynonyms(newSynonym);
+      }
+    }
+  }, [newSynonym]);
+
+  const handleNewSynonym = target => {
+    if (target.current.value.length > 0) {
+      setNewSynonym(target.current.value);
+      target.current.value = '';
+    } else {
+      setNewSynonym('');
+    }
+  };
+
+  const removeSynonym = value => {
+    let arr = [...synonyms];
+    let index = arr.indexOf(value);
+
+    if (index !== -1) {
+      arr.splice(index, 1);
+      setSynonyms(arr);
+    }
+  };
+
+  const makeSynonyms = (items, active) => {
+    if (items) {
+      return items && items.map((item, i) => {
+        if (item && !active) {
+          return /*#__PURE__*/React.createElement("div", {
+            className: "synonym",
+            key: i
+          }, item);
+        } else {
+          return /*#__PURE__*/React.createElement("div", {
+            key: i,
+            className: "synonym"
+          }, item, /*#__PURE__*/React.createElement("button", {
+            type: "button",
+            className: "synonym__remove",
+            onClick: () => {
+              removeSynonym(item);
+            }
+          }, "\u2715"));
+        }
+      });
+    }
+  };
+
+  const handleRemove = e => {
+    e.stopPropagation();
+    setRemove(true);
+    setTimeout(() => {
+      props.removeValue(props.index);
+      setRemove(false);
+    }, 220);
+  };
+
+  if (props.activeValue !== props.index) {
+    return /*#__PURE__*/React.createElement("li", {
+      className: `item item--entity ${remove ? 'item--remove' : ''}`,
+      onClick: () => {
+        props.setActiveValue(props.index);
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "item__inner"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "grid"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "cell cell--3--small"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "item__value item__value--primary"
+    }, value)), /*#__PURE__*/React.createElement("div", {
+      className: "cell cell--9--small"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "item__values"
+    }, makeSynonyms(synonyms, false))))), /*#__PURE__*/React.createElement("div", {
+      className: "item__buttons"
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "btn--remove btn--remove--main",
+      type: "button",
+      onClick: e => {
+        handleRemove(e);
+      }
+    }, /*#__PURE__*/React.createElement(IconTrash, null))));
+  } else {
+    return /*#__PURE__*/React.createElement("li", {
+      className: `item item--entity item--active ${remove ? 'item--remove' : ''}`
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "item__inner"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "grid"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "cell cell--3--small"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "item__value item__value--primary"
+    }, /*#__PURE__*/React.createElement("input", {
+      "data-input": "true",
+      className: "editor-input",
+      type: "text",
+      defaultValue: value,
+      placeholder: "Enter value",
+      onChange: e => {
+        setValue(e.target.value);
+      }
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "cell cell--9--small"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "item__values"
+    }, makeSynonyms(synonyms, true), /*#__PURE__*/React.createElement("form", {
+      onSubmit: e => {
+        e.preventDefault();
+        handleNewSynonym(synonymInput);
+      }
+    }, /*#__PURE__*/React.createElement("input", {
+      className: "editor-input",
+      type: "text",
+      style: {
+        marginLeft: '0.625rem'
+      },
+      ref: synonymInput,
+      placeholder: "Enter synonym",
+      onChange: e => {}
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "editor-input",
+      type: "submit",
+      hidden: true
+    })))))), /*#__PURE__*/React.createElement("div", {
+      className: "item__buttons"
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "btn--remove btn--remove--main",
+      type: "button",
+      onClick: e => {
+        handleRemove(e);
+      }
+    }, /*#__PURE__*/React.createElement(IconTrash, null))));
+  }
+};
+
+function EntityValues(props) {
+  const [activeValue, setActiveValue] = useState(null);
+
+  function handleUpdate(arr, index, item) {
+    arr[index] = {
+      value: item.value,
+      synonyms: item.synonyms
+    };
+    props.setValues(arr);
+  }
+
+  const makeItems = items => {
+    if (items) {
+      return items.map((item, index) => {
+        return /*#__PURE__*/React.createElement(React.Fragment, {
+          key: index
+        }, /*#__PURE__*/React.createElement(EntityValue, {
+          index: index,
+          item: item,
+          values: props.values,
+          removeValue: props.removeValue,
+          handleUpdate: handleUpdate,
+          activeValue: activeValue,
+          setActiveValue: setActiveValue
+        }));
+      });
+    }
+  };
+
+  if (props.values) {
+    return /*#__PURE__*/React.createElement("div", null, makeItems(props.values));
+  } else {
+    return null;
+  }
+}
+
+const validateInput = (elem, term, regex, message) => {
+  let reg = new RegExp(regex);
+
+  if (reg.test(term)) {
+    elem.setCustomValidity('');
+  } else {
+    elem.setCustomValidity(message);
+  }
+
+  elem.reportValidity();
+  return reg.test(term);
+};
+
+function EntityDetails(props) {
+  const [entity, setEntity] = useState(null);
+  const [name, setName] = useState(null);
+  const [values, setValues] = useState(null);
+  const [newValue, setNewValue] = useState(null);
+  const [valid, setValid] = useState(true);
+  const valueInput = useRef(null);
+  useEffect(() => {
+    if (!entity) {
+      setEntity(props.entity);
+    }
+  }, [props.entity]);
+  useEffect(() => {
+    setName(props.entity.name);
+    setValues(props.entity.values);
+  }, [entity]);
+  useEffect(() => {
+    if (name && values) {
+      props.onUpdate({
+        name: name,
+        values: values
+      }, valid);
+    }
+  }, [name, values]);
+
+  const addNewValue = () => {
+    let val = {
+      value: newValue,
+      synonyms: []
+    };
+    let arr = [...values, val];
+    setValues(arr);
+  };
+
+  const removeValue = index => {
+    let arr = [...values];
+
+    if (index !== -1) {
+      arr.splice(index, 1);
+      setValues(arr);
+    }
+  };
+
+  if (values) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "convo-details"
+    }, /*#__PURE__*/React.createElement("section", {
+      className: "layout--editor-content"
+    }, /*#__PURE__*/React.createElement("section", {
+      className: "entities-editor"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "margin--30--large"
+    }, /*#__PURE__*/React.createElement("h3", {
+      className: "margin--10--large"
+    }, "Entity name"), /*#__PURE__*/React.createElement("form", {
+      onSubmit: e => {
+        e.preventDefault();
+      }
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      defaultValue: name ? name : '',
+      placeholder: "Entity name",
+      className: "editor-input input--item-name",
+      onChange: e => {
+        let message = 'Entity names shall begin with alphabetic characters from a to Z. The entity name may contain multiple underscores per word. Entity names shall not contain any numbers at all or soecial characters other than undersocres.';
+        let validate = validateInput(e.target, e.target.value, '^[A-Za-z](_*[A-Za-z])*_*$', message);
+        setValid(validate);
+        setName(e.target.value);
+      }
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "margin--50--large"
+    }, /*#__PURE__*/React.createElement("h3", {
+      className: "font--18--large margin--10--large"
+    }, "Values"), /*#__PURE__*/React.createElement("div", {
+      className: "margin--24--large"
+    }, /*#__PURE__*/React.createElement(EntityValues, {
+      values: values,
+      setValues: setValues,
+      removeValue: removeValue
+    }), /*#__PURE__*/React.createElement("form", {
+      onSubmit: e => {
+        e.preventDefault();
+
+        if (newValue) {
+          addNewValue();
+          setNewValue(null);
+          valueInput.current.value = '';
+        }
+      }
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      className: "editor-input input--add-field",
+      placeholder: "Enter reference value",
+      onChange: e => setNewValue(e.target.value),
+      ref: valueInput
+    })))))));
+  } else {
+    return null;
+  }
+}
 
 const getColor = index => {
   let arr = ["#56ebd3", "#fbacf6", "#9ee786", "#e4b5ff", "#c2e979", "#20d8fd", "#e8d25c", "#42edec", "#f3c46f", "#5cefba", "#e8de7a", "#7ee8c0", "#e8d98c", "#88e99a", "#cfdd73", "#8be8ad", "#dff799", "#b5eaa1", "#c2d681", "#b5e287"];
@@ -101,23 +423,6 @@ function Modal(props) {
   } else {
     return null;
   }
-}
-
-function IconTrash() {
-  return /*#__PURE__*/React.createElement("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    width: "16",
-    height: "16",
-    viewBox: "0 0 16 16"
-  }, /*#__PURE__*/React.createElement("g", {
-    fill: "none",
-    "fill-rule": "evenodd",
-    stroke: "#1A1A1A",
-    "stroke-linecap": "round",
-    "stroke-linejoin": "round"
-  }, /*#__PURE__*/React.createElement("path", {
-    d: "M2.4 6.5v7c0 1.105.835 2 1.867 2h7.466c1.032 0 1.867-.895 1.867-2v-7M1.467 3.5h13.066M6.133 3.5v-3h3.734v3M8 7.5v5M10.8 7.5v5M5.2 7.5v5"
-  })));
 }
 
 class Input extends React.Component {
@@ -475,19 +780,6 @@ const List = React.memo(function List(props) {
   }
 });
 
-const validateInput = (elem, term, regex, message) => {
-  let reg = new RegExp(regex);
-
-  if (reg.test(term)) {
-    elem.setCustomValidity('');
-  } else {
-    elem.setCustomValidity(message);
-  }
-
-  elem.reportValidity();
-  return reg.test(term);
-};
-
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
   const entities = props.entities;
@@ -612,25 +904,20 @@ function IntentDetails(props) {
   }
 }
 
-var styles = {"test":"_styles-module__test__3ybTi"};
-
-const ExampleComponent = ({
-  text
-}) => {
-  return /*#__PURE__*/React.createElement("div", {
-    className: styles.test
-  }, "Example Component: ", text);
-};
 const IntentEditor = props => {
   return /*#__PURE__*/React.createElement(IntentDetails, {
-    intent: '',
-    entities: [],
-    systemEntities: [],
-    onUpdate: () => {
-      console.log('update');
-    }
+    intent: props.intent,
+    entities: props.entities,
+    systemEntities: props.systemEntities,
+    onUpdate: props.onUpdate
+  });
+};
+const EntitiyEditor = props => {
+  return /*#__PURE__*/React.createElement(EntityDetails, {
+    entity: props.entity,
+    onUpdate: props.onUpdate
   });
 };
 
-export { ExampleComponent, IntentEditor };
+export { EntitiyEditor, IntentEditor };
 //# sourceMappingURL=index.modern.js.map
