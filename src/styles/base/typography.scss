@@ -7,15 +7,10 @@ a {
 ** VARIABLES
 \*------------------------------------*/
 
-$base-font-family: 'DM Sans',
-sans-serif;
-$base-font-weight: $regular;
+$base-font-weight: $font-weight--regular;
 $base-font-size: 16px;
 $base-line-height: 1.78;
 $base-font-color: $black;
-
-$heading-font-family: 'DM Sans',
-sans-serif;
 
 /*------------------------------------*\
 ** HEADINGS
@@ -27,10 +22,10 @@ h3,
 h4,
 h5,
 h6 {
-	font-family: $heading-font-family;
+	font-family: inherit;
 	margin: 0;
 	padding: 0;
-	font-weight: $regular;
+	font-weight: $font-weight--regular;
 }
 
 h1 {
@@ -132,32 +127,13 @@ a {
 	text-decoration: none;
 }
 
-.link {
-	outline-width: 0;
-	text-decoration: none;
-	color: $color-primary;
-	transition: 0.2s;
-}
-
-a.link:hover,
-a.link:focus,
-a.link:active {
-	color: lighten($color-primary, 10%);
-}
-
 /*------------------------------------*\
 ** OTHER
 \*------------------------------------*/
 
-b,
-strong,
-.strong {
-	font-weight: $bold;
-}
-
 p {
 	@include font-size($copy-font-sizes);
-	font-family: $base-font-family;
+	font-family: inherit;
 	margin-bottom: 1.5rem;
 }
 
@@ -165,45 +141,8 @@ p {
 # FONT SIZES
 \*------------------------------------*/
 
-@each $key,
-$value in $breakpoints {
-	@include breakpoint($value) {
-		@for $i from 1 through 200 {
-			@include breakpoint ($large) {
-				.font--#{$i}--#{$key} {
-					font-size: calc((#{$i}/ 16) * 1.25rem);
-				}
-			}
-
-			@include breakpoint ($xlarge) {
-				.font--#{$i}--#{$key} {
-					font-size: calc((#{$i}/ 16) * 1.125rem);
-				}
-			}
-
-			@include breakpoint ($xxlarge) {
-				.font--#{$i}--#{$key} {
-					font-size: calc((#{$i}/ 16) * 1rem);
-				}
-			}
-		}
-	}
-}
-
-// line heights
-
-.line-height--normal {
-	@include breakpoint($large) {
-		line-height: 1.78;
-	}
-}
-
-pre,
-code {
-	font-size: 0.75rem;
-	line-height: 1rem;
-	margin-bottom: 1rem;
-	display: block;
+.font--18--large {
+	font-size: 1.125rem;
 }
 
 /*------------------------------------*\
@@ -282,37 +221,4 @@ code {
 
 .color-gray--lightish {
 	color: $color-gray--lightish;
-}
-
-// TODO: Dodaj text-- klase za debljinu, velicinu, boju, itd
-
-/*------------------------------------*\
-** LABELS
-\*------------------------------------*/
-
-.text-label {
-	display: block;
-	color: $color-gray--light;
-	font-weight: $demibold;
-	margin-bottom: 0.875rem;
-	text-transform: uppercase;
-}
-
-/*------------------------------------*\
-# HIDE AND SHOW
-\*------------------------------------*/
-
-/*------------------------------------*\
-# HIDE AND SHOW
-\*------------------------------------*/
-
-@each $key,
-$value in $breakpoints {
-	@include breakpoint($value) {
-		@for $i from 1 through 10 {
-			.lh--#{$i}--#{$key} {
-				line-height: calc((#{$i}/ 16) * 1rem);
-			}
-		}
-	}
 }
