@@ -7,6 +7,6 @@ export const IntentEditor = (props) => {
   return <IntentDetails intent={props.intent} entities={props.entities} systemEntities={props.systemEntities} onUpdate={props.onUpdate} />
 }
 
-export const EntitiyEditor = (props) => {
+export const EntityEditor = (props) => {
   return <EntityDetails entity={props.entity} onUpdate={props.onUpdate} />
 }

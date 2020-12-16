@@ -23,41 +23,29 @@ function IconTrash() {
   })));
 }
 
-var EntityValue = function EntityValue(props) {
-  var _useState = useState(props.item.value),
-      value = _useState[0],
-      setValue = _useState[1];
-
-  var _useState2 = useState(props.item.synonyms),
-      synonyms = _useState2[0],
-      setSynonyms = _useState2[1];
-
-  var _useState3 = useState(''),
-      newSynonym = _useState3[0],
-      setNewSynonym = _useState3[1];
-
-  var _useState4 = useState(false),
-      remove = _useState4[0],
-      setRemove = _useState4[1];
-
-  var synonymInput = useRef(null);
-  useEffect(function () {
-    props.handleUpdate([].concat(props.values), props.index, {
+const EntityValue = props => {
+  const [value, setValue] = useState(props.item.value);
+  const [synonyms, setSynonyms] = useState(props.item.synonyms);
+  const [newSynonym, setNewSynonym] = useState('');
+  const [remove, setRemove] = useState(false);
+  const synonymInput = useRef(null);
+  useEffect(() => {
+    props.handleUpdate([...props.values], props.index, {
       value: value,
       synonyms: synonyms
     });
   }, [value, synonyms]);
-  useEffect(function () {
+  useEffect(() => {
     if (newSynonym) {
       if (synonyms) {
-        setSynonyms([].concat(synonyms, [newSynonym]));
+        setSynonyms([...synonyms, newSynonym]);
       } else {
         setSynonyms(newSynonym);
       }
     }
   }, [newSynonym]);
 
-  var handleNewSynonym = function handleNewSynonym(target) {
+  const handleNewSynonym = target => {
     if (target.current.value.length > 0) {
       setNewSynonym(target.current.value);
       target.current.value = '';
@@ -66,9 +54,9 @@ var EntityValue = function EntityValue(props) {
     }
   };
 
-  var removeSynonym = function removeSynonym(value) {
-    var arr = [].concat(synonyms);
-    var index = arr.indexOf(value);
+  const removeSynonym = value => {
+    let arr = [...synonyms];
+    let index = arr.indexOf(value);
 
     if (index !== -1) {
       arr.splice(index, 1);
@@ -76,9 +64,9 @@ var EntityValue = function EntityValue(props) {
     }
   };
 
-  var makeSynonyms = function makeSynonyms(items, active) {
+  const makeSynonyms = (items, active) => {
     if (items) {
-      return items && items.map(function (item, i) {
+      return items && items.map((item, i) => {
         if (item && !active) {
           return /*#__PURE__*/React.createElement("div", {
             className: "synonym",
@@ -91,7 +79,7 @@ var EntityValue = function EntityValue(props) {
           }, item, /*#__PURE__*/React.createElement("button", {
             type: "button",
             className: "synonym__remove",
-            onClick: function onClick() {
+            onClick: () => {
               removeSynonym(item);
             }
           }, "\u2715"));
@@ -100,10 +88,10 @@ var EntityValue = function EntityValue(props) {
     }
   };
 
-  var handleRemove = function handleRemove(e) {
+  const handleRemove = e => {
     e.stopPropagation();
     setRemove(true);
-    setTimeout(function () {
+    setTimeout(() => {
       props.removeValue(props.index);
       setRemove(false);
     }, 220);
@@ -111,8 +99,8 @@ var EntityValue = function EntityValue(props) {
 
   if (props.activeValue !== props.index) {
     return /*#__PURE__*/React.createElement("li", {
-      className: "item item--entity " + (remove ? 'item--remove' : ''),
-      onClick: function onClick() {
+      className: `item item--entity ${remove ? 'item--remove' : ''}`,
+      onClick: () => {
         props.setActiveValue(props.index);
       }
     }, /*#__PURE__*/React.createElement("div", {
@@ -132,13 +120,13 @@ var EntityValue = function EntityValue(props) {
     }, /*#__PURE__*/React.createElement("button", {
       className: "btn--remove btn--remove--main",
       type: "button",
-      onClick: function onClick(e) {
+      onClick: e => {
         handleRemove(e);
       }
     }, /*#__PURE__*/React.createElement(IconTrash, null))));
   } else {
     return /*#__PURE__*/React.createElement("li", {
-      className: "item item--entity item--active " + (remove ? 'item--remove' : '')
+      className: `item item--entity item--active ${remove ? 'item--remove' : ''}`
     }, /*#__PURE__*/React.createElement("div", {
       className: "item__inner"
     }, /*#__PURE__*/React.createElement("div", {
@@ -153,7 +141,7 @@ var EntityValue = function EntityValue(props) {
       type: "text",
       defaultValue: value,
       placeholder: "Enter value",
-      onChange: function onChange(e) {
+      onChange: e => {
         setValue(e.target.value);
       }
     }))), /*#__PURE__*/React.createElement("div", {
@@ -161,7 +149,7 @@ var EntityValue = function EntityValue(props) {
     }, /*#__PURE__*/React.createElement("div", {
       className: "item__values"
     }, makeSynonyms(synonyms, true), /*#__PURE__*/React.createElement("form", {
-      onSubmit: function onSubmit(e) {
+      onSubmit: e => {
         e.preventDefault();
         handleNewSynonym(synonymInput);
       }
@@ -173,7 +161,7 @@ var EntityValue = function EntityValue(props) {
       },
       ref: synonymInput,
       placeholder: "Enter synonym",
-      onChange: function onChange(e) {}
+      onChange: e => {}
     }), /*#__PURE__*/React.createElement("input", {
       className: "editor-input",
       type: "submit",
@@ -183,7 +171,7 @@ var EntityValue = function EntityValue(props) {
     }, /*#__PURE__*/React.createElement("button", {
       className: "btn--remove btn--remove--main",
       type: "button",
-      onClick: function onClick(e) {
+      onClick: e => {
         handleRemove(e);
       }
     }, /*#__PURE__*/React.createElement(IconTrash, null))));
@@ -191,9 +179,7 @@ var EntityValue = function EntityValue(props) {
 };
 
 function EntityValues(props) {
-  var _useState = useState(null),
-      activeValue = _useState[0],
-      setActiveValue = _useState[1];
+  const [activeValue, setActiveValue] = useState(null);
 
   function handleUpdate(arr, index, item) {
     arr[index] = {
@@ -203,9 +189,9 @@ function EntityValues(props) {
     props.setValues(arr);
   }
 
-  var makeItems = function makeItems(items) {
+  const makeItems = items => {
     if (items) {
-      return items.map(function (item, index) {
+      return items.map((item, index) => {
         return /*#__PURE__*/React.createElement(React.Fragment, {
           key: index
         }, /*#__PURE__*/React.createElement(EntityValue, {
@@ -228,8 +214,8 @@ function EntityValues(props) {
   }
 }
 
-var validateInput = function validateInput(elem, term, regex, message) {
-  var reg = new RegExp(regex);
+const validateInput = (elem, term, regex, message) => {
+  let reg = new RegExp(regex);
 
   if (reg.test(term)) {
     elem.setCustomValidity('');
@@ -242,37 +228,22 @@ var validateInput = function validateInput(elem, term, regex, message) {
 };
 
 function EntityDetails(props) {
-  var _useState = useState(null),
-      entity = _useState[0],
-      setEntity = _useState[1];
-
-  var _useState2 = useState(null),
-      name = _useState2[0],
-      setName = _useState2[1];
-
-  var _useState3 = useState(null),
-      values = _useState3[0],
-      setValues = _useState3[1];
-
-  var _useState4 = useState(null),
-      newValue = _useState4[0],
-      setNewValue = _useState4[1];
-
-  var _useState5 = useState(true),
-      valid = _useState5[0],
-      setValid = _useState5[1];
-
-  var valueInput = useRef(null);
-  useEffect(function () {
+  const [entity, setEntity] = useState(null);
+  const [name, setName] = useState(null);
+  const [values, setValues] = useState(null);
+  const [newValue, setNewValue] = useState(null);
+  const [valid, setValid] = useState(true);
+  const valueInput = useRef(null);
+  useEffect(() => {
     if (!entity) {
       setEntity(props.entity);
     }
   }, [props.entity]);
-  useEffect(function () {
+  useEffect(() => {
     setName(props.entity.name);
     setValues(props.entity.values);
   }, [entity]);
-  useEffect(function () {
+  useEffect(() => {
     if (name && values) {
       props.onUpdate({
         name: name,
@@ -281,17 +252,17 @@ function EntityDetails(props) {
     }
   }, [name, values]);
 
-  var addNewValue = function addNewValue() {
-    var val = {
+  const addNewValue = () => {
+    let val = {
       value: newValue,
       synonyms: []
     };
-    var arr = [].concat(values, [val]);
+    let arr = [...values, val];
     setValues(arr);
   };
 
-  var removeValue = function removeValue(index) {
-    var arr = [].concat(values);
+  const removeValue = index => {
+    let arr = [...values];
 
     if (index !== -1) {
       arr.splice(index, 1);
@@ -311,7 +282,7 @@ function EntityDetails(props) {
     }, /*#__PURE__*/React.createElement("h3", {
       className: "margin--10--large"
     }, "Entity name"), /*#__PURE__*/React.createElement("form", {
-      onSubmit: function onSubmit(e) {
+      onSubmit: e => {
         e.preventDefault();
       }
     }, /*#__PURE__*/React.createElement("input", {
@@ -319,9 +290,9 @@ function EntityDetails(props) {
       defaultValue: name ? name : '',
       placeholder: "Entity name",
       className: "editor-input input--item-name",
-      onChange: function onChange(e) {
-        var message = 'Entity names shall begin with alphabetic characters from a to Z. The entity name may contain multiple underscores per word. Entity names shall not contain any numbers at all or soecial characters other than undersocres.';
-        var validate = validateInput(e.target, e.target.value, '^[A-Za-z](_*[A-Za-z])*_*$', message);
+      onChange: e => {
+        let message = 'Entity names shall begin with alphabetic characters from a to Z. The entity name may contain multiple underscores per word. Entity names shall not contain any numbers at all or soecial characters other than undersocres.';
+        let validate = validateInput(e.target, e.target.value, '^[A-Za-z](_*[A-Za-z])*_*$', message);
         setValid(validate);
         setName(e.target.value);
       }
@@ -336,7 +307,7 @@ function EntityDetails(props) {
       setValues: setValues,
       removeValue: removeValue
     }), /*#__PURE__*/React.createElement("form", {
-      onSubmit: function onSubmit(e) {
+      onSubmit: e => {
         e.preventDefault();
 
         if (newValue) {
@@ -349,9 +320,7 @@ function EntityDetails(props) {
       type: "text",
       className: "editor-input input--add-field",
       placeholder: "Enter reference value",
-      onChange: function onChange(e) {
-        return setNewValue(e.target.value);
-      },
+      onChange: e => setNewValue(e.target.value),
       ref: valueInput
     })))))));
   } else {
@@ -359,80 +328,36 @@ function EntityDetails(props) {
   }
 }
 
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-function _inheritsLoose(subClass, superClass) {
-  subClass.prototype = Object.create(superClass.prototype);
-  subClass.prototype.constructor = subClass;
-  subClass.__proto__ = superClass;
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-var getColor = function getColor(index) {
-  var arr = ["#56ebd3", "#fbacf6", "#9ee786", "#e4b5ff", "#c2e979", "#20d8fd", "#e8d25c", "#42edec", "#f3c46f", "#5cefba", "#e8de7a", "#7ee8c0", "#e8d98c", "#88e99a", "#cfdd73", "#8be8ad", "#dff799", "#b5eaa1", "#c2d681", "#b5e287"];
+const getColor = index => {
+  let arr = ["#56ebd3", "#fbacf6", "#9ee786", "#e4b5ff", "#c2e979", "#20d8fd", "#e8d25c", "#42edec", "#f3c46f", "#5cefba", "#e8de7a", "#7ee8c0", "#e8d98c", "#88e99a", "#cfdd73", "#8be8ad", "#dff799", "#b5eaa1", "#c2d681", "#b5e287"];
   return arr[index % arr.length];
 };
 
 function Modal(props) {
-  var _useState = useState(props.entities),
-      entities = _useState[0],
-      setEntities = _useState[1];
-
-  var _useState2 = useState(props.entities),
-      allEntities = _useState2[0];
-
-  var _useState3 = useState([]),
-      entitiesNames = _useState3[0],
-      setEntitiesNames = _useState3[1];
-
-  var input = useRef();
-  var modalRef = useOnclickOutside(function () {
+  const [entities, setEntities] = useState(props.entities);
+  const [allEntities, setAllEntities] = useState(props.entities);
+  const [entitiesNames, setEntitiesNames] = useState([]);
+  const input = useRef();
+  const modalRef = useOnclickOutside(() => {
     props.setModal(false);
     props.setSelection(null);
   });
 
-  var filterEntities = function filterEntities(term) {
-    var arr = [].concat(allEntities);
-    var filteredArr = arr.filter(function (item) {
-      return item.name && item.name.toLowerCase().includes(term.trim().toLowerCase());
-    });
+  const filterEntities = term => {
+    let arr = [...allEntities];
+    let filteredArr = arr.filter(item => item.name && item.name.toLowerCase().includes(term.trim().toLowerCase()));
     setEntities(filteredArr);
   };
 
-  useEffect(function () {
-    var arr = entities.map(function (item) {
+  useEffect(() => {
+    let arr = entities.map(item => {
       return item.name;
-    }).filter(function (item) {
-      return item;
-    });
+    }).filter(item => item);
     setEntitiesNames(arr);
   }, [entities]);
 
-  var makeEntities = function makeEntities(items) {
-    var handleDefaultParam = function handleDefaultParam(param) {
+  const makeEntities = items => {
+    const handleDefaultParam = param => {
       if (param.includes('.')) {
         return param.split('.').pop();
       } else {
@@ -441,18 +366,16 @@ function Modal(props) {
     };
 
     if (items) {
-      return items.map(function (item, i) {
+      return items.map((item, i) => {
         return /*#__PURE__*/React.createElement("button", {
           key: i,
-          onClick: function onClick(e) {
+          onClick: e => {
             e.preventDefault();
-            var type = '@' + item.name;
-            var slotValue = item.name;
+            let type = '@' + item.name;
+            let slotValue = item.name;
 
-            var getParamValues = function getParamValues() {
-              var found = props.paramValues.find(function (obj) {
-                return obj.type === type;
-              });
+            const getParamValues = () => {
+              let found = props.paramValues.find(obj => obj.type === type);
 
               if (found) {
                 return found.slot_value;
@@ -478,7 +401,7 @@ function Modal(props) {
   if (entities) {
     return /*#__PURE__*/React.createElement("div", {
       id: "dropdown-modal",
-      className: "dropdown " + (props.modal && 'dropdown--active'),
+      className: `dropdown ${props.modal && 'dropdown--active'}`,
       ref: modalRef
     }, /*#__PURE__*/React.createElement("div", {
       className: "dropdown__search-wrap"
@@ -488,7 +411,7 @@ function Modal(props) {
       options: entitiesNames,
       spaceRemovers: [],
       matchAny: true,
-      onChange: function onChange(e) {
+      onChange: e => {
         filterEntities(e);
       },
       ref: input,
@@ -502,64 +425,57 @@ function Modal(props) {
   }
 }
 
-var Input = /*#__PURE__*/function (_React$Component) {
-  _inheritsLoose(Input, _React$Component);
-
-  function Input(props) {
-    var _this;
-
-    _this = _React$Component.call(this, props) || this;
-    _this.state = {
-      model: _this.props.model
+class Input extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      model: this.props.model
     };
-    _this.text = React.createRef('');
-    _this.handleSelection = _this.handleSelection.bind(_assertThisInitialized(_this));
-    _this.handleModal = _this.handleModal.bind(_assertThisInitialized(_this));
-    return _this;
+    this.text = React.createRef('');
+    this.handleSelection = this.handleSelection.bind(this);
+    this.handleModal = this.handleModal.bind(this);
   }
 
-  var _proto = Input.prototype;
-
-  _proto.shouldComponentUpdate = function shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps) {
     if (nextProps.utterances.length !== this.props.utterances.length || this.props.stateChange !== nextProps.stateChange || nextProps.active !== this.props.active) {
       return true;
     } else {
       return this.props.model.length === 0;
     }
-  };
+  }
 
-  _proto.componentDidUpdate = function componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps) {
     console.log(this.props.active, prevProps.active);
 
     if (this.props.active !== prevProps.active || this.props.active && !this.text.current.length) {
       this.text.current && this.text.current.focus();
     }
-  };
+  }
 
-  _proto.handleModal = function handleModal(selection, relativePos) {
-    document.querySelector('#dropdown-modal').style.left = relativePos.left + 24 + "px";
-    document.querySelector('#dropdown-modal').style.top = relativePos.top + 2 * 24 + "px";
+  handleModal(selection, relativePos) {
+    document.querySelector('#dropdown-modal').style.left = `${relativePos.left + 24}px`;
+    document.querySelector('#dropdown-modal').style.top = `${relativePos.top + 2 * 24}px`;
     this.props.setModal(true);
     this.props.setSelection({
       item: selection,
       index: this.props.index
     });
-  };
+  }
 
-  _proto.handleSelection = function handleSelection(e) {
+  handleSelection(e) {
 
-    var selection = window.getSelection().getRangeAt(0);
+    let selection = window.getSelection().getRangeAt(0);
 
     if (selection.toString()) {
-      var textNode = document.createTextNode(selection.toString());
-      var selectedText = selection.extractContents();
-      var span = document.createElement('span');
-      var nested = span.querySelectorAll('*');
+      let textNode = document.createTextNode(selection.toString());
+      let selectedText = selection.extractContents();
+      let span = document.createElement('span');
+      let nested = span.querySelectorAll('*');
       span.appendChild(textNode);
       span.setAttribute('class', 'highlight');
       span.textContent = span.textContent.trim();
       selection.insertNode(span);
-      e.target.childNodes.forEach(function (child) {
+      e.target.childNodes.forEach(child => {
         if (child.dataset && !child.dataset.type && child !== span) {
           child.replaceWith(child.textContent);
         }
@@ -569,38 +485,33 @@ var Input = /*#__PURE__*/function (_React$Component) {
         span.parentNode.outerHTML = span.parentNode.innerHTML;
       }
 
-      var parentPos = document.querySelector('.convo-details').getBoundingClientRect();
-      var childPos = span.getBoundingClientRect();
-      var relativePos = {
+      let parentPos = document.querySelector('.convo-details').getBoundingClientRect();
+      let childPos = span.getBoundingClientRect();
+      let relativePos = {
         top: childPos.top - parentPos.top,
         left: childPos.left - parentPos.left
       };
       this.handleModal(span, relativePos);
     }
-  };
+  }
 
-  _proto.render = function render() {
-    var _this2 = this;
-
+  render() {
     if (this.props.model) {
-      var mappedModel = this.props.model.filter(function (item) {
-        return item.text.trim().length;
-      });
-      mappedModel = this.props.model.map(function (item, index) {
+      let mappedModel = this.props.model.filter(item => item.text.trim().length);
+      mappedModel = this.props.model.map((item, index) => {
         if (item.type) {
-          return "<span data-token=\"true\" style=\"background:" + item.color + "\" data-slot-value=\"" + item.slot_value + "\" data-type=\"" + item.type + "\" class=\"highlight\">" + item.text.trim() + "</span>";
+          return `<span data-token="true" style="background:${item.color}" data-slot-value="${item.slot_value}" data-type="${item.type}" class="highlight">${item.text.trim()}</span>`;
         } else {
           return item.text;
         }
       });
 
-      var disableNewlines = function disableNewlines(evt) {
-        var keyCode = evt.keyCode || evt.which;
+      const disableNewlines = evt => {
+        const keyCode = evt.keyCode || evt.which;
 
         if (keyCode === 13) {
           evt.preventDefault();
-
-          _this2.props.focusOnExpressionInput();
+          this.props.focusOnExpressionInput();
         }
       };
 
@@ -609,27 +520,26 @@ var Input = /*#__PURE__*/function (_React$Component) {
           className: "item__input"
         }, /*#__PURE__*/React.createElement(ContentEditable, {
           innerRef: this.text,
-          html: mappedModel.join(' ') + " ",
-          onClick: function onClick(e) {
+          html: `${mappedModel.join(' ')} `,
+          onClick: e => {
             if (e.target.getAttribute('data-token')) {
-              _this2.handleModal(e.target, e);
+              this.handleModal(e.target, e);
             }
           },
-          onKeyPress: function onKeyPress(e) {
+          onKeyPress: e => {
             disableNewlines(e);
           },
-          onMouseUp: function onMouseUp(e) {
-            _this2.handleSelection(e);
+          onMouseUp: e => {
+            this.handleSelection(e);
           },
-          onChange: function onChange(e) {
-            var nodes = e.currentTarget.childNodes;
-            nodes = nodes.forEach(function (item) {
+          onChange: e => {
+            let nodes = e.currentTarget.childNodes;
+            nodes = nodes.forEach(item => {
               if (!item.textContent.trim().length && item.tagName === 'SPAN') {
                 item.remove();
               }
             });
-
-            _this2.props.mapNodesToModel(e.currentTarget.childNodes, _this2.props.index);
+            this.props.mapNodesToModel(e.currentTarget.childNodes, this.props.index);
           }
         })));
       } else {
@@ -644,36 +554,21 @@ var Input = /*#__PURE__*/function (_React$Component) {
     } else {
       return /*#__PURE__*/React.createElement("div", null);
     }
-  };
+  }
 
-  return Input;
-}(React.Component);
+}
 
-var Utterance = function Utterance(props) {
-  var _useState = useState(false),
-      remove = _useState[0],
-      setRemove = _useState[1];
-
-  var _useState2 = useState(true),
-      valid = _useState2[0],
-      setValid = _useState2[1];
-
-  var wrapper = useRef(null);
-  var removeBtn = useRef(null);
-  var data = props.data;
-  useEffect(function () {
-    var slotValues = props.data.model.map(function (item) {
-      return item.slot_value;
-    }).filter(function (item) {
-      return item;
-    });
-    var invalidValues = slotValues.filter(function (item) {
-      return !item.match(/^[A-Za-z](_*[A-Za-z])*_*$/);
-    });
-    var term = props.data.model.map(function (item) {
-      return item.text;
-    }).join(' ');
-    var reg = /^[a-zA-Z][a-zA-Z\s]*$/;
+const Utterance = props => {
+  const [remove, setRemove] = useState(false);
+  const [valid, setValid] = useState(true);
+  const wrapper = useRef(null);
+  const removeBtn = useRef(null);
+  let data = props.data;
+  useEffect(() => {
+    let slotValues = props.data.model.map(item => item.slot_value).filter(item => item);
+    let invalidValues = slotValues.filter(item => !item.match(/^[A-Za-z](_*[A-Za-z])*_*$/));
+    let term = props.data.model.map(item => item.text).join(' ');
+    let reg = /^[a-zA-Z][a-zA-Z\s]*$/;
 
     if (reg.test(term) && !invalidValues.length) {
       setValid(true);
@@ -682,11 +577,11 @@ var Utterance = function Utterance(props) {
     }
   }, [props.data.model]);
   return /*#__PURE__*/React.createElement("li", {
-    "data-valid": "" + valid,
+    "data-valid": `${valid}`,
     ref: wrapper,
     key: data.index,
-    className: "item item--intent " + (data.active ? 'item--active' : '') + " " + (remove ? 'item--remove' : '') + " " + (valid ? 'item--valid' : 'item--error'),
-    onClick: function onClick() {
+    className: `item item--intent ${data.active ? 'item--active' : ''} ${remove ? 'item--remove' : ''} ${valid ? 'item--valid' : 'item--error'}`,
+    onClick: () => {
       data.handleActive(data.index);
     }
   }, !valid && /*#__PURE__*/React.createElement("legend", {
@@ -714,33 +609,31 @@ var Utterance = function Utterance(props) {
     className: "btn--remove btn--remove--main",
     type: "button",
     ref: removeBtn,
-    onClick: function onClick(e) {
+    onClick: e => {
       e.stopPropagation();
       setRemove(true);
-      setTimeout(function () {
+      setTimeout(() => {
         data.removeFromUtterances(data.index);
         setRemove(false);
       }, 220);
     }
-  }, /*#__PURE__*/React.createElement(IconTrash, null)))), data.model && data.model.filter(function (item) {
-    return item.type;
-  }).length ? /*#__PURE__*/React.createElement("ul", {
+  }, /*#__PURE__*/React.createElement(IconTrash, null)))), data.model && data.model.filter(item => item.type).length ? /*#__PURE__*/React.createElement("ul", {
     className: "model",
     style: {
-      display: "" + (data.active ? 'block' : 'none')
+      display: `${data.active ? 'block' : 'none'}`
     }
-  }, /*#__PURE__*/React.createElement("header", null, /*#__PURE__*/React.createElement("div", null, "Parameter Name"), /*#__PURE__*/React.createElement("div", null, "Entity"), /*#__PURE__*/React.createElement("div", null, "Resolved Value")), data.model.map(function (item, i) {
+  }, /*#__PURE__*/React.createElement("header", null, /*#__PURE__*/React.createElement("div", null, "Parameter Name"), /*#__PURE__*/React.createElement("div", null, "Entity"), /*#__PURE__*/React.createElement("div", null, "Resolved Value")), data.model.map((item, i) => {
     if (item.type) {
-      var slotValue = item.slot_value;
-      var type = item.type;
+      let slotValue = item.slot_value;
+      let type = item.type;
       return /*#__PURE__*/React.createElement("li", {
         key: i
       }, /*#__PURE__*/React.createElement("input", {
         className: "editor-input",
         type: "text",
         defaultValue: slotValue,
-        onChange: function onChange(e) {
-          var arr = [].concat(data.utterances);
+        onChange: e => {
+          let arr = [...data.utterances];
           arr[data.index].model[i].slot_value = e.target.value;
           data.setUtterances(arr);
         },
@@ -754,7 +647,7 @@ var Utterance = function Utterance(props) {
         className: "item__buttons"
       }, /*#__PURE__*/React.createElement("button", {
         className: "btn--remove",
-        onClick: function onClick(e) {
+        onClick: e => {
           e.preventDefault(e);
           data.removeFromModel(data.index, i);
           data.setStateChange(!data.stateChange);
@@ -764,60 +657,31 @@ var Utterance = function Utterance(props) {
   })) : /*#__PURE__*/React.createElement(React.Fragment, null));
 };
 
-var List = React.memo(function List(props) {
-  var _useState = useState(false),
-      modal = _useState[0],
-      setModal = _useState[1];
-
-  var _useState2 = useState(null),
-      modalPosition = _useState2[0],
-      setModalPosition = _useState2[1];
-
-  var _useState3 = useState(null),
-      selection = _useState3[0],
-      setSelection = _useState3[1];
-
-  var _useState4 = useState(false),
-      update = _useState4[0],
-      setUpdate = _useState4[1];
-
-  var _useState5 = useState(false),
-      stateChange = _useState5[0],
-      setStateChange = _useState5[1];
-
-  var _useState6 = useState(null),
-      paramValues = _useState6[0],
-      setParamValues = _useState6[1];
-  useEffect(function () {
-    var arr = props.utterances.map(function (item) {
-      return item.model;
-    }).flat().filter(function (item) {
-      return item.slot_value;
-    }).map(function (item) {
-      return {
-        type: item.type,
-        slot_value: item.slot_value
-      };
-    });
-    var uniq = arr.filter(function (v, i, a) {
-      return a.findIndex(function (t) {
-        return t.slot_value === v.slot_value;
-      }) === i;
-    });
+const List = React.memo(function List(props) {
+  const [modal, setModal] = useState(false);
+  const [modalPosition, setModalPosition] = useState(null);
+  const [selection, setSelection] = useState(null);
+  const [update, setUpdate] = useState(false);
+  const [stateChange, setStateChange] = useState(false);
+  const [paramValues, setParamValues] = useState(null);
+  useEffect(() => {
+    let arr = props.utterances.map(item => item.model).flat().filter(item => item.slot_value).map(item => ({
+      type: item.type,
+      slot_value: item.slot_value
+    }));
+    let uniq = arr.filter((v, i, a) => a.findIndex(t => t.slot_value === v.slot_value) === i);
     setParamValues(uniq);
   }, [props.utterances]);
 
-  var handleActive = function handleActive(index) {
+  const handleActive = index => {
     props.setActive(index);
   };
 
-  var mapNodesToModel = function mapNodesToModel(items, index) {
-    var arr = Array.from(items).filter(function (item) {
-      return item.textContent.trim().length;
-    });
-    arr = arr.map(function (item) {
+  const mapNodesToModel = (items, index) => {
+    let arr = Array.from(items).filter(item => item.textContent.trim().length);
+    arr = arr.map(item => {
       if (item.tagName === 'SPAN' || item.nodeName === '#text' && item.textContent.trim().length) {
-        var type = item.dataset && item.dataset.type && item.dataset.type.length ? item.dataset.type : null;
+        let type = item.dataset && item.dataset.type && item.dataset.type.length ? item.dataset.type : null;
 
         if (type) {
           return {
@@ -834,28 +698,24 @@ var List = React.memo(function List(props) {
         return null;
       }
     });
-    arr = arr.filter(function (item) {
-      return item;
-    });
+    arr = arr.filter(item => item);
     console.log('arr', arr);
-    var values = [].concat(props.utterances);
+    let values = [...props.utterances];
     values[index] = {
-      raw: arr.map(function (item) {
-        return item.text;
-      }).join(' '),
+      raw: arr.map(item => item.text).join(' '),
       model: arr
     };
     props.setUtterances(values);
   };
 
-  var makeItems = function makeItems(items) {
-    return items.map(function (item, index) {
-      var model = item.model.map(function (val) {
-        return _extends({}, val, {
+  const makeItems = items => {
+    return items.map((item, index) => {
+      let model = item.model.map(val => {
+        return { ...val,
           color: getColor(val.text.length)
-        });
+        };
       });
-      var data = {
+      let data = {
         index: index,
         active: index === props.active,
         model: model,
@@ -883,8 +743,8 @@ var List = React.memo(function List(props) {
     });
   };
 
-  var removeFromUtterances = function removeFromUtterances(index) {
-    var arr = [].concat(props.utterances);
+  const removeFromUtterances = index => {
+    let arr = [...props.utterances];
 
     if (index !== -1) {
       arr.splice(index, 1);
@@ -921,77 +781,59 @@ var List = React.memo(function List(props) {
 });
 
 function IntentDetails(props) {
-  var _useState = useState(props.intent),
-      intent = _useState[0];
+  const [intent, setIntent] = useState(props.intent);
+  const entities = props.entities;
+  const systemEntities = props.systemEntities;
+  const [name, setName] = useState('');
+  const [utterances, setUtterances] = useState([]);
+  const [active, setActive] = useState(null);
+  const [newExpression, setNewExpression] = useState(null);
+  const [nameValid, setNameValid] = useState(true);
+  const newExpressionInput = useRef(null);
+  let errors = Array.from(document.querySelectorAll('[data-valid="false"]'));
 
-  var entities = props.entities;
-  var systemEntities = props.systemEntities;
-
-  var _useState2 = useState(''),
-      name = _useState2[0],
-      setName = _useState2[1];
-
-  var _useState3 = useState([]),
-      utterances = _useState3[0],
-      setUtterances = _useState3[1];
-
-  var _useState4 = useState(null),
-      active = _useState4[0],
-      setActive = _useState4[1];
-
-  var _useState5 = useState(null),
-      newExpression = _useState5[0],
-      setNewExpression = _useState5[1];
-
-  var _useState6 = useState(true),
-      nameValid = _useState6[0],
-      setNameValid = _useState6[1];
-
-  var newExpressionInput = useRef(null);
-  var errors = Array.from(document.querySelectorAll('[data-valid="false"]'));
-
-  var focusOnExpressionInput = function focusOnExpressionInput() {
+  const focusOnExpressionInput = () => {
     newExpressionInput.current.focus();
     newExpressionInput.current.value = '';
     setActive(null);
   };
 
   function addNewValue() {
-    var arr = [].concat(utterances);
-    var newUtterance = {
+    let arr = [...utterances];
+    let newUtterance = {
       raw: newExpression ? newExpression : '',
       model: [{
         text: newExpression ? newExpression : ''
       }]
     };
-    arr = [newUtterance].concat(arr);
+    arr = [newUtterance, ...arr];
     setUtterances(arr);
     setActive(0);
   }
 
-  var removeFromModel = function removeFromModel(utteranceIndex, index) {
-    var arr = [].concat(utterances);
-    var model = arr[utteranceIndex].model;
+  const removeFromModel = (utteranceIndex, index) => {
+    let arr = [...utterances];
+    let model = arr[utteranceIndex].model;
     model[index] = {
       text: model[index].text
     };
     setUtterances(arr);
   };
 
-  useEffect(function () {
+  useEffect(() => {
     if (intent) {
       setName(intent.name);
       setUtterances(intent.utterances);
     }
   }, [intent]);
-  useEffect(function () {
+  useEffect(() => {
     console.log('errors --->', errors.length < 1);
 
     if (name && utterances) {
-      props.onUpdate(_extends({}, intent, {
+      props.onUpdate({ ...intent,
         name: name,
         utterances: utterances
-      }), errors.length < 1);
+      }, errors.length < 1);
     }
   }, [name, utterances]);
 
@@ -1005,18 +847,18 @@ function IntentDetails(props) {
     }, /*#__PURE__*/React.createElement("h3", {
       className: "margin--10--large"
     }, "Intent name"), /*#__PURE__*/React.createElement("form", {
-      onSubmit: function onSubmit(e) {
+      onSubmit: e => {
         e.preventDefault();
       }
     }, /*#__PURE__*/React.createElement("input", {
-      "data-valid": "" + nameValid,
+      "data-valid": `${nameValid}`,
       type: "text",
       defaultValue: name ? name : '',
       placeholder: "Intent name",
       className: "editor-input input--item-name",
-      onChange: function onChange(e) {
-        var message = 'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
-        var valid = validateInput(e.target, e.target.value, '^[A-Za-z](_?[A-Za-z])*_?$', message);
+      onChange: e => {
+        let message = 'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
+        let valid = validateInput(e.target, e.target.value, '^[A-Za-z](_?[A-Za-z])*_?$', message);
         setNameValid(valid);
         setName(e.target.value);
       },
@@ -1028,7 +870,7 @@ function IntentDetails(props) {
     }, "Utterances"), /*#__PURE__*/React.createElement("div", {
       className: "margin--24--large"
     }, /*#__PURE__*/React.createElement("form", {
-      onSubmit: function onSubmit(e) {
+      onSubmit: e => {
         e.preventDefault();
 
         if (newExpression) {
@@ -1041,11 +883,9 @@ function IntentDetails(props) {
       type: "text",
       className: "editor-input input--add-field",
       placeholder: "Enter reference value",
-      onChange: function onChange(e) {
-        return setNewExpression(e.target.value);
-      },
+      onChange: e => setNewExpression(e.target.value),
       ref: newExpressionInput,
-      onFocus: function onFocus() {
+      onFocus: () => {
         setActive(null);
       }
     })), /*#__PURE__*/React.createElement(List, {
@@ -1055,7 +895,7 @@ function IntentDetails(props) {
       utterances: utterances,
       setUtterances: setUtterances,
       removeFromModel: removeFromModel,
-      entities: [entities].concat(systemEntities),
+      entities: [entities, ...systemEntities],
       focusOnExpressionInput: focusOnExpressionInput,
       errors: errors
     }))))));
@@ -1064,7 +904,7 @@ function IntentDetails(props) {
   }
 }
 
-var IntentEditor = function IntentEditor(props) {
+const IntentEditor = props => {
   return /*#__PURE__*/React.createElement(IntentDetails, {
     intent: props.intent,
     entities: props.entities,
@@ -1072,12 +912,12 @@ var IntentEditor = function IntentEditor(props) {
     onUpdate: props.onUpdate
   });
 };
-var EntitiyEditor = function EntitiyEditor(props) {
+const EntityEditor = props => {
   return /*#__PURE__*/React.createElement(EntityDetails, {
     entity: props.entity,
     onUpdate: props.onUpdate
   });
 };
 
-export { EntitiyEditor, IntentEditor };
+export { EntityEditor, IntentEditor };
 //# sourceMappingURL=index.modern.js.map

@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 
 import { IntentEditor } from 'convoworks-intent-model-editor'
-import { EntitiyEditor } from 'convoworks-intent-model-editor'
+import { EntityEditor } from 'convoworks-intent-model-editor'
 import 'convoworks-intent-model-editor/dist/index.css'
 import data from './guess-the-number-game.json'
 
@@ -23,7 +23,7 @@ const App = () => {
 
       :
 
-      <EntitiyEditor
+      <EntityEditor
         entity={data.entities[0]}
         onUpdate={() => {console.log('update')}}
       />

@@ -1075,13 +1075,13 @@ var IntentEditor = function IntentEditor(props) {
     onUpdate: props.onUpdate
   });
 };
-var EntitiyEditor = function EntitiyEditor(props) {
+var EntityEditor = function EntityEditor(props) {
   return /*#__PURE__*/React__default.createElement(EntityDetails, {
     entity: props.entity,
     onUpdate: props.onUpdate
   });
 };
 
-exports.EntitiyEditor = EntitiyEditor;
+exports.EntityEditor = EntityEditor;
 exports.IntentEditor = IntentEditor;
 //# sourceMappingURL=index.js.map
