@@ -8,9 +8,7 @@ const List = React.memo(function List(props) {
 	const [ modalPosition, setModalPosition ] = useState(null);
 	const [ selection, setSelection ] = useState(null);
 	const [ update, setUpdate ] = useState(false);
-	const [ stateChange, setStateChange ] = useState(false);
 	const [ paramValues, setParamValues ] = useState(null);
-	const intents = props.intents;
 
 	useEffect(
 		() => {
@@ -33,65 +31,9 @@ const List = React.memo(function List(props) {
 		props.setActive(index);
 	};
 
-	const mapNodesToModel = (items, index) => {
-		let arr = Array.from(items).filter((item) => item.textContent.trim().length);
-
-		let i = 0;
-		arr = arr.map((item) => {
-			if (item.tagName === 'SPAN' || (item.nodeName === '#text' && item.textContent.trim().length)) {
-				let type = item.dataset && item.dataset.type && item.dataset.type.length ? item.dataset.type : null;
-				if (type) {
-					i++;
-					return {
-						text: item.textContent.trim(),
-						type: type,
-						slot_value: item.dataset.slotValue
-					};
-				} else {
-					return { text: item.textContent.trim() };
-				}
-			} else {
-				return null;
-			}
-		});
-
-		arr = arr.filter((item) => item);
-
-		console.log('arr', arr);
-
-		let values = [ ...props.utterances ];
-		values[index] = { raw: arr.map((item) => item.text).join(' '), model: arr };
-		props.setUtterances(values);
-	};
-
 	const makeItems = (items) => {
 		return items.map((item, index) => {
-			let model = item.model.map((val) => {
-				return { ...val, color: getColor(val.text.length) };
-			});
-
-			let data = {
-				index: index,
-				active: index === props.active,
-				model: model,
-				utterances: props.utterances,
-				setUtterances: props.setUtterances,
-				handleActive: handleActive,
-				modal: modal,
-				setModal: setModal,
-				setModalPosition: setModalPosition,
-				selection: selection,
-				setSelection: setSelection,
-				addNewValue: props.addNewValue,
-				stateChange: stateChange,
-				setStateChange: setStateChange,
-				removeFromUtterances: removeFromUtterances,
-				removeFromModel: props.removeFromModel,
-				mapNodesToModel: mapNodesToModel,
-				focusOnExpressionInput: props.focusOnExpressionInput,
-			};
-
-			return <Utterance key={index} data={data} errors={props.errors} />;
+			return <Utterance key={index} data={item} />;
 		});
 	};
 
@@ -111,7 +53,7 @@ const List = React.memo(function List(props) {
 		return (
 			<React.Fragment>
 				<ul>{makeItems(props.utterances)}</ul>
-				<Modal
+				{/* <Modal
 					setModal={setModal}
 					modal={modal}
 					modalPosition={modalPosition}
@@ -122,13 +64,12 @@ const List = React.memo(function List(props) {
 					setUtterances={props.setUtterances}
 					setUpdate={setUpdate}
 					update={update}
-					mapNodesToModel={mapNodesToModel}
 					stateChange={stateChange}
 					setStateChange={setStateChange}
 					entities={props.entities.flat()}
 					paramValues={paramValues}
 					setParamValues={setParamValues}
-				/>
+				/> */}
 			</React.Fragment>
 		);
 	} else {

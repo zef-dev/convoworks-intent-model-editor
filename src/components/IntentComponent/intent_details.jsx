@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { List as Utterances } from './intent_utterances.jsx';
+import _ from 'lodash';
 import { useRef } from 'react';
 import { validateInput } from '../../helpers/validations.jsx';
 
@@ -12,12 +13,10 @@ function IntentDetails(props) {
   const [utterances, setUtterances] = useState([]);
   const [active, setActive] = useState(null);
   const [newExpression, setNewExpression] = useState(null);
-  const [nameValid, setNameValid] = useState(true);
+
+  const [valid, setValid] = useState(true);
 
   const newExpressionInput = useRef(null);
-
-  let errors = Array.from(document.querySelectorAll('[data-valid="false"]'));
-
 
   const focusOnExpressionInput = () => {
     newExpressionInput.current.focus();
@@ -56,14 +55,12 @@ function IntentDetails(props) {
   }, [intent]);
 
   useEffect(() => {
-
-    console.log('errors --->', errors.length < 1)
     if (name && utterances) {
       props.onUpdate({
         ...intent,
         name: name,
         utterances: utterances,
-      }, errors.length < 1);
+      });
     }
   }, [name, utterances]);
 
@@ -81,7 +78,6 @@ function IntentDetails(props) {
                 }}
               >
                 <input
-                  data-valid={`${nameValid}`}
                   type="text"
                   defaultValue={name ? name : ''}
                   placeholder="Intent name"
@@ -89,14 +85,12 @@ function IntentDetails(props) {
                   onChange={e => {
                     let message =
                       'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
-                    let valid = validateInput(
+                    validateInput(
                       e.target,
                       e.target.value,
                       '^[A-Za-z](_?[A-Za-z])*_?$',
                       message
                     );
-
-                    setNameValid(valid);
                     setName(e.target.value);
                   }}
                   required
@@ -137,7 +131,6 @@ function IntentDetails(props) {
                   removeFromModel={removeFromModel}
                   entities={[entities, ...systemEntities]}
                   focusOnExpressionInput={focusOnExpressionInput}
-                  errors={errors}
                 />
               </div>
             </div>
