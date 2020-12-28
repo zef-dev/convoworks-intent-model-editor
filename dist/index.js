@@ -2,12 +2,11 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var React = require('react');
 var React__default = _interopDefault(React);
-require('lodash');
+var _ = _interopDefault(require('lodash'));
 require('react-cool-onclickoutside');
 require('react-autocomplete-input');
 require('react-autocomplete-input/dist/bundle.css');
-var Tags = _interopDefault(require('@yaireo/tagify/dist/react.tagify'));
-require('@yaireo/tagify/src/tagify.scss');
+var rangy = _interopDefault(require('rangy'));
 
 function IconTrash() {
   return /*#__PURE__*/React__default.createElement("svg", {
@@ -384,59 +383,125 @@ function Utterance(props) {
   var _useState = React.useState(props.data.raw),
       raw = _useState[0];
 
-  var _useState2 = React.useState(props.data.model),
-      model = _useState2[0];
+  var _useState2 = React.useState(props.data.model);
+
+  var _useState3 = React.useState(null),
+      selection = _useState3[0],
+      setSelection = _useState3[1];
+
+  var _useState4 = React.useState(props.data.model.filter(function (item) {
+    return item.type;
+  }).map(function (item) {
+    return {
+      text: item.text,
+      type: item.type
+    };
+  })),
+      whitelist = _useState4[0],
+      setWhitelist = _useState4[1];
 
   var wrapper = React.useRef(null);
   var input = React.useRef(null);
-  var whitelist = model.filter(function (item) {
-    return item.type;
-  }).map(function (item) {
-    return item.text;
-  });
   var parsedRaw = raw;
   whitelist.map(function (item) {
-    parsedRaw = raw.replace(item, "[[" + item + "]]");
+    parsedRaw = raw.replace(item, "" + item.text);
   });
-  console.log(parsedRaw);
-  var settings = {
-    mode: 'mix',
-    keepInvalidTags: false,
-    editTags: {
-      clicks: 1,
-      keepInvalid: false
-    },
-    whitelist: whitelist,
-    backspace: "edit",
-    placeholder: "Type something"
+
+  var updateWhitelist = function updateWhitelist() {
+    var list = [].concat(whitelist);
+
+    if (selection && !list.find(function (item) {
+      return item.text === selection.string;
+    })) {
+      console.log(selection.nodes);
+      list.map(function (item, index) {
+        var arr1 = item.text.split(' ');
+        var arr2 = selection.string.split(' ');
+        console.log(arr1, arr2);
+
+        var intersection = _.intersection(arr1, arr2);
+
+        console.log(intersection);
+
+        if (intersection.length) {
+          list.splice(index, 1);
+        }
+
+        console.log(list);
+      });
+      setWhitelist([].concat(list, [{
+        text: selection.string,
+        type: ''
+      }]));
+    }
+
+    mapWhitelist();
   };
+
+  function mapWhitelist() {
+    var str = props.data.raw;
+    whitelist.map(function (item) {
+      str = str.replace(item.text, "#" + item.text + "#");
+    });
+    var arr = str.split('#').filter(function (item) {
+      return item.trim().length > 0;
+    }).map(function (item) {
+      return item.trim();
+    }).map(function (item) {
+      var modelObj = whitelist.find(function (val) {
+        return val.text === item;
+      });
+
+      if (modelObj) {
+        return modelObj;
+      } else {
+        return {
+          text: item
+        };
+      }
+    });
+    console.log(arr);
+    setSelection(null);
+  }
 
   if (props.data) {
     return /*#__PURE__*/React__default.createElement("div", {
+      id: "input",
       onKeyUp: function onKeyUp(e) {
-        var sel = window.getSelection();
-        var from = sel.anchorOffset;
-        var to = from + sel.toString().length;
+        var sel = rangy.getSelection();
 
         if (sel.toString().trim().length) {
-          var string = raw;
-          console.log(string.substring(from, to));
+          var nodes = sel.getRangeAt(0).getNodes();
+          var nodeArray = Array.from(nodes).filter(function (node) {
+            return node.nodeName === '#text';
+          }).filter(function (node) {
+            return node.textContent.trim().length;
+          });
+          var selectedString = nodeArray.map(function (node) {
+            return node.textContent;
+          }).join(' ');
+          setSelection({
+            string: selectedString,
+            nodes: nodeArray
+          });
+          setTimeout(function () {
+            updateWhitelist();
+          }, 1000);
         }
       }
-    }, /*#__PURE__*/React__default.createElement("button", {
-      type: "button",
-      onClick: function onClick() {
-        console.log();
-        input.current.loadOriginalValues();
+    }, /*#__PURE__*/React__default.createElement("div", null, whitelist.map(function (item) {
+      return /*#__PURE__*/React__default.createElement("small", null, " / ", item.text, "  ");
+    })), /*#__PURE__*/React__default.createElement("div", {
+      contentEditable: true
+    }, parsedRaw.split(' ').map(function (item) {
+      if (whitelist.find(function (val) {
+        return val.text === item;
+      })) {
+        return /*#__PURE__*/React__default.createElement("b", null, item, "\xA0");
+      } else {
+        return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, item, "\xA0");
       }
-    }, "click"), /*#__PURE__*/React__default.createElement(Tags, {
-      inputMode: "textarea",
-      className: "myInput",
-      tagifyRef: input,
-      name: "tags",
-      settings: settings,
-      value: parsedRaw
-    }));
+    })));
   } else {
     return null;
   }
