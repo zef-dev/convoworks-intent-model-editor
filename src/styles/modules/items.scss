@@ -225,6 +225,12 @@
         input {
             border: none;
             padding-right: 1.5rem;
+            height: 100%;
+            font-size: inherit;
+            
+            &:focus {
+                outline: none;
+            }
         }
     }
 

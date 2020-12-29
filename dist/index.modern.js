@@ -462,6 +462,7 @@ class Input extends React.Component {
 
       let parentPos = document.querySelector('.convo-details').getBoundingClientRect();
       let childPos = span.getBoundingClientRect();
+      console.log(parentPos, childPos);
       let relativePos = {
         top: childPos.top - parentPos.top,
         left: childPos.left - parentPos.left
@@ -498,7 +499,13 @@ class Input extends React.Component {
           html: `${mappedModel.join(' ')} `,
           onClick: e => {
             if (e.target.getAttribute('data-token')) {
-              this.handleModal(e.target, e);
+              let parentPos = document.querySelector('.convo-details').getBoundingClientRect();
+              let childPos = e.target.getBoundingClientRect();
+              let relativePos = {
+                top: childPos.top - parentPos.top,
+                left: childPos.left - parentPos.left
+              };
+              this.handleModal(e.target, relativePos);
             }
           },
           onKeyPress: e => {
@@ -634,7 +641,6 @@ const Utterance = props => {
 
 const List = React.memo(function List(props) {
   const [modal, setModal] = useState(false);
-  const [modalPosition, setModalPosition] = useState(null);
   const [selection, setSelection] = useState(null);
   const [update, setUpdate] = useState(false);
   const [stateChange, setStateChange] = useState(false);
@@ -699,7 +705,6 @@ const List = React.memo(function List(props) {
         handleActive: handleActive,
         modal: modal,
         setModal: setModal,
-        setModalPosition: setModalPosition,
         selection: selection,
         setSelection: setSelection,
         addNewValue: props.addNewValue,
@@ -735,7 +740,6 @@ const List = React.memo(function List(props) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("ul", null, makeItems(props.utterances)), /*#__PURE__*/React.createElement(Modal, {
       setModal: setModal,
       modal: modal,
-      modalPosition: modalPosition,
       selection: selection,
       setSelection: setSelection,
       active: props.active,

@@ -64,16 +64,14 @@ class Input extends React.Component {
 				}
 			});
 
-			/* nested.forEach((item) => {
-				unwrap(item);
-			}); */
-
 			if (span.parentNode.tagName === 'SPAN') {
 				span.parentNode.outerHTML = span.parentNode.innerHTML;
 			}
 
 			let parentPos = document.querySelector('.convo-details').getBoundingClientRect();
 			let childPos = span.getBoundingClientRect();
+
+			console.log(parentPos, childPos)
 
 			let relativePos = {
 				top: childPos.top - parentPos.top,
@@ -114,7 +112,16 @@ class Input extends React.Component {
 								html={`${mappedModel.join(' ')} `}
 								onClick={(e) => {
 									if (e.target.getAttribute('data-token')) {
-										this.handleModal(e.target, e);
+										let parentPos = document.querySelector('.convo-details').getBoundingClientRect();
+										let childPos = e.target.getBoundingClientRect();
+
+
+										let relativePos = {
+											top: childPos.top - parentPos.top,
+											left: childPos.left - parentPos.left
+										};
+
+										this.handleModal(e.target, relativePos);
 									}
 								}}
 								onKeyPress={(e) => {

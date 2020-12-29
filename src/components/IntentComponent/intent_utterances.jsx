@@ -5,7 +5,6 @@ import Utterance from './utterance/utterance.jsx';
 
 const List = React.memo(function List(props) {
 	const [ modal, setModal ] = useState(false);
-	const [ modalPosition, setModalPosition ] = useState(null);
 	const [ selection, setSelection ] = useState(null);
 	const [ update, setUpdate ] = useState(false);
 	const [ stateChange, setStateChange ] = useState(false);
@@ -79,7 +78,6 @@ const List = React.memo(function List(props) {
 				handleActive: handleActive,
 				modal: modal,
 				setModal: setModal,
-				setModalPosition: setModalPosition,
 				selection: selection,
 				setSelection: setSelection,
 				addNewValue: props.addNewValue,
@@ -114,7 +112,6 @@ const List = React.memo(function List(props) {
 				<Modal
 					setModal={setModal}
 					modal={modal}
-					modalPosition={modalPosition}
 					selection={selection}
 					setSelection={setSelection}
 					active={props.active}

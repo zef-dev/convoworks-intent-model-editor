@@ -549,6 +549,7 @@ var Input = /*#__PURE__*/function (_React$Component) {
 
       var parentPos = document.querySelector('.convo-details').getBoundingClientRect();
       var childPos = span.getBoundingClientRect();
+      console.log(parentPos, childPos);
       var relativePos = {
         top: childPos.top - parentPos.top,
         left: childPos.left - parentPos.left
@@ -590,7 +591,14 @@ var Input = /*#__PURE__*/function (_React$Component) {
           html: mappedModel.join(' ') + " ",
           onClick: function onClick(e) {
             if (e.target.getAttribute('data-token')) {
-              _this2.handleModal(e.target, e);
+              var parentPos = document.querySelector('.convo-details').getBoundingClientRect();
+              var childPos = e.target.getBoundingClientRect();
+              var relativePos = {
+                top: childPos.top - parentPos.top,
+                left: childPos.left - parentPos.left
+              };
+
+              _this2.handleModal(e.target, relativePos);
             }
           },
           onKeyPress: function onKeyPress(e) {
@@ -750,24 +758,20 @@ var List = React__default.memo(function List(props) {
       setModal = _useState[1];
 
   var _useState2 = React.useState(null),
-      modalPosition = _useState2[0],
-      setModalPosition = _useState2[1];
+      selection = _useState2[0],
+      setSelection = _useState2[1];
 
-  var _useState3 = React.useState(null),
-      selection = _useState3[0],
-      setSelection = _useState3[1];
+  var _useState3 = React.useState(false),
+      update = _useState3[0],
+      setUpdate = _useState3[1];
 
   var _useState4 = React.useState(false),
-      update = _useState4[0],
-      setUpdate = _useState4[1];
+      stateChange = _useState4[0],
+      setStateChange = _useState4[1];
 
-  var _useState5 = React.useState(false),
-      stateChange = _useState5[0],
-      setStateChange = _useState5[1];
-
-  var _useState6 = React.useState(null),
-      paramValues = _useState6[0],
-      setParamValues = _useState6[1];
+  var _useState5 = React.useState(null),
+      paramValues = _useState5[0],
+      setParamValues = _useState5[1];
   React.useEffect(function () {
     var arr = props.utterances.map(function (item) {
       return item.model;
@@ -844,7 +848,6 @@ var List = React__default.memo(function List(props) {
         handleActive: handleActive,
         modal: modal,
         setModal: setModal,
-        setModalPosition: setModalPosition,
         selection: selection,
         setSelection: setSelection,
         addNewValue: props.addNewValue,
@@ -880,7 +883,6 @@ var List = React__default.memo(function List(props) {
     return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("ul", null, makeItems(props.utterances)), /*#__PURE__*/React__default.createElement(Modal, {
       setModal: setModal,
       modal: modal,
-      modalPosition: modalPosition,
       selection: selection,
       setSelection: setSelection,
       active: props.active,
