@@ -2,7 +2,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var React = require('react');
 var React__default = _interopDefault(React);
-var _ = _interopDefault(require('lodash'));
+require('lodash');
 require('react-cool-onclickoutside');
 require('react-autocomplete-input');
 require('react-autocomplete-input/dist/bundle.css');
@@ -413,26 +413,16 @@ function Utterance(props) {
     if (selection && !list.find(function (item) {
       return item.text === selection.string;
     })) {
-      console.log(selection.nodes);
-      list.map(function (item, index) {
-        var arr1 = item.text.split(' ');
-        var arr2 = selection.string.split(' ');
-        console.log(arr1, arr2);
-
-        var intersection = _.intersection(arr1, arr2);
-
-        console.log(intersection);
-
-        if (intersection.length) {
-          list.splice(index, 1);
-        }
-
-        console.log(list);
+      selection.string.split(' ').map(function (val) {
+        var item = list.filter(function (obj) {
+          return obj.text.includes(val);
+        });
+        var i = list.indexOf(item);
+        console.log(item, i, val);
+        list = list.splice(i, 1);
       });
-      setWhitelist([].concat(list, [{
-        text: selection.string,
-        type: ''
-      }]));
+      console.log(list);
+      setWhitelist(list);
     }
 
     mapWhitelist();

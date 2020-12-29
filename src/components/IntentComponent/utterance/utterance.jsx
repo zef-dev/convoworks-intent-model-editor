@@ -40,26 +40,17 @@ export default function Utterance(props) {
 
 		// ignore strings that are already present in the whitelist
 		if (selection && !list.find(item => item.text === selection.string)) {
-			console.log(selection.nodes);
-			list.map((item, index) => {
-				let arr1 = item.text.split(' ');
-				let arr2 = selection.string.split(' ');
 
-				console.log(arr1, arr2)
+			selection.string.split(' ').map(val => {
+				let item = list.filter(obj => obj.text.includes(val));
+				let i = list.indexOf(item);
 
-				let intersection = _.intersection(
-					arr1, arr2);
+				console.log(item, i, val)
+				list = list.splice(i, 1);
+			})
 
-					console.log(intersection)
-
-				if (intersection.length) {
-					list.splice(index, 1);
-				}
-
-				console.log(list);
-			});
-
-			setWhitelist([...list, { text: selection.string, type: '' }]);
+			console.log(list);
+			setWhitelist(list);
 		}
 
 		mapWhitelist();

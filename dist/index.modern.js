@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import _ from 'lodash';
+import 'lodash';
 import 'react-cool-onclickoutside';
 import 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
@@ -346,26 +346,14 @@ function Utterance(props) {
     let list = [...whitelist];
 
     if (selection && !list.find(item => item.text === selection.string)) {
-      console.log(selection.nodes);
-      list.map((item, index) => {
-        let arr1 = item.text.split(' ');
-        let arr2 = selection.string.split(' ');
-        console.log(arr1, arr2);
-
-        let intersection = _.intersection(arr1, arr2);
-
-        console.log(intersection);
-
-        if (intersection.length) {
-          list.splice(index, 1);
-        }
-
-        console.log(list);
+      selection.string.split(' ').map(val => {
+        let item = list.filter(obj => obj.text.includes(val));
+        let i = list.indexOf(item);
+        console.log(item, i, val);
+        list = list.splice(i, 1);
       });
-      setWhitelist([...list, {
-        text: selection.string,
-        type: ''
-      }]);
+      console.log(list);
+      setWhitelist(list);
     }
 
     mapWhitelist();
