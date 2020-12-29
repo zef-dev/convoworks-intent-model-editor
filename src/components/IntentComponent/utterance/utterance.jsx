@@ -17,7 +17,7 @@ const Utterance = (props) => {
 		let slotValues = props.data.model.map(item => item.slot_value).filter(item => item);
 		let invalidValues = slotValues.filter(item => !item.match(/^[A-Za-z](_*[A-Za-z])*_*$/));
 
-		let term = props.data.model.map(item => item.text).join(' ');
+		let term = props.data.model.filter(item => !item.type).map(item => item.text).join(' ');
 		let reg = /^[a-zA-Z][a-zA-Z\s]*$/;
 
 		if (reg.test(term) && !invalidValues.length) {

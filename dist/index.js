@@ -673,7 +673,9 @@ var Utterance = function Utterance(props) {
     var invalidValues = slotValues.filter(function (item) {
       return !item.match(/^[A-Za-z](_*[A-Za-z])*_*$/);
     });
-    var term = props.data.model.map(function (item) {
+    var term = props.data.model.filter(function (item) {
+      return !item.type;
+    }).map(function (item) {
       return item.text;
     }).join(' ');
     var reg = /^[a-zA-Z][a-zA-Z\s]*$/;
