@@ -32,15 +32,15 @@ const Utterance = (props) => {
 			data-valid={`${valid}`}
 			ref={wrapper}
 			key={data.index}
-			className={`item item--intent ${data.active ? 'item--active' : ''} ${remove
-				? 'item--remove'
-				: ''} ${valid ? 'item--valid' : 'item--error'}`}
+			className={`field field--intent ${data.active ? 'field--active' : ''} ${remove
+				? 'field--remove'
+				: ''} ${valid ? 'field--valid' : 'field--error'}`}
 			onClick={() => {
 				data.handleActive(data.index);
 			}}
 		>
-			{!valid && <legend className="item__error">Utterances shall begin with alphabetic characters from a to Z. The untterance may not contain other characters then alphabetic characters. The utterance shall not contain any numbers at all.</legend>}
-			<div className="item__main">
+			{!valid && <legend className="field__error">Utterances shall begin with alphabetic characters from a to Z. The untterance may not contain other characters then alphabetic characters. The utterance shall not contain any numbers at all.</legend>}
+			<div className="field__main">
 				<Input
 					model={data.model}
 					index={data.index}
@@ -57,7 +57,7 @@ const Utterance = (props) => {
 					focusOnExpressionInput={data.focusOnExpressionInput}
 					wrapper={wrapper}
 				/>
-				<div className="item__buttons">
+				<div className="field__actions">
 					<button
 						className="btn--remove btn--remove--main"
 						type="button"
@@ -105,7 +105,7 @@ const Utterance = (props) => {
 										</span>
 									</div>
 									<div>{item.text}</div>
-									<div className="item__buttons">
+									<div className="field__actions">
 										<button
 											className="btn--remove"
 											onClick={(e) => {

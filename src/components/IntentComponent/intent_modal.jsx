@@ -68,7 +68,7 @@ function Modal(props) {
 							props.selection.item.setAttribute('data-type', type);
 							props.selection.item.setAttribute('data-slot-value', getParamValues());
 							props.mapNodesToModel(
-								document.querySelector('.item--active [contenteditable="true"]').childNodes,
+								document.querySelector('.field--active [contenteditable="true"]').childNodes,
 								props.active
 							);
 							props.setSelection(null);

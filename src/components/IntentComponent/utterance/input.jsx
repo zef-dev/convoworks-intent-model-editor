@@ -108,7 +108,7 @@ class Input extends React.Component {
 			if (this.props.active) {
 				return (
 					<React.Fragment>
-						<div className="item__input">
+						<div className="field__input">
 							<ContentEditable
 								innerRef={this.text}
 								html={`${mappedModel.join(' ')} `}
@@ -138,7 +138,7 @@ class Input extends React.Component {
 				);
 			} else {
 				return (
-					<div className="item__input item__input--readonly">
+					<div className="field__input field__input--readonly">
 						<div style={{ opacity: mappedModel.join(' ').trim().length ? '1' : '0.5' }}>
 							{mappedModel.join(' ').trim().length ? (
 								reactHtmlParser(mappedModel.join(' '))

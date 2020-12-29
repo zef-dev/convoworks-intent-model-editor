@@ -1,4 +1,4 @@
-.item {
+.field {
     margin-bottom: 0.625rem;
     border: $border--gray-lighter;
     border-radius: $input-radius;
@@ -32,7 +32,7 @@
             visibility: visible;
         }
 
-        .item__error {
+        .field__error {
             visibility: visible;
             opacity: 1;
         }
@@ -52,7 +52,7 @@
     }
 }
 
-.item__error {
+.field__error {
     position: absolute;
     top: 100%;
     left: 0;
@@ -71,10 +71,10 @@
     z-index: 1;
 }
 
-.item--error {
+.field--error {
     border-color: $color-alert;
 
-    &.item--active {
+    &.field--active {
         border-color: $color-alert;
 
         &:hover {
@@ -83,39 +83,49 @@
     }
 }
 
-.item--entity {
+.field--entity {
     // height: $input-height;
     min-height: $input-height;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     padding: 0.5rem 0.75rem;
     line-height: 1;
     cursor: pointer;
+    min-height: 2.625rem;
+
+    .field__value {
+        width: 25.00%;
+    }
+
+    .field__value input {
+        border: none;
+    }
 }
 
-.item--intent {
+.field--intent {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     cursor: pointer;
     transition: $transition-time;
 
-    .item__input {
+    .field__input {
         pointer-events: none;
     }
 
-    &.item--active {
-        .item__input {
+    &.field--active {
+        .field__input {
             pointer-events: all;
         }
     }
 
-    .item__main {
+    .field__main {
         width: 100%;
         display: flex;
         position: relative;
 
-        .item__buttons {
+        .field__actions {
             position: absolute;
             right: 0;
             top: 0;
@@ -125,12 +135,12 @@
         }
     }
 
-    .item__input {
+    .field__input {
         width: 100%;
         position: relative;
     }
 
-    .item__input>div {
+    .field__input>div {
         padding: 0.625rem 0.75rem;
         cursor: text;
         white-space: pre-wrap;
@@ -211,14 +221,19 @@
                 }
             }
         }
+
+        input {
+            border: none;
+            padding-right: 1.5rem;
+        }
     }
 
-    .item__buttons {
+    .field__actions {
         height: 100%;
     }
 }
 
-.item--active {
+.field--active {
     border: 1px solid $color-primary;
     cursor: default;
 
@@ -227,23 +242,23 @@
     }
 }
 
-.item--padded {
+.field--padded {
     padding: 0.875rem 0.75rem;
 }
 
-.item--edit {
+.field--edit {
     cursor: default;
     border-color: $color-primary;
 
-    .item__inner {}
+    .field__inner {}
 
-    .item__row {
+    .field__row {
         padding-left: 0.75rem;
         padding-right: 0.75rem;
     }
 }
 
-.item__inner {
+.field__inner {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -252,14 +267,14 @@
     line-height: 1;
 }
 
-.item__padded-wrapper {
+.field__padded-wrapper {
     min-height: $input-height;
     padding: 10px 0.75rem;
     list-style: none;
     width: 100%;
 }
 
-.item__buttons {
+.field__actions {
     display: flex;
     align-items: center;
     position: absolute;
@@ -281,14 +296,12 @@
     }
 }
 
-.item__values {
+.field__synonyms {
     display: flex;
     align-items: center;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 0.625rem 0;
     display: flex;
     flex-wrap: wrap;
+    padding-right: 2.75rem;
 
     >.synonym {
         margin-right: 0.25rem;
@@ -323,7 +336,7 @@
     margin-left: 0.125rem;
 }
 
-.item__value--primary {
+.field__value--primary {
     height: 100%;
     width: 100%;
     display: flex;
@@ -331,7 +344,7 @@
     font-size: 0.875rem;
 }
 
-.item__columns {
+.field__columns {
     display: grid;
     grid-template-columns: repeat(3, 33.33%);
     width: 100%;

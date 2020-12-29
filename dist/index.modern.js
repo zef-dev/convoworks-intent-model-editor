@@ -97,85 +97,60 @@ const EntityValue = props => {
     }, 220);
   };
 
-  if (props.activeValue !== props.index) {
-    return /*#__PURE__*/React.createElement("li", {
-      className: `item item--entity ${remove ? 'item--remove' : ''}`,
-      onClick: () => {
-        props.setActiveValue(props.index);
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "item__inner"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "grid"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "cell cell--3--small"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "item__value item__value--primary"
-    }, value)), /*#__PURE__*/React.createElement("div", {
-      className: "cell cell--9--small"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "item__values"
-    }, makeSynonyms(synonyms, false))))), /*#__PURE__*/React.createElement("div", {
-      className: "item__buttons"
-    }, /*#__PURE__*/React.createElement("button", {
-      className: "btn--remove btn--remove--main",
-      type: "button",
-      onClick: e => {
-        handleRemove(e);
-      }
-    }, /*#__PURE__*/React.createElement(IconTrash, null))));
-  } else {
-    return /*#__PURE__*/React.createElement("li", {
-      className: `item item--entity item--active ${remove ? 'item--remove' : ''}`
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "item__inner"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "grid"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "cell cell--3--small"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "item__value item__value--primary"
-    }, /*#__PURE__*/React.createElement("input", {
-      "data-input": "true",
-      className: "editor-input",
-      type: "text",
-      defaultValue: value,
-      placeholder: "Enter value",
-      onChange: e => {
-        setValue(e.target.value);
-      }
-    }))), /*#__PURE__*/React.createElement("div", {
-      className: "cell cell--9--small"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "item__values"
-    }, makeSynonyms(synonyms, true), /*#__PURE__*/React.createElement("form", {
-      onSubmit: e => {
-        e.preventDefault();
-        handleNewSynonym(synonymInput);
-      }
-    }, /*#__PURE__*/React.createElement("input", {
-      className: "editor-input",
-      type: "text",
-      style: {
-        marginLeft: '0.625rem'
-      },
-      ref: synonymInput,
-      placeholder: "Enter synonym",
-      onChange: e => {}
-    }), /*#__PURE__*/React.createElement("input", {
-      className: "editor-input",
-      type: "submit",
-      hidden: true
-    })))))), /*#__PURE__*/React.createElement("div", {
-      className: "item__buttons"
-    }, /*#__PURE__*/React.createElement("button", {
-      className: "btn--remove btn--remove--main",
-      type: "button",
-      onClick: e => {
-        handleRemove(e);
-      }
-    }, /*#__PURE__*/React.createElement(IconTrash, null))));
-  }
+  let active = props.activeValue === props.index;
+  return /*#__PURE__*/React.createElement("li", {
+    className: `field field--${active ? 'active' : 'inactive'} field--entity ${remove ? 'field--remove' : ''}`,
+    onClick: () => {
+      props.setActiveValue(props.index);
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    class: "field__value"
+  }, active ? /*#__PURE__*/React.createElement("input", {
+    className: "editor-input",
+    type: "text",
+    defaultValue: value,
+    placeholder: "Enter value",
+    onChange: e => {
+      setValue(e.target.value);
+    }
+  }) : /*#__PURE__*/React.createElement("input", {
+    readOnly: true,
+    className: "editor-input",
+    type: "text",
+    defaultValue: value,
+    placeholder: "Enter value",
+    onChange: e => {
+      setValue(e.target.value);
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "field__synonyms"
+  }, makeSynonyms(synonyms, false), /*#__PURE__*/React.createElement("form", {
+    onSubmit: e => {
+      e.preventDefault();
+      handleNewSynonym(synonymInput);
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "editor-input",
+    type: "text",
+    style: {
+      marginLeft: '0.625rem'
+    },
+    ref: synonymInput,
+    placeholder: "Enter synonym",
+    onChange: e => {}
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "editor-input",
+    type: "submit",
+    hidden: true
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "field__actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn--remove btn--remove--main",
+    type: "button",
+    onClick: e => {
+      handleRemove(e);
+    }
+  }, /*#__PURE__*/React.createElement(IconTrash, null))));
 };
 
 function EntityValues(props) {
@@ -387,7 +362,7 @@ function Modal(props) {
             props.setModal(false);
             props.selection.item.setAttribute('data-type', type);
             props.selection.item.setAttribute('data-slot-value', getParamValues());
-            props.mapNodesToModel(document.querySelector('.item--active [contenteditable="true"]').childNodes, props.active);
+            props.mapNodesToModel(document.querySelector('.field--active [contenteditable="true"]').childNodes, props.active);
             props.setSelection(null);
             props.setStateChange(!props.stateChange);
           }
@@ -517,7 +492,7 @@ class Input extends React.Component {
 
       if (this.props.active) {
         return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-          className: "item__input"
+          className: "field__input"
         }, /*#__PURE__*/React.createElement(ContentEditable, {
           innerRef: this.text,
           html: `${mappedModel.join(' ')} `,
@@ -544,7 +519,7 @@ class Input extends React.Component {
         })));
       } else {
         return /*#__PURE__*/React.createElement("div", {
-          className: "item__input item__input--readonly"
+          className: "field__input field__input--readonly"
         }, /*#__PURE__*/React.createElement("div", {
           style: {
             opacity: mappedModel.join(' ').trim().length ? '1' : '0.5'
@@ -580,14 +555,14 @@ const Utterance = props => {
     "data-valid": `${valid}`,
     ref: wrapper,
     key: data.index,
-    className: `item item--intent ${data.active ? 'item--active' : ''} ${remove ? 'item--remove' : ''} ${valid ? 'item--valid' : 'item--error'}`,
+    className: `field field--intent ${data.active ? 'field--active' : ''} ${remove ? 'field--remove' : ''} ${valid ? 'field--valid' : 'field--error'}`,
     onClick: () => {
       data.handleActive(data.index);
     }
   }, !valid && /*#__PURE__*/React.createElement("legend", {
-    className: "item__error"
+    className: "field__error"
   }, "Utterances shall begin with alphabetic characters from a to Z. The untterance may not contain other characters then alphabetic characters. The utterance shall not contain any numbers at all."), /*#__PURE__*/React.createElement("div", {
-    className: "item__main"
+    className: "field__main"
   }, /*#__PURE__*/React.createElement(Input, {
     model: data.model,
     index: data.index,
@@ -604,7 +579,7 @@ const Utterance = props => {
     focusOnExpressionInput: data.focusOnExpressionInput,
     wrapper: wrapper
   }), /*#__PURE__*/React.createElement("div", {
-    className: "item__buttons"
+    className: "field__actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn--remove btn--remove--main",
     type: "button",
@@ -644,7 +619,7 @@ const Utterance = props => {
           background: item.color
         }
       }, type)), /*#__PURE__*/React.createElement("div", null, item.text), /*#__PURE__*/React.createElement("div", {
-        className: "item__buttons"
+        className: "field__actions"
       }, /*#__PURE__*/React.createElement("button", {
         className: "btn--remove",
         onClick: e => {
