@@ -654,14 +654,14 @@ var Utterance = function Utterance(props) {
       return item;
     });
     var invalidValues = slotValues.filter(function (item) {
-      return !item.match(/^[A-Za-z](_*[A-Za-z])*_*$/);
+      return !item.match(/^[A-Za-z](_*[A-Za-z/"/'/`/`/])*_*$/);
     });
     var term = props.data.model.filter(function (item) {
       return !item.type;
     }).map(function (item) {
       return item.text;
     }).join(' ');
-    var reg = /^[a-zA-Z][a-zA-Z\s]*$/;
+    var reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
 
     if (reg.test(term) && !invalidValues.length) {
       setValid(true);
