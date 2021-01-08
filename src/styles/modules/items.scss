@@ -303,14 +303,16 @@
 }
 
 .field__synonyms {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     display: flex;
     flex-wrap: wrap;
     padding-right: 2.75rem;
+    margin: -0.25rem 0 0 -0.25rem;
+    width: calc(100% + 0.25rem);
 
-    >.synonym {
-        margin-right: 0.25rem;
+    >* {
+        margin: 0.25rem 0rem 0rem 0.25rem;
     }
 }
 
