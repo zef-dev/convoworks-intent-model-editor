@@ -29,6 +29,7 @@ const EntityValue = props => {
   const [newSynonym, setNewSynonym] = useState('');
   const [remove, setRemove] = useState(false);
   const synonymInput = useRef(null);
+  let active = props.activeValue === props.index;
   useEffect(() => {
     props.handleUpdate([...props.values], props.index, {
       value: value,
@@ -64,19 +65,14 @@ const EntityValue = props => {
     }
   };
 
-  const makeSynonyms = (items, active) => {
+  const makeSynonyms = (items, isActive) => {
     if (items) {
       return items && items.map((item, i) => {
-        if (item && !active) {
-          return /*#__PURE__*/React.createElement("div", {
-            className: "synonym",
-            key: i
-          }, item);
-        } else {
+        if (item) {
           return /*#__PURE__*/React.createElement("div", {
             key: i,
             className: "synonym"
-          }, item, /*#__PURE__*/React.createElement("button", {
+          }, item, isActive && /*#__PURE__*/React.createElement("button", {
             type: "button",
             className: "synonym__remove",
             onClick: () => {
@@ -97,7 +93,6 @@ const EntityValue = props => {
     }, 220);
   };
 
-  let active = props.activeValue === props.index;
   return /*#__PURE__*/React.createElement("li", {
     className: `field field--${active ? 'active' : 'inactive'} field--entity ${remove ? 'field--remove' : ''}`,
     onClick: () => {
@@ -124,7 +119,7 @@ const EntityValue = props => {
     }
   })), /*#__PURE__*/React.createElement("div", {
     className: "field__synonyms"
-  }, makeSynonyms(synonyms, false), /*#__PURE__*/React.createElement("form", {
+  }, makeSynonyms(synonyms, active), /*#__PURE__*/React.createElement("form", {
     onSubmit: e => {
       e.preventDefault();
       handleNewSynonym(synonymInput);
@@ -136,8 +131,7 @@ const EntityValue = props => {
       marginLeft: '0.625rem'
     },
     ref: synonymInput,
-    placeholder: "Enter synonym",
-    onChange: e => {}
+    placeholder: "Enter synonym"
   }))), /*#__PURE__*/React.createElement("div", {
     className: "field__actions"
   }, /*#__PURE__*/React.createElement("button", {

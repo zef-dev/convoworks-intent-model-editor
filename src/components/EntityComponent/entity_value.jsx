@@ -8,6 +8,8 @@ const EntityValue = (props) => {
 	const [remove, setRemove] = useState(false);
 	const synonymInput = useRef(null);
 
+	let active = props.activeValue === props.index;
+
 	useEffect(
 		() => {
 			props.handleUpdate([...props.values], props.index, {
@@ -52,32 +54,27 @@ const EntityValue = (props) => {
 		}
 	};
 
-	const makeSynonyms = (items, active) => {
+	const makeSynonyms = (items, isActive) => {
 		if (items) {
 			return (
 				items &&
 				items.map((item, i) => {
-					if (item && !active) {
-						return (
-							<div className="synonym" key={i}>
-								{item}
-							</div>
-						);
-					} else {
+					if (item) {
 						return (
 							<div key={i} className="synonym">
 								{item}
-								<button
-									type="button"
-									className="synonym__remove"
-									onClick={() => {
-										removeSynonym(item);
-									}}
-								>
-									&#10005;
-								</button>
-							</div>
-						);
+								{isActive &&
+									<button
+										type="button"
+										className="synonym__remove"
+										onClick={() => {
+											removeSynonym(item);
+										}}
+									>
+										&#10005;
+									</button>
+								}
+							</div>)
 					}
 				})
 			);
@@ -92,8 +89,6 @@ const EntityValue = (props) => {
 			setRemove(false);
 		}, 220);
 	};
-
-	let active = props.activeValue === props.index;
 
 	return (
 		<li
@@ -129,7 +124,7 @@ const EntityValue = (props) => {
 				}
 			</div>
 			<div className="field__synonyms">
-				{makeSynonyms(synonyms, false)}
+				{makeSynonyms(synonyms, active)}
 				<form
 					onSubmit={(e) => {
 						e.preventDefault();
@@ -142,7 +137,6 @@ const EntityValue = (props) => {
 						style={{ marginLeft: '0.625rem' }}
 						ref={synonymInput}
 						placeholder="Enter synonym"
-						onChange={(e) => { }}
 					/>
 					{/* <input className="editor-input" type="submit" hidden={true} /> */}
 				</form>

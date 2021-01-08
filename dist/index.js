@@ -44,6 +44,7 @@ var EntityValue = function EntityValue(props) {
       setRemove = _useState4[1];
 
   var synonymInput = React.useRef(null);
+  var active = props.activeValue === props.index;
   React.useEffect(function () {
     props.handleUpdate([].concat(props.values), props.index, {
       value: value,
@@ -79,19 +80,14 @@ var EntityValue = function EntityValue(props) {
     }
   };
 
-  var makeSynonyms = function makeSynonyms(items, active) {
+  var makeSynonyms = function makeSynonyms(items, isActive) {
     if (items) {
       return items && items.map(function (item, i) {
-        if (item && !active) {
-          return /*#__PURE__*/React__default.createElement("div", {
-            className: "synonym",
-            key: i
-          }, item);
-        } else {
+        if (item) {
           return /*#__PURE__*/React__default.createElement("div", {
             key: i,
             className: "synonym"
-          }, item, /*#__PURE__*/React__default.createElement("button", {
+          }, item, isActive && /*#__PURE__*/React__default.createElement("button", {
             type: "button",
             className: "synonym__remove",
             onClick: function onClick() {
@@ -112,7 +108,6 @@ var EntityValue = function EntityValue(props) {
     }, 220);
   };
 
-  var active = props.activeValue === props.index;
   return /*#__PURE__*/React__default.createElement("li", {
     className: "field field--" + (active ? 'active' : 'inactive') + " field--entity " + (remove ? 'field--remove' : ''),
     onClick: function onClick() {
@@ -139,7 +134,7 @@ var EntityValue = function EntityValue(props) {
     }
   })), /*#__PURE__*/React__default.createElement("div", {
     className: "field__synonyms"
-  }, makeSynonyms(synonyms, false), /*#__PURE__*/React__default.createElement("form", {
+  }, makeSynonyms(synonyms, active), /*#__PURE__*/React__default.createElement("form", {
     onSubmit: function onSubmit(e) {
       e.preventDefault();
       handleNewSynonym(synonymInput);
@@ -151,8 +146,7 @@ var EntityValue = function EntityValue(props) {
       marginLeft: '0.625rem'
     },
     ref: synonymInput,
-    placeholder: "Enter synonym",
-    onChange: function onChange(e) {}
+    placeholder: "Enter synonym"
   }))), /*#__PURE__*/React__default.createElement("div", {
     className: "field__actions"
   }, /*#__PURE__*/React__default.createElement("button", {
