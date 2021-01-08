@@ -1045,9 +1045,12 @@
     white-space: nowrap;
     line-height: 100%;
     display: flex;
-    align-items: center; }
-    .convo-details .synonym--edit {
-      padding-right: 1.75rem; }
+    align-items: center;
+    transition: 0.22s; }
+    .convo-details .synonym:hover {
+      border-color: #2f74ea; }
+      .convo-details .synonym:hover .synonym__remove {
+        opacity: 1; }
   .convo-details .synonym__remove {
     display: flex;
     align-items: center;
@@ -1057,7 +1060,15 @@
     font-size: 0.875rem;
     opacity: 0.5;
     transform: translateY(1px);
-    margin-left: 0.125rem; }
+    padding-left: 0.25rem;
+    transition: 0.22s; }
+    .convo-details .synonym__remove:focus {
+      border: none;
+      outline: none; }
+    .convo-details .synonym__remove:hover {
+      cursor: pointer;
+      -moz-columns: #d9543e;
+           columns: #d9543e; }
   .convo-details .field__value--primary {
     height: 100%;
     width: 100%;

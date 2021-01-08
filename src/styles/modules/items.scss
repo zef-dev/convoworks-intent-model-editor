@@ -326,12 +326,17 @@
     line-height: 100%;
     display: flex;
     align-items: center;
+    transition: $transition-time;
 
-    &--edit {
-        padding-right: 1.75rem;
+    &:hover {
+        border-color: $color-primary;
+
+        .synonym__remove {
+            opacity: 1;
+        }
     }
-}
 
+}
 .synonym__remove {
     display: flex;
     align-items: center;
@@ -341,7 +346,18 @@
     font-size: 0.875rem;
     opacity: 0.5;
     transform: translateY(1px);
-    margin-left: 0.125rem;
+    padding-left: 0.25rem;
+    transition: $transition-time;
+
+    &:focus {
+        border: none;
+        outline: none;
+    }
+
+    &:hover {
+        cursor: pointer;
+        columns: $color-alert;
+    }
 }
 
 .field__value--primary {
