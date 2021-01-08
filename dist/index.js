@@ -6,7 +6,10 @@ require('lodash');
 require('react-cool-onclickoutside');
 require('react-autocomplete-input');
 require('react-autocomplete-input/dist/bundle.css');
+require('@yaireo/tagify/dist/react.tagify');
+require('@yaireo/tagify/src/tagify.scss');
 var rangy = _interopDefault(require('rangy'));
+require('react-contenteditable');
 
 function IconTrash() {
   return /*#__PURE__*/React__default.createElement("svg", {
@@ -393,105 +396,77 @@ function Utterance(props) {
     return item.type;
   }).map(function (item) {
     return {
-      text: item.text,
-      type: item.type
+      value: item.text
     };
   })),
       whitelist = _useState4[0],
       setWhitelist = _useState4[1];
 
-  var wrapper = React.useRef(null);
   var input = React.useRef(null);
-  var parsedRaw = raw;
-  whitelist.map(function (item) {
-    parsedRaw = raw.replace(item, "" + item.text);
-  });
-
-  var updateWhitelist = function updateWhitelist() {
-    var list = [].concat(whitelist);
-
-    if (selection && !list.find(function (item) {
-      return item.text === selection.string;
-    })) {
-      selection.string.split(' ').map(function (val) {
-        var item = list.filter(function (obj) {
-          return obj.text.includes(val);
+  React.useEffect(function () {
+    if (selection) {
+      setTimeout(function () {
+        var list = [].concat(whitelist);
+        list.map(function (item, index) {
+          if (selection.text.includes(item.value) || item.value.includes(selection.text)) {
+            list.splice(index, 1);
+          }
         });
-        var i = list.indexOf(item);
-        console.log(item, i, val);
-        list = list.splice(i, 1);
-      });
-      console.log(list);
-      setWhitelist(list);
+        list = [].concat(list, [{
+          value: selection.text
+        }]);
+        console.log(list);
+        setWhitelist(list);
+        setSelection(null);
+      }, 1000);
     }
+  }, [selection]);
 
-    mapWhitelist();
+  var handleSelection = function handleSelection() {
+    var sel = rangy.getSelection();
+
+    if (sel.toString().trim().length) {
+      var nodes = sel.getRangeAt(0).getNodes();
+      var nodeArray = Array.from(nodes).filter(function (node) {
+        return node.nodeName === '#text';
+      }).filter(function (node) {
+        return node.textContent.trim().length;
+      });
+      var selectedString = nodeArray.map(function (node) {
+        return node.textContent;
+      }).join(' ');
+      setSelection({
+        text: selectedString,
+        nodes: nodeArray
+      });
+    }
   };
 
-  function mapWhitelist() {
-    var str = props.data.raw;
+  if (props.data && raw) {
+    var str = raw;
     whitelist.map(function (item) {
-      str = str.replace(item.text, "#" + item.text + "#");
+      str = str.replace(item.value, "" + item.value);
     });
-    var arr = str.split('#').filter(function (item) {
-      return item.trim().length > 0;
-    }).map(function (item) {
-      return item.trim();
-    }).map(function (item) {
-      var modelObj = whitelist.find(function (val) {
-        return val.text === item;
-      });
-
-      if (modelObj) {
-        return modelObj;
-      } else {
-        return {
-          text: item
-        };
-      }
-    });
-    console.log(arr);
-    setSelection(null);
-  }
-
-  if (props.data) {
+    str = str.split(' ').map(function (item) {
+      return "<span>" + item + "</span>";
+    }).join(' ');
     return /*#__PURE__*/React__default.createElement("div", {
       id: "input",
-      onKeyUp: function onKeyUp(e) {
-        var sel = rangy.getSelection();
-
-        if (sel.toString().trim().length) {
-          var nodes = sel.getRangeAt(0).getNodes();
-          var nodeArray = Array.from(nodes).filter(function (node) {
-            return node.nodeName === '#text';
-          }).filter(function (node) {
-            return node.textContent.trim().length;
-          });
-          var selectedString = nodeArray.map(function (node) {
-            return node.textContent;
-          }).join(' ');
-          setSelection({
-            string: selectedString,
-            nodes: nodeArray
-          });
-          setTimeout(function () {
-            updateWhitelist();
-          }, 1000);
-        }
+      onKeyUp: function onKeyUp() {
+        handleSelection();
+      },
+      onMouseUp: function onMouseUp() {
+        handleSelection();
       }
     }, /*#__PURE__*/React__default.createElement("div", null, whitelist.map(function (item) {
-      return /*#__PURE__*/React__default.createElement("small", null, " / ", item.text, "  ");
+      return /*#__PURE__*/React__default.createElement("small", null, " / ", item.value, "  ");
     })), /*#__PURE__*/React__default.createElement("div", {
-      contentEditable: true
-    }, parsedRaw.split(' ').map(function (item) {
-      if (whitelist.find(function (val) {
-        return val.text === item;
-      })) {
-        return /*#__PURE__*/React__default.createElement("b", null, item, "\xA0");
-      } else {
-        return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, item, "\xA0");
+      contentEditable: true,
+      suppressContentEditableWarning: true,
+      dangerouslySetInnerHTML: {
+        __html: str
       }
-    })));
+    }));
   } else {
     return null;
   }

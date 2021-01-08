@@ -60,6 +60,7 @@
     "react-cool-onclickoutside": "^1.5.9",
     "react-html-parser": "^2.0.2",
     "react-is": "^17.0.1",
-    "react-svg": "^11.1.4"
+    "react-svg": "^11.1.4",
+    "sanitize-html": "^2.3.0"
   }
 }

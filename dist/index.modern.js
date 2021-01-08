@@ -3,7 +3,10 @@ import 'lodash';
 import 'react-cool-onclickoutside';
 import 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
+import '@yaireo/tagify/dist/react.tagify';
+import '@yaireo/tagify/src/tagify.scss';
 import rangy from 'rangy';
+import 'react-contenteditable';
 
 function IconTrash() {
   return /*#__PURE__*/React.createElement("svg", {
@@ -332,81 +335,65 @@ function Utterance(props) {
   const [model, setModel] = useState(props.data.model);
   const [selection, setSelection] = useState(null);
   const [whitelist, setWhitelist] = useState(props.data.model.filter(item => item.type).map(item => ({
-    text: item.text,
-    type: item.type
+    value: item.text
   })));
-  const wrapper = useRef(null);
   const input = useRef(null);
-  let parsedRaw = raw;
-  whitelist.map(item => {
-    parsedRaw = raw.replace(item, `${item.text}`);
-  });
-
-  const updateWhitelist = () => {
-    let list = [...whitelist];
-
-    if (selection && !list.find(item => item.text === selection.string)) {
-      selection.string.split(' ').map(val => {
-        let item = list.filter(obj => obj.text.includes(val));
-        let i = list.indexOf(item);
-        console.log(item, i, val);
-        list = list.splice(i, 1);
-      });
-      console.log(list);
-      setWhitelist(list);
+  useEffect(() => {
+    if (selection) {
+      setTimeout(() => {
+        let list = [...whitelist];
+        list.map((item, index) => {
+          if (selection.text.includes(item.value) || item.value.includes(selection.text)) {
+            list.splice(index, 1);
+          }
+        });
+        list = [...list, {
+          value: selection.text
+        }];
+        console.log(list);
+        setWhitelist(list);
+        setSelection(null);
+      }, 1000);
     }
+  }, [selection]);
 
-    mapWhitelist();
+  const handleSelection = () => {
+    let sel = rangy.getSelection();
+
+    if (sel.toString().trim().length) {
+      let nodes = sel.getRangeAt(0).getNodes();
+      let nodeArray = Array.from(nodes).filter(node => node.nodeName === '#text').filter(node => node.textContent.trim().length);
+      let selectedString = nodeArray.map(node => node.textContent).join(' ');
+      setSelection({
+        text: selectedString,
+        nodes: nodeArray
+      });
+    }
   };
 
-  function mapWhitelist() {
-    let str = props.data.raw;
+  if (props.data && raw) {
+    let str = raw;
     whitelist.map(item => {
-      str = str.replace(item.text, `#${item.text}#`);
+      str = str.replace(item.value, `${item.value}`);
     });
-    let arr = str.split('#').filter(item => item.trim().length > 0).map(item => item.trim()).map(item => {
-      let modelObj = whitelist.find(val => val.text === item);
-
-      if (modelObj) {
-        return modelObj;
-      } else {
-        return {
-          text: item
-        };
-      }
-    });
-    console.log(arr);
-    setSelection(null);
-  }
-
-  if (props.data) {
+    str = str.split(' ').map(item => {
+      return `<span>${item}</span>`;
+    }).join(' ');
     return /*#__PURE__*/React.createElement("div", {
       id: "input",
-      onKeyUp: e => {
-        let sel = rangy.getSelection();
-
-        if (sel.toString().trim().length) {
-          let nodes = sel.getRangeAt(0).getNodes();
-          let nodeArray = Array.from(nodes).filter(node => node.nodeName === '#text').filter(node => node.textContent.trim().length);
-          let selectedString = nodeArray.map(node => node.textContent).join(' ');
-          setSelection({
-            string: selectedString,
-            nodes: nodeArray
-          });
-          setTimeout(() => {
-            updateWhitelist();
-          }, 1000);
-        }
+      onKeyUp: () => {
+        handleSelection();
+      },
+      onMouseUp: () => {
+        handleSelection();
       }
-    }, /*#__PURE__*/React.createElement("div", null, whitelist.map(item => /*#__PURE__*/React.createElement("small", null, " / ", item.text, "  "))), /*#__PURE__*/React.createElement("div", {
-      contentEditable: true
-    }, parsedRaw.split(' ').map(item => {
-      if (whitelist.find(val => val.text === item)) {
-        return /*#__PURE__*/React.createElement("b", null, item, "\xA0");
-      } else {
-        return /*#__PURE__*/React.createElement(React.Fragment, null, item, "\xA0");
+    }, /*#__PURE__*/React.createElement("div", null, whitelist.map(item => /*#__PURE__*/React.createElement("small", null, " / ", item.value, "  "))), /*#__PURE__*/React.createElement("div", {
+      contentEditable: true,
+      suppressContentEditableWarning: true,
+      dangerouslySetInnerHTML: {
+        __html: str
       }
-    })));
+    }));
   } else {
     return null;
   }

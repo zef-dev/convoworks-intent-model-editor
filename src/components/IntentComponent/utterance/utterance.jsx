@@ -1,108 +1,71 @@
 import React, { useRef, useState, useEffect } from 'react';
-//import Tags from "@yaireo/tagify/dist/react.tagify" // React-wrapper file
-//import '@yaireo/tagify/src/tagify.scss';
+import Tags from "@yaireo/tagify/dist/react.tagify" // React-wrapper file
+import '@yaireo/tagify/src/tagify.scss';
 import rangy from 'rangy';
-import _ from 'lodash';
+import _, { debounce } from 'lodash';
+import ContentEditable from 'react-contenteditable';
 
 export default function Utterance(props) {
 	const [raw, setRaw] = useState(props.data.raw);
 	const [model, setModel] = useState(props.data.model);
 	const [selection, setSelection] = useState(null);
-	const [whitelist, setWhitelist] = useState(props.data.model.filter(item => item.type).map((item) => ({ text: item.text, type: item.type })));
+	const [whitelist, setWhitelist] = useState(props.data.model.filter(item => item.type).map((item) => ({ value: item.text })));
 
-	const wrapper = useRef(null);
 	const input = useRef(null);
 
-	let parsedRaw = raw;
-	whitelist.map(item => {
-		parsedRaw = raw.replace(item, `${item.text}`);
-	})
+	useEffect(() => {
+		if (selection) {
+			setTimeout(() => {
+				let list = [...whitelist];
 
-	const settings = {
-		mode: 'mix',
-		keepInvalidTags: false,         // do not remove invalid tags (but keep them marked as invalid)
-		editTags: {
-			clicks: 1,              // single click to edit a tag
-			keepInvalid: false      // if after editing, tag is invalid, auto-revert
-		},
-		// maxTags: 6,
-		whitelist: whitelist,
-		backspace: "edit",
-		placeholder: "Type something",
-	};
+				list.map((item, index) => {
+					if (selection.text.includes(item.value) || item.value.includes(selection.text)) {
+						list.splice(index, 1);
+					}
+				})
 
-	const updateInput = () => {
-		let value = input.current.state.lastOriginalValueReported;
-	}
+				list = [...list, { value: selection.text }];
 
-	const updateWhitelist = () => {
-		let list = [...whitelist];
+				console.log(list);
 
-		// ignore strings that are already present in the whitelist
-		if (selection && !list.find(item => item.text === selection.string)) {
-
-			selection.string.split(' ').map(val => {
-				let item = list.filter(obj => obj.text.includes(val));
-				let i = list.indexOf(item);
-
-				console.log(item, i, val)
-				list = list.splice(i, 1);
-			})
-
-			console.log(list);
-			setWhitelist(list);
+				setWhitelist(list);
+				setSelection(null);
+			}, 1000)
 		}
+	}, [selection]);
 
-		mapWhitelist();
+	const handleSelection = () => {
+		let sel = rangy.getSelection();
+
+		if (sel.toString().trim().length) {
+			let nodes = sel.getRangeAt(0).getNodes();
+			let nodeArray = Array.from(nodes).filter(node => node.nodeName === '#text').filter(node => node.textContent.trim().length);
+			let selectedString = nodeArray.map(node => node.textContent).join(' ');
+
+			setSelection({ text: selectedString, nodes: nodeArray });
+		}
 	}
 
-	function mapWhitelist() {
-		let str = props.data.raw;
+	if (props.data && raw) {
+
+		let str = raw;
+
 		whitelist.map(item => {
-			str = str.replace(item.text, `#${item.text}#`);
+			str = str.replace(item.value, `${item.value}`)
 		})
 
-		let arr = str.split('#').filter(item => item.trim().length > 0).map(item => item.trim()).map(item => {
-			let modelObj = whitelist.find(val => val.text === item);
-			if (modelObj) {
-				return modelObj;
-
-			} else {
-				return ({
-					text: item
-				})
-			}
-		});
-
-		console.log(arr);
-
-		setSelection(null);
-	}
-
-	if (props.data) {
+		str = str.split(' ').map(item => {
+			return `<span>${item}</span>`
+		}).join(' ');
+		
 		return (
-			<div id="input" onKeyUp={(e) => {
-				let sel = rangy.getSelection();
-
-				if (sel.toString().trim().length) {
-					let nodes = sel.getRangeAt(0).getNodes();
-					let nodeArray = Array.from(nodes).filter(node => node.nodeName === '#text').filter(node => node.textContent.trim().length);
-					let selectedString = nodeArray.map(node => node.textContent).join(' ');
-					setSelection({ string: selectedString, nodes: nodeArray });
-
-					setTimeout(() => {
-						updateWhitelist();
-					}, 1000)
-				}
+			<div id="input" onKeyUp={() => {
+				handleSelection()
+			}} onMouseUp={() => {
+				handleSelection()
 			}}>
-				<div>{whitelist.map(item => <small> / {item.text}  </small>)}</div>
-				<div contentEditable={true}>{parsedRaw.split(' ').map(item => {
-					if (whitelist.find(val => val.text === item)) {
-						return <b>{item}&nbsp;</b>
-					} else {
-						return <React.Fragment>{item}&nbsp;</React.Fragment>
-					}
-				})}</div>
+				<div>{whitelist.map(item => <small> / {item.value}  </small>)}</div>
+				<div contentEditable={true} suppressContentEditableWarning={true} dangerouslySetInnerHTML={{ __html: str }} />
 			</div>
 		);
 	} else {
