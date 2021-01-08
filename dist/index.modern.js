@@ -138,10 +138,6 @@ const EntityValue = props => {
     ref: synonymInput,
     placeholder: "Enter synonym",
     onChange: e => {}
-  }), /*#__PURE__*/React.createElement("input", {
-    className: "editor-input",
-    type: "submit",
-    hidden: true
   }))), /*#__PURE__*/React.createElement("div", {
     className: "field__actions"
   }, /*#__PURE__*/React.createElement("button", {

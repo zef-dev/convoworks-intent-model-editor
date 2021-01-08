@@ -144,7 +144,7 @@ const EntityValue = (props) => {
 						placeholder="Enter synonym"
 						onChange={(e) => { }}
 					/>
-					<input className="editor-input" type="submit" hidden={true} />
+					{/* <input className="editor-input" type="submit" hidden={true} /> */}
 				</form>
 			</div>
 			<div className="field__actions">
