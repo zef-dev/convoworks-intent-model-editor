@@ -651,9 +651,13 @@ var Utterance = function Utterance(props) {
     }).map(function (item) {
       return item.text;
     }).join(' ');
+    var types = props.data.model.filter(function (item) {
+      return item.type;
+    });
     var reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
+    console.log(types, term.length);
 
-    if (reg.test(term) && !invalidValues.length) {
+    if (reg.test(term) && !invalidValues.length || types.length && !term.length) {
       setValid(true);
     } else {
       setValid(false);
