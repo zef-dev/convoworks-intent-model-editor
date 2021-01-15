@@ -5,7 +5,7 @@
 .layout {
 	&--editor-content {
 		width: 100%;
-		max-width: 45.625rem;
+		max-width: 730px;
 	}
 }
 
@@ -77,19 +77,19 @@ $value in $breakpoints {
 \*------------------------------------*/
 
 .margin--10--large {
-	margin-bottom: 0.625rem;
+	margin-bottom: 10px;
 }
 
 .margin--20--large {
-	margin-bottom: 2*0.625rem;
+	margin-bottom: 2*10px;
 }
 
 .margin--30--large {
-	margin-bottom: 3*0.625rem;
+	margin-bottom: 3*10px;
 }
 
 .margin--40--large {
-	margin-bottom: 4*0.625rem;
+	margin-bottom: 4*10px;
 }
 
 /*------------------------------------*\

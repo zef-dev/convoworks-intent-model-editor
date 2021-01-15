@@ -3,7 +3,7 @@ form {
         border: none;
         outline: none;
         background: transparent;
-        font-size: 0.875rem;
+        font-size: 14px;
 
         &::placeholder {
             opacity: 1;
@@ -21,8 +21,8 @@ form {
         border: $input-border;
         border-radius: $input-radius;
         border: $input-border;
-        padding: 0.875rem 0.75rem;
-        font-size: 0.875rem;
+        padding: 14px 12px;
+        font-size: 14px;
         height: $input-height;
         width: 100%;
 	}
@@ -33,16 +33,16 @@ form {
     
     input.input--add-field {
         height: $input-height;
-        margin-bottom: 1.25rem;
+        margin-bottom: 20px;
         border: $border--gray-lighter;
         border-radius: $input-radius;
         //overflow: hidden;
         transition: $transition-time;
-        font-size: 0.875rem;
+        font-size: 14px;
         color: rgba($black, 0.85);
         background: transparent;
         width: 100%;
-        padding: 0.5rem 0.75rem;
+        padding: 8px 12px;
 
     
         &:hover, &:focus, &:active {
@@ -69,20 +69,20 @@ form {
     top: 100%;
     left: 0;
     right: 0;
-    transform: translateY(0.625rem);
+    transform: translateY(10px);
     background: $white--true;
     text-align: left;
     border: $input-border;
     z-index: 10;
-    width: 18.75rem;
+    width: 300px;
     height: 30vh;
     border-radius: $input-radius;
     overflow: hidden;
-    box-shadow: 0.25rem 0.25rem 0.625rem 0 rgba(0, 0, 0, 0.14);
-    font-size: 0.875rem;
+    box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.14);
+    font-size: 14px;
 
     li {
-        padding: 0.625rem;
+        padding: 10px;
         cursor: pointer;
         transition: $transition-time;
 
