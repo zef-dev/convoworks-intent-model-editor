@@ -80,7 +80,7 @@ const Utterance = (props) => {
 				</div>
 			</div>
 			{data.model && data.model.filter((item) => item.type).length ? (
-				<ul className="model" style={{display: `${data.active ? 'block' : 'none'}`}}>
+				<ul className="model" style={{ display: `${data.active ? 'block' : 'none'}` }}>
 					<header>
 						<div>Parameter Name</div>
 						<div>Entity</div>
@@ -92,17 +92,19 @@ const Utterance = (props) => {
 							let type = item.type;
 							return (
 								<li key={i}>
-									<input
-										className="editor-input"
-										type="text"
-										defaultValue={slotValue}
-										onChange={(e) => {
-											let arr = [...data.utterances];
-											arr[data.index].model[i].slot_value = e.target.value;
-											data.setUtterances(arr);
-										}}
-										placeholder="Set parameter name"
-									/>
+									<form onSubmit={e => { console.log(e); e.preventDefault() }}>
+										<input
+											className="editor-input"
+											type="text"
+											defaultValue={slotValue}
+											onChange={(e) => {
+												let arr = [...data.utterances];
+												arr[data.index].model[i].slot_value = e.target.value;
+												data.setUtterances(arr);
+											}}
+											placeholder="Set parameter name"
+										/>
+									</form>
 									<div>
 										<span className="highlight" style={{ background: item.color }}>
 											{type}

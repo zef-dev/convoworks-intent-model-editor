@@ -103,70 +103,70 @@
     padding: 0;
     font-weight: 400; }
   .convo-details h1 {
-    font-size: 1.75rem;
+    font-size: 28px;
     line-height: 1.43; }
     @media screen and (min-width: 640px) {
       .convo-details h1 {
-        font-size: 2rem;
+        font-size: 32px;
         line-height: 1.43; } }
     @media screen and (min-width: 1024px) {
       .convo-details h1 {
-        font-size: 3rem;
+        font-size: 48px;
         line-height: 1.33; } }
   .convo-details h2 {
-    font-size: 1.375rem;
+    font-size: 22px;
     line-height: 1.52; }
     @media screen and (min-width: 640px) {
       .convo-details h2 {
-        font-size: 1.5rem;
+        font-size: 24px;
         line-height: 1.52; } }
     @media screen and (min-width: 1024px) {
       .convo-details h2 {
-        font-size: 2rem;
+        font-size: 32px;
         line-height: 1.2; } }
   .convo-details h3 {
-    font-size: 1rem;
+    font-size: 16px;
     line-height: 1; }
   .convo-details h4 {
-    font-size: 1.125rem;
+    font-size: 18px;
     line-height: 1.56; }
     @media screen and (min-width: 640px) {
       .convo-details h4 {
-        font-size: 1.25rem;
+        font-size: 20px;
         line-height: 1.56; } }
     @media screen and (min-width: 1024px) {
       .convo-details h4 {
-        font-size: 1.5rem;
+        font-size: 24px;
         line-height: 1; } }
   .convo-details h5 {
-    font-size: 1rem;
+    font-size: 16px;
     line-height: 1.2; }
     @media screen and (min-width: 640px) {
       .convo-details h5 {
-        font-size: 1rem;
+        font-size: 16px;
         line-height: 1.2; } }
     @media screen and (min-width: 1024px) {
       .convo-details h5 {
-        font-size: 1rem;
+        font-size: 16px;
         line-height: 1.2; } }
     @media screen and (min-width: 1200px) {
       .convo-details h5 {
-        font-size: 1rem;
+        font-size: 16px;
         line-height: 1.2; } }
     @media screen and (min-width: 1440px) {
       .convo-details h5 {
-        font-size: 1rem;
+        font-size: 16px;
         line-height: 1.2; } }
   .convo-details h6 {
-    font-size: 1rem;
+    font-size: 16px;
     line-height: 1.2; }
     @media screen and (min-width: 640px) {
       .convo-details h6 {
-        font-size: 1rem;
+        font-size: 16px;
         line-height: 1.2; } }
     @media screen and (min-width: 1024px) {
       .convo-details h6 {
-        font-size: 1.125rem;
+        font-size: 18px;
         line-height: 1.78; } }
   .convo-details ul li {
     list-style-type: none; }
@@ -178,66 +178,66 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    margin-bottom: -1rem; }
+    margin-bottom: -16px; }
     .convo-details .bubble-items li {
-      margin-bottom: 0.75rem;
-      margin-right: 0.75rem; }
+      margin-bottom: 12px;
+      margin-right: 12px; }
       @media only screen and (min-width: 1024px) {
         .convo-details .bubble-items li {
-          margin-bottom: 1rem;
-          margin-right: 1rem; } }
+          margin-bottom: 16px;
+          margin-right: 16px; } }
   .convo-details .bubble-items__item {
-    padding: 0 1rem;
-    border-radius: 1rem;
+    padding: 0 16px;
+    border-radius: 16px;
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.1);
     color: rgba(26, 26, 26, 0.7);
-    font-size: 0.875rem;
+    font-size: 14px;
     font-weight: 600;
     line-height: 2.29;
-    height: 2rem; }
+    height: 32px; }
   .convo-details .spaced-list {
     padding: 0;
     margin: 0; }
   .convo-details .spaced-list__item {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
     line-height: 2.29;
-    font-size: 0.875rem;
+    font-size: 14px;
     text-align: right; }
     @media only screen and (min-width: 1024px) {
       .convo-details .spaced-list__item {
-        margin-bottom: 0.75rem;
+        margin-bottom: 12px;
         line-height: 2;
-        font-size: 1rem; } }
+        font-size: 16px; } }
     .convo-details .spaced-list__item:nth-last-child(1) {
       margin-bottom: 0; }
   .convo-details a {
     text-decoration: none; }
   .convo-details p {
-    font-size: 1rem;
+    font-size: 16px;
     line-height: 1;
     font-family: inherit;
-    margin-bottom: 1.5rem; }
+    margin-bottom: 24px; }
     @media screen and (min-width: 640px) {
       .convo-details p {
-        font-size: 1rem;
+        font-size: 16px;
         line-height: 1; } }
     @media screen and (min-width: 1024px) {
       .convo-details p {
-        font-size: 1rem;
+        font-size: 16px;
         line-height: 1; } }
     @media screen and (min-width: 1200px) {
       .convo-details p {
-        font-size: 1rem;
+        font-size: 16px;
         line-height: 1; } }
     @media screen and (min-width: 1440px) {
       .convo-details p {
-        font-size: 1rem;
+        font-size: 16px;
         line-height: 1; } }
   .convo-details .font--18--large {
-    font-size: 1.125rem; }
+    font-size: 18px; }
   .convo-details .light {
     font-weight: 300; }
   .convo-details .medium {
@@ -276,7 +276,7 @@
     color: rgba(26, 26, 26, 0.7); }
   .convo-details .layout--editor-content {
     width: 100%;
-    max-width: 45.625rem; }
+    max-width: 730px; }
   .convo-details .flex {
     display: flex;
     align-items: center; }
@@ -590,15 +590,15 @@
     @media only screen and (min-width: 1024px) {
       .convo-details .grid {
         grid-template-columns: repeat(12, minmax(auto, 1fr));
-        grid-column-gap: 1.5rem; } }
+        grid-column-gap: 24px; } }
   .convo-details .margin--10--large {
-    margin-bottom: 0.625rem; }
+    margin-bottom: 10px; }
   .convo-details .margin--20--large {
-    margin-bottom: 1.25rem; }
+    margin-bottom: 20px; }
   .convo-details .margin--30--large {
-    margin-bottom: 1.875rem; }
+    margin-bottom: 30px; }
   .convo-details .margin--40--large {
-    margin-bottom: 2.5rem; }
+    margin-bottom: 40px; }
   @media only screen and (min-width: 0) {
     .convo-details .hide--small {
       display: none; } }
@@ -631,38 +631,38 @@
       display: block; } }
   .convo-details .editor {
     display: flex;
-    grid-gap: 1.5rem;
+    grid-gap: 24px;
     height: 100%;
-    padding-top: 2.5rem;
-    padding-left: 8.625rem;
-    padding-right: 3.375rem; }
+    padding-top: 40px;
+    padding-left: 138px;
+    padding-right: 54px; }
     .convo-details .editor > section {
-      padding-top: 1.5rem; }
+      padding-top: 24px; }
     .convo-details .editor > section {
       width: 100%; }
   .convo-details .editor__header {
-    padding-bottom: 1.5rem;
-    margin-bottom: 1.5rem;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
     display: flex;
     align-items: center;
     justify-content: space-between; }
   .convo-details .editor-wrapper {
     display: flex;
-    grid-gap: 1.5rem;
+    grid-gap: 24px;
     height: 100%;
-    padding-top: 8.5rem;
-    padding-left: 8.625rem;
-    padding-right: 3.375rem;
+    padding-top: 136px;
+    padding-left: 138px;
+    padding-right: 54px;
     width: 100%; }
     .convo-details .editor-wrapper > section {
-      padding-top: 1.5rem; }
+      padding-top: 24px; }
     .convo-details .editor-wrapper > section {
       width: 100%; }
   .convo-details form input.editor-input {
     border: none;
     outline: none;
     background: transparent;
-    font-size: 0.875rem; }
+    font-size: 14px; }
     .convo-details form input.editor-input::-moz-placeholder {
       opacity: 1;
       color: rgba(0, 0, 0, 0.36); }
@@ -676,25 +676,25 @@
     border-color: #d9543e; }
   .convo-details form input.input--item-name {
     border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
+    border-radius: 8px;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 0.875rem 0.75rem;
-    font-size: 0.875rem;
-    height: 2.5rem;
+    padding: 14px 12px;
+    font-size: 14px;
+    height: 40px;
     width: 100%; }
   .convo-details form input[hidden] {
     display: none; }
   .convo-details form input.input--add-field {
-    height: 2.5rem;
-    margin-bottom: 1.25rem;
+    height: 40px;
+    margin-bottom: 20px;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
+    border-radius: 8px;
     transition: 0.22s;
-    font-size: 0.875rem;
+    font-size: 14px;
     color: rgba(26, 26, 26, 0.85);
     background: transparent;
     width: 100%;
-    padding: 0.5rem 0.75rem; }
+    padding: 8px 12px; }
     .convo-details form input.input--add-field:hover, .convo-details form input.input--add-field:focus, .convo-details form input.input--add-field:active {
       border-color: #2f74ea; }
   .convo-details form input[data-valid="false"] {
@@ -708,19 +708,19 @@
     top: 100%;
     left: 0;
     right: 0;
-    transform: translateY(0.625rem);
+    transform: translateY(10px);
     background: #ffffff;
     text-align: left;
     border: 1px solid rgba(0, 0, 0, 0.1);
     z-index: 10;
-    width: 18.75rem;
+    width: 300px;
     height: 30vh;
-    border-radius: 0.5rem;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0.25rem 0.25rem 0.625rem 0 rgba(0, 0, 0, 0.14);
-    font-size: 0.875rem; }
+    box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.14);
+    font-size: 14px; }
     .convo-details .select__list li {
-      padding: 0.625rem;
+      padding: 10px;
       cursor: pointer;
       transition: 0.22s; }
       .convo-details .select__list li:hover {
@@ -729,25 +729,25 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.875rem;
+    font-size: 14px;
     line-height: 1;
-    padding: 0.875rem 1.5rem;
+    padding: 14px 24px;
     font-weight: 500;
     line-height: 1;
-    height: 2.375rem; }
+    height: 38px; }
   .convo-details .btn--primary {
     background: #2f74ea;
     color: #ffffff;
     border: none;
     outline: none;
-    border-radius: 0.5rem; }
+    border-radius: 8px; }
   .convo-details .btn--remove {
     margin-left: auto;
     cursor: pointer;
     background: transparent;
     border: none;
     padding: 0;
-    font-size: 0.75rem;
+    font-size: 12px;
     color: #1a1a1a;
     opacity: 0;
     transition: 0.22s;
@@ -767,19 +767,19 @@
     right: 0;
     display: flex;
     flex-direction: column;
-    width: 18rem;
-    height: 18.75rem;
+    width: 288px;
+    height: 300px;
     background: #ffffff;
-    box-shadow: 0 0.125rem 0.375rem 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
     z-index: 10;
     transition: 0.22s;
     opacity: 0;
     pointer-events: none;
     visibility: hidden;
-    font-size: 0.875rem;
-    border-radius: 0.75rem;
+    font-size: 14px;
+    border-radius: 12px;
     overflow: hidden;
-    padding: 0 0.75rem; }
+    padding: 0 12px; }
     .convo-details .dropdown--active {
       pointer-events: all;
       visibility: visible;
@@ -790,16 +790,16 @@
     overflow-y: auto;
     width: 100%;
     height: 100%;
-    padding: 1rem 0;
-    padding-top: 0.125rem;
-    margin-bottom: 1rem; }
+    padding: 16px 0;
+    padding-top: 2px;
+    margin-bottom: 16px; }
     .convo-details .dropdown__inner button {
       background: transparent;
       border: none;
       outline: none;
       text-align: left;
-      padding: 0.375rem 0;
-      font-size: 0.875rem;
+      padding: 6px 0;
+      font-size: 14px;
       cursor: pointer;
       transition: 0.22s;
       width: 100%;
@@ -808,22 +808,22 @@
       .convo-details .dropdown__inner button:hover {
         color: #2f74ea; }
   .convo-details .dropdown__search-wrap {
-    padding-bottom: 0.5rem;
-    padding: 0.625rem 0; }
+    padding-bottom: 8px;
+    padding: 10px 0; }
   .convo-details .editor-input.dropdown__search {
     width: 100%;
     border: none;
     border: 1px solid rgba(26, 26, 26, 0.3);
-    font-size: 0.875rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.25rem; }
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 4px; }
     .convo-details .editor-input.dropdown__search:focus, .convo-details .editor-input.dropdown__search:active {
       outline: none;
       border-color: #2f74ea; }
   .convo-details .field {
-    margin-bottom: 0.625rem;
+    margin-bottom: 10px;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
+    border-radius: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -855,15 +855,15 @@
     position: absolute;
     top: 100%;
     left: 0;
-    transform: translateY(0.45rem);
+    transform: translateY(7.2px);
     line-height: 1.25;
-    font-size: 0.875rem;
+    font-size: 14px;
     margin: 0;
     border: none;
     background: #d9543e;
     color: #fafafa;
-    border-radius: 0.5rem;
-    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    padding: 8px 12px;
     transition: 0.22s;
     visibility: hidden;
     opacity: 0;
@@ -875,14 +875,14 @@
       .convo-details .field--error.field--active:hover {
         border-color: #d9543e; }
   .convo-details .field--entity {
-    min-height: 2.5rem;
+    min-height: 40px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 0.5rem 0.75rem;
+    padding: 8px 12px;
     line-height: 1;
     cursor: pointer;
-    min-height: 2.625rem; }
+    min-height: 42px; }
     .convo-details .field--entity .field__value {
       width: 25.00%; }
     .convo-details .field--entity .field__value input {
@@ -912,7 +912,7 @@
       width: 100%;
       position: relative; }
     .convo-details .field--intent .field__input > div {
-      padding: 0.625rem 0.75rem;
+      padding: 10px 12px;
       cursor: text;
       white-space: pre-wrap;
       white-space: -moz-pre-wrap;
@@ -922,7 +922,7 @@
       word-break: break-word;
       vertical-align: bottom;
       caret-color: #2F74EA;
-      height: 2.5rem;
+      height: 40px;
       line-height: normal;
       outline: none; }
       .convo-details .field--intent .field__input > div::-moz-selection, .convo-details .field--intent .field__input > div ::-moz-selection {
@@ -956,27 +956,27 @@
         grid-template-columns: repeat(3, 33.3%);
         align-items: center;
         width: 100%;
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
+        padding-left: 12px;
+        padding-right: 12px;
         position: relative; }
       .convo-details .field--intent .model header {
-        height: 2rem;
+        height: 32px;
         line-height: 1;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         text-transform: uppercase;
         color: rgba(0, 0, 0, 0.36);
-        font-size: 0.75rem; }
+        font-size: 12px; }
       .convo-details .field--intent .model .btn--remove {
         transform: scale(0.85); }
       .convo-details .field--intent .model li {
-        height: 2.5rem; }
+        height: 40px; }
         .convo-details .field--intent .model li:hover .btn--remove {
           opacity: 0.35;
           visibility: visible; }
       .convo-details .field--intent .model input {
         border: none;
-        padding-right: 1.5rem;
+        padding-right: 24px;
         height: 100%;
         font-size: inherit; }
         .convo-details .field--intent .model input:focus {
@@ -989,23 +989,23 @@
     .convo-details .field--active:hover {
       border: 1px solid #2f74ea; }
   .convo-details .field--padded {
-    padding: 0.875rem 0.75rem; }
+    padding: 14px 12px; }
   .convo-details .field--edit {
     cursor: default;
     border-color: #2f74ea; }
     .convo-details .field--edit .field__row {
-      padding-left: 0.75rem;
-      padding-right: 0.75rem; }
+      padding-left: 12px;
+      padding-right: 12px; }
   .convo-details .field__inner {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    font-size: 0.875rem;
+    font-size: 14px;
     line-height: 1; }
   .convo-details .field__padded-wrapper {
-    min-height: 2.5rem;
-    padding: 10px 0.75rem;
+    min-height: 40px;
+    padding: 10px 12px;
     list-style: none;
     width: 100%; }
   .convo-details .field__actions {
@@ -1019,9 +1019,9 @@
       border: none;
       height: 100%;
       background: transparent;
-      width: 2.375rem;
+      width: 38px;
       padding: 0;
-      padding: 0.625rem;
+      padding: 10px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -1031,16 +1031,16 @@
     align-items: center;
     display: flex;
     flex-wrap: wrap;
-    padding-right: 2.75rem;
-    margin: -0.25rem 0 0 -0.25rem;
-    width: calc(100% + 0.25rem); }
+    padding-right: 44px;
+    margin: -4px 0 0 -4px;
+    width: calc(100% + 4px); }
     .convo-details .field__synonyms > * {
-      margin: 0.25rem 0rem 0rem 0.25rem; }
+      margin: 4px 0px 0px 4px; }
   .convo-details .synonym {
-    padding: 0.25rem;
+    padding: 4px;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0.125rem;
-    font-size: 0.875rem;
+    border-radius: 2px;
+    font-size: 14px;
     position: relative;
     white-space: nowrap;
     line-height: 100%;
@@ -1057,10 +1057,10 @@
     background: transparent;
     border: none;
     padding: 0;
-    font-size: 0.875rem;
+    font-size: 14px;
     opacity: 0.5;
     transform: translateY(1px);
-    padding-left: 0.25rem;
+    padding-left: 4px;
     transition: 0.22s; }
     .convo-details .synonym__remove:focus {
       border: none;
@@ -1074,7 +1074,7 @@
     width: 100%;
     display: flex;
     align-items: center;
-    font-size: 0.875rem; }
+    font-size: 14px; }
   .convo-details .field__columns {
     display: grid;
     grid-template-columns: repeat(3, 33.33%);

@@ -602,6 +602,11 @@ const Utterance = props => {
       let type = item.type;
       return /*#__PURE__*/React.createElement("li", {
         key: i
+      }, /*#__PURE__*/React.createElement("form", {
+        onSubmit: e => {
+          console.log(e);
+          e.preventDefault();
+        }
       }, /*#__PURE__*/React.createElement("input", {
         className: "editor-input",
         type: "text",
@@ -612,7 +617,7 @@ const Utterance = props => {
           data.setUtterances(arr);
         },
         placeholder: "Set parameter name"
-      }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
         className: "highlight",
         style: {
           background: item.color
