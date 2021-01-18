@@ -3,6 +3,7 @@ import { IconTrash } from '../../../assets/icon_trash.jsx';
 import Input from './input.jsx';
 import { Component } from 'react';
 import _ from 'lodash';
+import { preventSubmit } from '../../../helpers/common_constants.jsx';
 
 const Utterance = (props) => {
 	const [remove, setRemove] = useState(false);
@@ -21,8 +22,6 @@ const Utterance = (props) => {
 		let term = props.data.model.filter(item => !item.type).map(item => item.text).join(' ');
 		let types = props.data.model.filter(item => item.type);
 		let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-
-		console.log(types, term.length)
 
 		if ((reg.test(term) && !invalidValues.length) || types.length && !term.length) {
 			setValid(true);
@@ -92,19 +91,19 @@ const Utterance = (props) => {
 							let type = item.type;
 							return (
 								<li key={i}>
-									<form onSubmit={e => { console.log(e); e.preventDefault() }}>
-										<input
-											className="editor-input"
-											type="text"
-											defaultValue={slotValue}
-											onChange={(e) => {
-												let arr = [...data.utterances];
-												arr[data.index].model[i].slot_value = e.target.value;
-												data.setUtterances(arr);
-											}}
-											placeholder="Set parameter name"
-										/>
-									</form>
+									<input
+										className="editor-input"
+										type="text"
+										defaultValue={slotValue}
+										number
+										onKeyDown={(e) => preventSubmit(e)}
+										onChange={(e) => {
+											let arr = [...data.utterances];
+											arr[data.index].model[i].slot_value = e.target.value;
+											data.setUtterances(arr);
+										}}
+										placeholder="Set parameter name"
+									/>
 									<div>
 										<span className="highlight" style={{ background: item.color }}>
 											{type}

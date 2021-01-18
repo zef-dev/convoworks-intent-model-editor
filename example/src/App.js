@@ -14,19 +14,24 @@ const App = () => {
         <button onClick={() => setView('entity')}>Entity editor</button>
       </nav>
       {view === 'intent' ? 
-      <IntentEditor
-        intent={data.intents[0]}
-        entities={data.entities}
-        systemEntities={[]}
-        onUpdate={() => {console.log('update')}}
-      />
+      <form onSubmit={(e) => {e.preventDefault(); console.log('submit')}}>
+        <IntentEditor
+          intent={data.intents[0]}
+          entities={data.entities}
+          systemEntities={[]}
+          onUpdate={() => {console.log('update')}}
+        />
+      </form>
 
       :
+
+      <form onSubmit={(e) => {e.preventDefault(); console.log('submit')}}>
 
       <EntityEditor
         entity={data.entities[0]}
         onUpdate={() => {console.log('update')}}
       />
+      </form>
     }
     </React.Fragment>
   )

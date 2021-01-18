@@ -1,62 +1,60 @@
-form {
-    input.editor-input {
-        border: none;
-        outline: none;
-        background: transparent;
-        font-size: 14px;
+input.editor-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
 
-        &::placeholder {
-            opacity: 1;
-            color: $color-gray--light;
-        }
-    }
-
-    input {
-        &--alert {
-            border-color: $color-alert;
-        }
-    }
-
-    input.input--item-name {
-        border: $input-border;
-        border-radius: $input-radius;
-        border: $input-border;
-        padding: 14px 12px;
-        font-size: 14px;
-        height: $input-height;
-        width: 100%;
-	}
-	
-	input[hidden] {
-		display: none;
-    }
-    
-    input.input--add-field {
-        height: $input-height;
-        margin-bottom: 20px;
-        border: $border--gray-lighter;
-        border-radius: $input-radius;
-        //overflow: hidden;
-        transition: $transition-time;
-        font-size: 14px;
-        color: rgba($black, 0.85);
-        background: transparent;
-        width: 100%;
-        padding: 8px 12px;
-
-    
-        &:hover, &:focus, &:active {
-            border-color: $color-primary;
-        }
-    }
-
-    input {
-        &[data-valid="false"] {
-            border-color: $color-alert;
-        }
+    &::placeholder {
+        opacity: 1;
+        color: $color-gray--light;
     }
 }
 
+input {
+    &--alert {
+        border-color: $color-alert;
+    }
+}
+
+input.input--item-name {
+    border: $input-border;
+    border-radius: $input-radius;
+    border: $input-border;
+    padding: 14px 12px;
+    font-size: 14px;
+    height: $input-height;
+    width: 100%;
+}
+
+input[hidden] {
+    display: none;
+}
+
+input.input--add-field {
+    height: $input-height;
+    margin-bottom: 20px;
+    border: $border--gray-lighter;
+    border-radius: $input-radius;
+    //overflow: hidden;
+    transition: $transition-time;
+    font-size: 14px;
+    color: rgba($black, 0.85);
+    background: transparent;
+    width: 100%;
+    padding: 8px 12px;
+
+    &:hover,
+    &:focus,
+    &:active {
+        border-color: $color-primary;
+    }
+}
+
+input {
+    &[data-valid="false"] {
+        border-color: $color-alert;
+    }
+}
 
 .select {
     position: relative;
@@ -91,4 +89,3 @@ form {
         }
     }
 }
-

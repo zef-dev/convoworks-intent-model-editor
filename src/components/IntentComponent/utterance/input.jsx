@@ -28,7 +28,6 @@ class Input extends React.Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		console.log(this.props.active, prevProps.active);
 		if (this.props.active !== prevProps.active || (this.props.active && !this.text.current.length)) {
 			this.text.current && this.text.current.focus();
 		}
@@ -70,8 +69,6 @@ class Input extends React.Component {
 
 			let parentPos = document.querySelector('.convo-details').getBoundingClientRect();
 			let childPos = span.getBoundingClientRect();
-
-			console.log(parentPos, childPos)
 
 			let relativePos = {
 				top: childPos.top - parentPos.top,

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
+import { preventSubmit } from '../../helpers/common_constants';
 
 function Modal(props) {
 	const [ entities, setEntities ] = useState(props.entities);
@@ -24,7 +25,7 @@ function Modal(props) {
 	};
 
 	useEffect(
-		() => {
+		() => {			
 			let arr = entities
 				.map((item) => {
 					return item.name;
@@ -92,6 +93,9 @@ function Modal(props) {
 						options={entitiesNames}
 						spaceRemovers={[]}
 						matchAny={true}
+						onKeyDown={(e) => {
+							preventSubmit(e);
+						}}
 						onChange={(e) => {
 							filterEntities(e);
 						}}

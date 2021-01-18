@@ -23,6 +23,17 @@ function IconTrash() {
   })));
 }
 
+const preventSubmit = e => {
+  if (e.keyCode == 13) {
+    e.preventDefault();
+    return false;
+  }
+};
+const getColor = index => {
+  let arr = ["#56ebd3", "#fbacf6", "#9ee786", "#e4b5ff", "#c2e979", "#20d8fd", "#e8d25c", "#42edec", "#f3c46f", "#5cefba", "#e8de7a", "#7ee8c0", "#e8d98c", "#88e99a", "#cfdd73", "#8be8ad", "#dff799", "#b5eaa1", "#c2d681", "#b5e287"];
+  return arr[index % arr.length];
+};
+
 const EntityValue = props => {
   const [value, setValue] = useState(props.item.value);
   const [synonyms, setSynonyms] = useState(props.item.synonyms);
@@ -105,6 +116,9 @@ const EntityValue = props => {
     type: "text",
     defaultValue: value,
     placeholder: "Enter value",
+    onKeyDown: e => {
+      preventSubmit(e);
+    },
     onChange: e => {
       setValue(e.target.value);
     }
@@ -114,25 +128,30 @@ const EntityValue = props => {
     type: "text",
     defaultValue: value,
     placeholder: "Enter value",
+    onKeyDown: e => {
+      preventSubmit(e);
+    },
     onChange: e => {
       setValue(e.target.value);
     }
   })), /*#__PURE__*/React.createElement("div", {
     className: "field__synonyms"
-  }, makeSynonyms(synonyms, active), /*#__PURE__*/React.createElement("form", {
-    onSubmit: e => {
-      e.preventDefault();
-      handleNewSynonym(synonymInput);
-    }
-  }, /*#__PURE__*/React.createElement("input", {
+  }, makeSynonyms(synonyms, active), /*#__PURE__*/React.createElement("input", {
     className: "editor-input",
     type: "text",
     style: {
       marginLeft: '0.625rem'
     },
+    onKeyDown: e => {
+      if (e.keyCode == 13) {
+        handleNewSynonym(synonymInput);
+      }
+
+      preventSubmit(e);
+    },
     ref: synonymInput,
     placeholder: "Enter synonym"
-  }))), /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "field__actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn--remove btn--remove--main",
@@ -246,22 +265,21 @@ function EntityDetails(props) {
       className: "margin--30--large"
     }, /*#__PURE__*/React.createElement("h3", {
       className: "margin--10--large"
-    }, "Entity name"), /*#__PURE__*/React.createElement("form", {
-      onSubmit: e => {
-        e.preventDefault();
-      }
-    }, /*#__PURE__*/React.createElement("input", {
+    }, "Entity name"), /*#__PURE__*/React.createElement("input", {
       type: "text",
       defaultValue: name ? name : '',
       placeholder: "Entity name",
       className: "editor-input input--item-name",
+      onKeyDown: e => {
+        preventSubmit(e);
+      },
       onChange: e => {
         let message = 'Entity names shall begin with alphabetic characters from a to Z. The entity name may contain multiple underscores per word. Entity names shall not contain any numbers at all or soecial characters other than undersocres.';
         let validate = validateInput(e.target, e.target.value, '^[A-Za-z](_*[A-Za-z])*_*$', message);
         setValid(validate);
         setName(e.target.value);
       }
-    }))), /*#__PURE__*/React.createElement("div", {
+    })), /*#__PURE__*/React.createElement("div", {
       className: "margin--50--large"
     }, /*#__PURE__*/React.createElement("h3", {
       className: "font--18--large margin--10--large"
@@ -271,32 +289,26 @@ function EntityDetails(props) {
       values: values,
       setValues: setValues,
       removeValue: removeValue
-    }), /*#__PURE__*/React.createElement("form", {
-      onSubmit: e => {
-        e.preventDefault();
-
-        if (newValue) {
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      className: "editor-input input--add-field",
+      placeholder: "Enter reference value",
+      onKeyDown: e => {
+        if (e.keyCode === 13) {
           addNewValue();
           setNewValue(null);
           valueInput.current.value = '';
         }
-      }
-    }, /*#__PURE__*/React.createElement("input", {
-      type: "text",
-      className: "editor-input input--add-field",
-      placeholder: "Enter reference value",
+
+        preventSubmit(e);
+      },
       onChange: e => setNewValue(e.target.value),
       ref: valueInput
-    })))))));
+    }))))));
   } else {
     return null;
   }
 }
-
-const getColor = index => {
-  let arr = ["#56ebd3", "#fbacf6", "#9ee786", "#e4b5ff", "#c2e979", "#20d8fd", "#e8d25c", "#42edec", "#f3c46f", "#5cefba", "#e8de7a", "#7ee8c0", "#e8d98c", "#88e99a", "#cfdd73", "#8be8ad", "#dff799", "#b5eaa1", "#c2d681", "#b5e287"];
-  return arr[index % arr.length];
-};
 
 function Modal(props) {
   const [entities, setEntities] = useState(props.entities);
@@ -376,6 +388,9 @@ function Modal(props) {
       options: entitiesNames,
       spaceRemovers: [],
       matchAny: true,
+      onKeyDown: e => {
+        preventSubmit(e);
+      },
       onChange: e => {
         filterEntities(e);
       },
@@ -410,8 +425,6 @@ class Input extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log(this.props.active, prevProps.active);
-
     if (this.props.active !== prevProps.active || this.props.active && !this.text.current.length) {
       this.text.current && this.text.current.focus();
     }
@@ -452,7 +465,6 @@ class Input extends React.Component {
 
       let parentPos = document.querySelector('.convo-details').getBoundingClientRect();
       let childPos = span.getBoundingClientRect();
-      console.log(parentPos, childPos);
       let relativePos = {
         top: childPos.top - parentPos.top,
         left: childPos.left - parentPos.left
@@ -542,7 +554,6 @@ const Utterance = props => {
     let term = props.data.model.filter(item => !item.type).map(item => item.text).join(' ');
     let types = props.data.model.filter(item => item.type);
     let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-    console.log(types, term.length);
 
     if (reg.test(term) && !invalidValues.length || types.length && !term.length) {
       setValid(true);
@@ -602,22 +613,19 @@ const Utterance = props => {
       let type = item.type;
       return /*#__PURE__*/React.createElement("li", {
         key: i
-      }, /*#__PURE__*/React.createElement("form", {
-        onSubmit: e => {
-          console.log(e);
-          e.preventDefault();
-        }
       }, /*#__PURE__*/React.createElement("input", {
         className: "editor-input",
         type: "text",
         defaultValue: slotValue,
+        number: true,
+        onKeyDown: e => preventSubmit(e),
         onChange: e => {
           let arr = [...data.utterances];
           arr[data.index].model[i].slot_value = e.target.value;
           data.setUtterances(arr);
         },
         placeholder: "Set parameter name"
-      })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
         className: "highlight",
         style: {
           background: item.color
@@ -677,7 +685,6 @@ const List = React.memo(function List(props) {
       }
     });
     arr = arr.filter(item => item);
-    console.log('arr', arr);
     let values = [...props.utterances];
     values[index] = {
       raw: arr.map(item => item.text).join(' '),
@@ -725,13 +732,10 @@ const List = React.memo(function List(props) {
 
     if (index !== -1) {
       arr.splice(index, 1);
-      console.log('new arr after delete', arr);
       props.setUtterances(arr);
       props.setActive(null);
     }
   };
-
-  console.log(selection);
 
   if (props.utterances) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("ul", null, makeItems(props.utterances)), /*#__PURE__*/React.createElement(Modal, {
@@ -822,49 +826,47 @@ function IntentDetails(props) {
       className: "margin--30--large"
     }, /*#__PURE__*/React.createElement("h3", {
       className: "margin--10--large"
-    }, "Intent name"), /*#__PURE__*/React.createElement("form", {
-      onSubmit: e => {
-        e.preventDefault();
-      }
-    }, /*#__PURE__*/React.createElement("input", {
+    }, "Intent name"), /*#__PURE__*/React.createElement("input", {
       "data-valid": `${nameValid}`,
       type: "text",
       defaultValue: name ? name : '',
       placeholder: "Intent name",
       className: "editor-input input--item-name",
+      onKeyDown: e => preventSubmit(e),
+      required: true,
       onChange: e => {
         let message = 'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
         let valid = validateInput(e.target, e.target.value, '^[A-Za-z](_?[A-Za-z])*_?$', message);
         setNameValid(valid);
         setName(e.target.value);
-      },
-      required: true
-    }))), /*#__PURE__*/React.createElement("div", {
+      }
+    })), /*#__PURE__*/React.createElement("div", {
       className: "margin--50--large"
     }, /*#__PURE__*/React.createElement("h3", {
       className: "margin--10--large"
     }, "Utterances"), /*#__PURE__*/React.createElement("div", {
       className: "margin--24--large"
-    }, /*#__PURE__*/React.createElement("form", {
-      onSubmit: e => {
-        e.preventDefault();
-
-        if (newExpression) {
-          addNewValue();
-          setNewExpression(null);
-          newExpressionInput.current.value = '';
-        }
-      }
     }, /*#__PURE__*/React.createElement("input", {
       type: "text",
       className: "editor-input input--add-field",
       placeholder: "Enter reference value",
+      onKeyDown: e => {
+        if (e.keyCode === 13) {
+          if (newExpression) {
+            addNewValue();
+            setNewExpression(null);
+            newExpressionInput.current.value = '';
+          }
+        }
+
+        preventSubmit(e);
+      },
       onChange: e => setNewExpression(e.target.value),
       ref: newExpressionInput,
       onFocus: () => {
         setActive(null);
       }
-    })), /*#__PURE__*/React.createElement(List, {
+    }), /*#__PURE__*/React.createElement(List, {
       addNewValue: addNewValue,
       active: active,
       setActive: setActive,

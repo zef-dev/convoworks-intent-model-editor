@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { IconTrash } from '../../assets/icon_trash.jsx';
+import { preventSubmit } from '../../helpers/common_constants.jsx';
 
 const EntityValue = (props) => {
 	const [value, setValue] = useState(props.item.value);
@@ -104,6 +105,9 @@ const EntityValue = (props) => {
 						type="text"
 						defaultValue={value}
 						placeholder="Enter value"
+						onKeyDown={(e) => {
+							preventSubmit(e);
+						}}
 						onChange={(e) => {
 							setValue(e.target.value);
 						}}
@@ -117,6 +121,9 @@ const EntityValue = (props) => {
 						type="text"
 						defaultValue={value}
 						placeholder="Enter value"
+						onKeyDown={(e) => {
+							preventSubmit(e);
+						}}
 						onChange={(e) => {
 							setValue(e.target.value);
 						}}
@@ -125,21 +132,19 @@ const EntityValue = (props) => {
 			</div>
 			<div className="field__synonyms">
 				{makeSynonyms(synonyms, active)}
-				<form
-					onSubmit={(e) => {
-						e.preventDefault();
-						handleNewSynonym(synonymInput);
+				<input
+					className="editor-input"
+					type="text"
+					style={{ marginLeft: '0.625rem' }}
+					onKeyDown={(e) => {
+						if (e.keyCode == 13) {
+							handleNewSynonym(synonymInput);
+						}
+						preventSubmit(e);
 					}}
-				>
-					<input
-						className="editor-input"
-						type="text"
-						style={{ marginLeft: '0.625rem' }}
-						ref={synonymInput}
-						placeholder="Enter synonym"
-					/>
-					{/* <input className="editor-input" type="submit" hidden={true} /> */}
-				</form>
+					ref={synonymInput}
+					placeholder="Enter synonym"
+				/>
 			</div>
 			<div className="field__actions">
 				<button

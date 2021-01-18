@@ -56,8 +56,6 @@ const List = React.memo(function List(props) {
 
 		arr = arr.filter((item) => item);
 
-		console.log('arr', arr);
-
 		let values = [ ...props.utterances ];
 		values[index] = { raw: arr.map((item) => item.text).join(' '), model: arr };
 		props.setUtterances(values);
@@ -97,13 +95,10 @@ const List = React.memo(function List(props) {
 		let arr = [ ...props.utterances ];
 		if (index !== -1) {
 			arr.splice(index, 1);
-			console.log('new arr after delete', arr);
 			props.setUtterances(arr);
 			props.setActive(null);
 		}
 	};
-
-	console.log(selection);
 
 	if (props.utterances) {
 		return (

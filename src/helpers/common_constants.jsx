@@ -8,6 +8,13 @@ export const getRandomColor = () => {
 	return color;
 };
 
+export const preventSubmit = (e) => {
+	if (e.keyCode == 13) {
+		e.preventDefault();
+		return false;
+	}
+}
+
 export const getColor = (index) => {
 	let arr = [
 		"#56ebd3",
