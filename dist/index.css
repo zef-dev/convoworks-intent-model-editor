@@ -1,4 +1,4 @@
-.convo-details {
+div.convo-details {
   position: relative;
   box-sizing: border-box;
   /* Config */
@@ -78,115 +78,115 @@
 # HIDE AND SHOW
 \*------------------------------------*/
   /* Modules */ }
-  .convo-details ul {
+  div.convo-details ul {
     padding: 0;
     margin: 0; }
-    .convo-details ul li {
+    div.convo-details ul li {
       padding: 0;
       margin: 0;
       list-style: none; }
-  .convo-details *,
-  .convo-details *:before,
-  .convo-details *:after {
+  div.convo-details *,
+  div.convo-details *:before,
+  div.convo-details *:after {
     box-sizing: inherit; }
-  .convo-details a {
+  div.convo-details a {
     text-decoration: none;
     color: #1a1a1a; }
-  .convo-details h1,
-  .convo-details h2,
-  .convo-details h3,
-  .convo-details h4,
-  .convo-details h5,
-  .convo-details h6 {
+  div.convo-details h1,
+  div.convo-details h2,
+  div.convo-details h3,
+  div.convo-details h4,
+  div.convo-details h5,
+  div.convo-details h6 {
     font-family: inherit;
     margin: 0;
     padding: 0;
     font-weight: 400; }
-  .convo-details h1 {
+  div.convo-details h1 {
     font-size: 28px;
     line-height: 1.43; }
     @media screen and (min-width: 640px) {
-      .convo-details h1 {
+      div.convo-details h1 {
         font-size: 32px;
         line-height: 1.43; } }
     @media screen and (min-width: 1024px) {
-      .convo-details h1 {
+      div.convo-details h1 {
         font-size: 48px;
         line-height: 1.33; } }
-  .convo-details h2 {
+  div.convo-details h2 {
     font-size: 22px;
     line-height: 1.52; }
     @media screen and (min-width: 640px) {
-      .convo-details h2 {
+      div.convo-details h2 {
         font-size: 24px;
         line-height: 1.52; } }
     @media screen and (min-width: 1024px) {
-      .convo-details h2 {
+      div.convo-details h2 {
         font-size: 32px;
         line-height: 1.2; } }
-  .convo-details h3 {
+  div.convo-details h3 {
     font-size: 16px;
     line-height: 1; }
-  .convo-details h4 {
+  div.convo-details h4 {
     font-size: 18px;
     line-height: 1.56; }
     @media screen and (min-width: 640px) {
-      .convo-details h4 {
+      div.convo-details h4 {
         font-size: 20px;
         line-height: 1.56; } }
     @media screen and (min-width: 1024px) {
-      .convo-details h4 {
+      div.convo-details h4 {
         font-size: 24px;
         line-height: 1; } }
-  .convo-details h5 {
+  div.convo-details h5 {
     font-size: 16px;
     line-height: 1.2; }
     @media screen and (min-width: 640px) {
-      .convo-details h5 {
+      div.convo-details h5 {
         font-size: 16px;
         line-height: 1.2; } }
     @media screen and (min-width: 1024px) {
-      .convo-details h5 {
+      div.convo-details h5 {
         font-size: 16px;
         line-height: 1.2; } }
     @media screen and (min-width: 1200px) {
-      .convo-details h5 {
+      div.convo-details h5 {
         font-size: 16px;
         line-height: 1.2; } }
     @media screen and (min-width: 1440px) {
-      .convo-details h5 {
+      div.convo-details h5 {
         font-size: 16px;
         line-height: 1.2; } }
-  .convo-details h6 {
+  div.convo-details h6 {
     font-size: 16px;
     line-height: 1.2; }
     @media screen and (min-width: 640px) {
-      .convo-details h6 {
+      div.convo-details h6 {
         font-size: 16px;
         line-height: 1.2; } }
     @media screen and (min-width: 1024px) {
-      .convo-details h6 {
+      div.convo-details h6 {
         font-size: 18px;
         line-height: 1.78; } }
-  .convo-details ul li {
+  div.convo-details ul li {
     list-style-type: none; }
-  .convo-details ol li {
+  div.convo-details ol li {
     list-style-type: none; }
-  .convo-details .bubble-items {
+  div.convo-details .bubble-items {
     padding: 0;
     margin: 0;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     margin-bottom: -16px; }
-    .convo-details .bubble-items li {
+    div.convo-details .bubble-items li {
       margin-bottom: 12px;
       margin-right: 12px; }
       @media only screen and (min-width: 1024px) {
-        .convo-details .bubble-items li {
+        div.convo-details .bubble-items li {
           margin-bottom: 16px;
           margin-right: 16px; } }
-  .convo-details .bubble-items__item {
+  div.convo-details .bubble-items__item {
     padding: 0 16px;
     border-radius: 16px;
     overflow: hidden;
@@ -196,10 +196,10 @@
     font-weight: 600;
     line-height: 2.29;
     height: 32px; }
-  .convo-details .spaced-list {
+  div.convo-details .spaced-list {
     padding: 0;
     margin: 0; }
-  .convo-details .spaced-list__item {
+  div.convo-details .spaced-list__item {
     display: flex;
     justify-content: space-between;
     margin-bottom: 8px;
@@ -207,446 +207,446 @@
     font-size: 14px;
     text-align: right; }
     @media only screen and (min-width: 1024px) {
-      .convo-details .spaced-list__item {
+      div.convo-details .spaced-list__item {
         margin-bottom: 12px;
         line-height: 2;
         font-size: 16px; } }
-    .convo-details .spaced-list__item:nth-last-child(1) {
+    div.convo-details .spaced-list__item:nth-last-child(1) {
       margin-bottom: 0; }
-  .convo-details a {
+  div.convo-details a {
     text-decoration: none; }
-  .convo-details p {
+  div.convo-details p {
     font-size: 16px;
     line-height: 1;
     font-family: inherit;
     margin-bottom: 24px; }
     @media screen and (min-width: 640px) {
-      .convo-details p {
+      div.convo-details p {
         font-size: 16px;
         line-height: 1; } }
     @media screen and (min-width: 1024px) {
-      .convo-details p {
+      div.convo-details p {
         font-size: 16px;
         line-height: 1; } }
     @media screen and (min-width: 1200px) {
-      .convo-details p {
+      div.convo-details p {
         font-size: 16px;
         line-height: 1; } }
     @media screen and (min-width: 1440px) {
-      .convo-details p {
+      div.convo-details p {
         font-size: 16px;
         line-height: 1; } }
-  .convo-details .font--18--large {
+  div.convo-details .font--18--large {
     font-size: 18px; }
-  .convo-details .light {
+  div.convo-details .light {
     font-weight: 300; }
-  .convo-details .medium {
+  div.convo-details .medium {
     font-weight: 500; }
-  .convo-details .semibold {
+  div.convo-details .semibold {
     font-weight: 600; }
-  .convo-details .bold {
+  div.convo-details .bold {
     font-weight: 700; }
-  .convo-details .extrabold {
+  div.convo-details .extrabold {
     font-weight: 800; }
-  .convo-details .heavy {
+  div.convo-details .heavy {
     font-weight: 900; }
-  .convo-details .font-style-italic {
+  div.convo-details .font-style-italic {
     font-style: italic; }
-  .convo-details .font-style-normal {
+  div.convo-details .font-style-normal {
     font-style: normal; }
-  .convo-details .color-primary {
+  div.convo-details .color-primary {
     color: #2f74ea; }
-  .convo-details .color-secondary {
+  div.convo-details .color-secondary {
     color: #00adbf; }
-  .convo-details .black {
+  div.convo-details .black {
     color: #1a1a1a; }
-  .convo-details .black--true {
+  div.convo-details .black--true {
     color: #000000; }
-  .convo-details .white {
+  div.convo-details .white {
     color: #fafafa; }
-  .convo-details .white--true {
+  div.convo-details .white--true {
     color: #ffffff; }
-  .convo-details .color-gray {
+  div.convo-details .color-gray {
     color: rgba(0, 0, 0, 0.65); }
-  .convo-details .color-gray--light {
+  div.convo-details .color-gray--light {
     color: rgba(0, 0, 0, 0.36); }
-  .convo-details .color-gray--ligher {
+  div.convo-details .color-gray--ligher {
     color: rgba(0, 0, 0, 0.1); }
-  .convo-details .color-gray--lightish {
+  div.convo-details .color-gray--lightish {
     color: rgba(26, 26, 26, 0.7); }
-  .convo-details .layout--editor-content {
+  div.convo-details .layout--editor-content {
     width: 100%;
     max-width: 730px; }
-  .convo-details .flex {
+  div.convo-details .flex {
     display: flex;
     align-items: center; }
-  .convo-details .flex--between {
+  div.convo-details .flex--between {
     justify-content: space-between; }
-  .convo-details .flex--center {
+  div.convo-details .flex--center {
     justify-content: center; }
-  .convo-details .no-wrap {
+  div.convo-details .no-wrap {
     flex-wrap: no-wrap; }
-  .convo-details .cell {
+  div.convo-details .cell {
     box-sizing: border-box;
     display: none;
     max-width: 100%; }
-  .convo-details .cell--1 {
+  div.convo-details .cell--1 {
     grid-column: auto/span 1;
     display: block;
     width: 100%; }
-  .convo-details .cell--2 {
+  div.convo-details .cell--2 {
     grid-column: auto/span 2;
     display: block;
     width: 100%; }
-  .convo-details .cell--3 {
+  div.convo-details .cell--3 {
     grid-column: auto/span 3;
     display: block;
     width: 100%; }
-  .convo-details .cell--4 {
+  div.convo-details .cell--4 {
     grid-column: auto/span 4;
     display: block;
     width: 100%; }
-  .convo-details .cell--5 {
+  div.convo-details .cell--5 {
     grid-column: auto/span 5;
     display: block;
     width: 100%; }
-  .convo-details .cell--6 {
+  div.convo-details .cell--6 {
     grid-column: auto/span 6;
     display: block;
     width: 100%; }
-  .convo-details .cell--7 {
+  div.convo-details .cell--7 {
     grid-column: auto/span 7;
     display: block;
     width: 100%; }
-  .convo-details .cell--8 {
+  div.convo-details .cell--8 {
     grid-column: auto/span 8;
     display: block;
     width: 100%; }
-  .convo-details .cell--9 {
+  div.convo-details .cell--9 {
     grid-column: auto/span 9;
     display: block;
     width: 100%; }
-  .convo-details .cell--10 {
+  div.convo-details .cell--10 {
     grid-column: auto/span 10;
     display: block;
     width: 100%; }
-  .convo-details .cell--11 {
+  div.convo-details .cell--11 {
     grid-column: auto/span 11;
     display: block;
     width: 100%; }
-  .convo-details .cell--12 {
+  div.convo-details .cell--12 {
     grid-column: auto/span 12;
     display: block;
     width: 100%; }
   @media only screen and (min-width: 0) {
-    .convo-details .cell--1--small {
+    div.convo-details .cell--1--small {
       grid-column: auto/span 1;
       display: block;
       width: 100%; }
-    .convo-details .cell--2--small {
+    div.convo-details .cell--2--small {
       grid-column: auto/span 2;
       display: block;
       width: 100%; }
-    .convo-details .cell--3--small {
+    div.convo-details .cell--3--small {
       grid-column: auto/span 3;
       display: block;
       width: 100%; }
-    .convo-details .cell--4--small {
+    div.convo-details .cell--4--small {
       grid-column: auto/span 4;
       display: block;
       width: 100%; }
-    .convo-details .cell--5--small {
+    div.convo-details .cell--5--small {
       grid-column: auto/span 5;
       display: block;
       width: 100%; }
-    .convo-details .cell--6--small {
+    div.convo-details .cell--6--small {
       grid-column: auto/span 6;
       display: block;
       width: 100%; }
-    .convo-details .cell--7--small {
+    div.convo-details .cell--7--small {
       grid-column: auto/span 7;
       display: block;
       width: 100%; }
-    .convo-details .cell--8--small {
+    div.convo-details .cell--8--small {
       grid-column: auto/span 8;
       display: block;
       width: 100%; }
-    .convo-details .cell--9--small {
+    div.convo-details .cell--9--small {
       grid-column: auto/span 9;
       display: block;
       width: 100%; }
-    .convo-details .cell--10--small {
+    div.convo-details .cell--10--small {
       grid-column: auto/span 10;
       display: block;
       width: 100%; }
-    .convo-details .cell--11--small {
+    div.convo-details .cell--11--small {
       grid-column: auto/span 11;
       display: block;
       width: 100%; }
-    .convo-details .cell--12--small {
+    div.convo-details .cell--12--small {
       grid-column: auto/span 12;
       display: block;
       width: 100%; } }
   @media only screen and (min-width: 640px) {
-    .convo-details .cell--1--medium {
+    div.convo-details .cell--1--medium {
       grid-column: auto/span 1;
       display: block;
       width: 100%; }
-    .convo-details .cell--2--medium {
+    div.convo-details .cell--2--medium {
       grid-column: auto/span 2;
       display: block;
       width: 100%; }
-    .convo-details .cell--3--medium {
+    div.convo-details .cell--3--medium {
       grid-column: auto/span 3;
       display: block;
       width: 100%; }
-    .convo-details .cell--4--medium {
+    div.convo-details .cell--4--medium {
       grid-column: auto/span 4;
       display: block;
       width: 100%; }
-    .convo-details .cell--5--medium {
+    div.convo-details .cell--5--medium {
       grid-column: auto/span 5;
       display: block;
       width: 100%; }
-    .convo-details .cell--6--medium {
+    div.convo-details .cell--6--medium {
       grid-column: auto/span 6;
       display: block;
       width: 100%; }
-    .convo-details .cell--7--medium {
+    div.convo-details .cell--7--medium {
       grid-column: auto/span 7;
       display: block;
       width: 100%; }
-    .convo-details .cell--8--medium {
+    div.convo-details .cell--8--medium {
       grid-column: auto/span 8;
       display: block;
       width: 100%; }
-    .convo-details .cell--9--medium {
+    div.convo-details .cell--9--medium {
       grid-column: auto/span 9;
       display: block;
       width: 100%; }
-    .convo-details .cell--10--medium {
+    div.convo-details .cell--10--medium {
       grid-column: auto/span 10;
       display: block;
       width: 100%; }
-    .convo-details .cell--11--medium {
+    div.convo-details .cell--11--medium {
       grid-column: auto/span 11;
       display: block;
       width: 100%; }
-    .convo-details .cell--12--medium {
+    div.convo-details .cell--12--medium {
       grid-column: auto/span 12;
       display: block;
       width: 100%; } }
   @media only screen and (min-width: 1024px) {
-    .convo-details .cell--1--large {
+    div.convo-details .cell--1--large {
       grid-column: auto/span 1;
       display: block;
       width: 100%; }
-    .convo-details .cell--2--large {
+    div.convo-details .cell--2--large {
       grid-column: auto/span 2;
       display: block;
       width: 100%; }
-    .convo-details .cell--3--large {
+    div.convo-details .cell--3--large {
       grid-column: auto/span 3;
       display: block;
       width: 100%; }
-    .convo-details .cell--4--large {
+    div.convo-details .cell--4--large {
       grid-column: auto/span 4;
       display: block;
       width: 100%; }
-    .convo-details .cell--5--large {
+    div.convo-details .cell--5--large {
       grid-column: auto/span 5;
       display: block;
       width: 100%; }
-    .convo-details .cell--6--large {
+    div.convo-details .cell--6--large {
       grid-column: auto/span 6;
       display: block;
       width: 100%; }
-    .convo-details .cell--7--large {
+    div.convo-details .cell--7--large {
       grid-column: auto/span 7;
       display: block;
       width: 100%; }
-    .convo-details .cell--8--large {
+    div.convo-details .cell--8--large {
       grid-column: auto/span 8;
       display: block;
       width: 100%; }
-    .convo-details .cell--9--large {
+    div.convo-details .cell--9--large {
       grid-column: auto/span 9;
       display: block;
       width: 100%; }
-    .convo-details .cell--10--large {
+    div.convo-details .cell--10--large {
       grid-column: auto/span 10;
       display: block;
       width: 100%; }
-    .convo-details .cell--11--large {
+    div.convo-details .cell--11--large {
       grid-column: auto/span 11;
       display: block;
       width: 100%; }
-    .convo-details .cell--12--large {
+    div.convo-details .cell--12--large {
       grid-column: auto/span 12;
       display: block;
       width: 100%; } }
   @media only screen and (min-width: 1200px) {
-    .convo-details .cell--1--xlarge {
+    div.convo-details .cell--1--xlarge {
       grid-column: auto/span 1;
       display: block;
       width: 100%; }
-    .convo-details .cell--2--xlarge {
+    div.convo-details .cell--2--xlarge {
       grid-column: auto/span 2;
       display: block;
       width: 100%; }
-    .convo-details .cell--3--xlarge {
+    div.convo-details .cell--3--xlarge {
       grid-column: auto/span 3;
       display: block;
       width: 100%; }
-    .convo-details .cell--4--xlarge {
+    div.convo-details .cell--4--xlarge {
       grid-column: auto/span 4;
       display: block;
       width: 100%; }
-    .convo-details .cell--5--xlarge {
+    div.convo-details .cell--5--xlarge {
       grid-column: auto/span 5;
       display: block;
       width: 100%; }
-    .convo-details .cell--6--xlarge {
+    div.convo-details .cell--6--xlarge {
       grid-column: auto/span 6;
       display: block;
       width: 100%; }
-    .convo-details .cell--7--xlarge {
+    div.convo-details .cell--7--xlarge {
       grid-column: auto/span 7;
       display: block;
       width: 100%; }
-    .convo-details .cell--8--xlarge {
+    div.convo-details .cell--8--xlarge {
       grid-column: auto/span 8;
       display: block;
       width: 100%; }
-    .convo-details .cell--9--xlarge {
+    div.convo-details .cell--9--xlarge {
       grid-column: auto/span 9;
       display: block;
       width: 100%; }
-    .convo-details .cell--10--xlarge {
+    div.convo-details .cell--10--xlarge {
       grid-column: auto/span 10;
       display: block;
       width: 100%; }
-    .convo-details .cell--11--xlarge {
+    div.convo-details .cell--11--xlarge {
       grid-column: auto/span 11;
       display: block;
       width: 100%; }
-    .convo-details .cell--12--xlarge {
+    div.convo-details .cell--12--xlarge {
       grid-column: auto/span 12;
       display: block;
       width: 100%; } }
   @media only screen and (min-width: 1440px) {
-    .convo-details .cell--1--xxlarge {
+    div.convo-details .cell--1--xxlarge {
       grid-column: auto/span 1;
       display: block;
       width: 100%; }
-    .convo-details .cell--2--xxlarge {
+    div.convo-details .cell--2--xxlarge {
       grid-column: auto/span 2;
       display: block;
       width: 100%; }
-    .convo-details .cell--3--xxlarge {
+    div.convo-details .cell--3--xxlarge {
       grid-column: auto/span 3;
       display: block;
       width: 100%; }
-    .convo-details .cell--4--xxlarge {
+    div.convo-details .cell--4--xxlarge {
       grid-column: auto/span 4;
       display: block;
       width: 100%; }
-    .convo-details .cell--5--xxlarge {
+    div.convo-details .cell--5--xxlarge {
       grid-column: auto/span 5;
       display: block;
       width: 100%; }
-    .convo-details .cell--6--xxlarge {
+    div.convo-details .cell--6--xxlarge {
       grid-column: auto/span 6;
       display: block;
       width: 100%; }
-    .convo-details .cell--7--xxlarge {
+    div.convo-details .cell--7--xxlarge {
       grid-column: auto/span 7;
       display: block;
       width: 100%; }
-    .convo-details .cell--8--xxlarge {
+    div.convo-details .cell--8--xxlarge {
       grid-column: auto/span 8;
       display: block;
       width: 100%; }
-    .convo-details .cell--9--xxlarge {
+    div.convo-details .cell--9--xxlarge {
       grid-column: auto/span 9;
       display: block;
       width: 100%; }
-    .convo-details .cell--10--xxlarge {
+    div.convo-details .cell--10--xxlarge {
       grid-column: auto/span 10;
       display: block;
       width: 100%; }
-    .convo-details .cell--11--xxlarge {
+    div.convo-details .cell--11--xxlarge {
       grid-column: auto/span 11;
       display: block;
       width: 100%; }
-    .convo-details .cell--12--xxlarge {
+    div.convo-details .cell--12--xxlarge {
       grid-column: auto/span 12;
       display: block;
       width: 100%; } }
-  .convo-details .grid {
+  div.convo-details .grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(auto, 1fr));
     width: 100%; }
     @media only screen and (min-width: 1024px) {
-      .convo-details .grid {
+      div.convo-details .grid {
         grid-template-columns: repeat(12, minmax(auto, 1fr));
         grid-column-gap: 24px; } }
-  .convo-details .margin--10--large {
+  div.convo-details .margin--10--large {
     margin-bottom: 10px; }
-  .convo-details .margin--20--large {
+  div.convo-details .margin--20--large {
     margin-bottom: 20px; }
-  .convo-details .margin--30--large {
+  div.convo-details .margin--30--large {
     margin-bottom: 30px; }
-  .convo-details .margin--40--large {
+  div.convo-details .margin--40--large {
     margin-bottom: 40px; }
   @media only screen and (min-width: 0) {
-    .convo-details .hide--small {
+    div.convo-details .hide--small {
       display: none; } }
   @media only screen and (min-width: 640px) {
-    .convo-details .hide--medium {
+    div.convo-details .hide--medium {
       display: none; } }
   @media only screen and (min-width: 1024px) {
-    .convo-details .hide--large {
+    div.convo-details .hide--large {
       display: none; } }
   @media only screen and (min-width: 1200px) {
-    .convo-details .hide--xlarge {
+    div.convo-details .hide--xlarge {
       display: none; } }
   @media only screen and (min-width: 1440px) {
-    .convo-details .hide--xxlarge {
+    div.convo-details .hide--xxlarge {
       display: none; } }
   @media only screen and (min-width: 0) {
-    .convo-details .show--small {
+    div.convo-details .show--small {
       display: block; } }
   @media only screen and (min-width: 640px) {
-    .convo-details .show--medium {
+    div.convo-details .show--medium {
       display: block; } }
   @media only screen and (min-width: 1024px) {
-    .convo-details .show--large {
+    div.convo-details .show--large {
       display: block; } }
   @media only screen and (min-width: 1200px) {
-    .convo-details .show--xlarge {
+    div.convo-details .show--xlarge {
       display: block; } }
   @media only screen and (min-width: 1440px) {
-    .convo-details .show--xxlarge {
+    div.convo-details .show--xxlarge {
       display: block; } }
-  .convo-details .editor {
+  div.convo-details .editor {
     display: flex;
     grid-gap: 24px;
     height: 100%;
     padding-top: 40px;
     padding-left: 138px;
     padding-right: 54px; }
-    .convo-details .editor > section {
+    div.convo-details .editor > section {
       padding-top: 24px; }
-    .convo-details .editor > section {
+    div.convo-details .editor > section {
       width: 100%; }
-  .convo-details .editor__header {
+  div.convo-details .editor__header {
     padding-bottom: 24px;
     margin-bottom: 24px;
     display: flex;
     align-items: center;
     justify-content: space-between; }
-  .convo-details .editor-wrapper {
+  div.convo-details .editor-wrapper {
     display: flex;
     grid-gap: 24px;
     height: 100%;
@@ -654,27 +654,27 @@
     padding-left: 138px;
     padding-right: 54px;
     width: 100%; }
-    .convo-details .editor-wrapper > section {
+    div.convo-details .editor-wrapper > section {
       padding-top: 24px; }
-    .convo-details .editor-wrapper > section {
+    div.convo-details .editor-wrapper > section {
       width: 100%; }
-  .convo-details input.editor-input {
+  div.convo-details input.editor-input {
     border: none;
     outline: none;
     background: transparent;
     font-size: 14px; }
-    .convo-details input.editor-input::-moz-placeholder {
+    div.convo-details input.editor-input::-moz-placeholder {
       opacity: 1;
       color: rgba(0, 0, 0, 0.36); }
-    .convo-details input.editor-input:-ms-input-placeholder {
+    div.convo-details input.editor-input:-ms-input-placeholder {
       opacity: 1;
       color: rgba(0, 0, 0, 0.36); }
-    .convo-details input.editor-input::placeholder {
+    div.convo-details input.editor-input::placeholder {
       opacity: 1;
       color: rgba(0, 0, 0, 0.36); }
-  .convo-details input--alert {
+  div.convo-details input--alert {
     border-color: #d9543e; }
-  .convo-details input.input--item-name {
+  div.convo-details input.input--item-name {
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -682,9 +682,9 @@
     font-size: 14px;
     height: 40px;
     width: 100%; }
-  .convo-details input[hidden] {
+  div.convo-details input[hidden] {
     display: none; }
-  .convo-details input.input--add-field {
+  div.convo-details input.input--add-field {
     height: 40px;
     margin-bottom: 20px;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -695,15 +695,15 @@
     background: transparent;
     width: 100%;
     padding: 8px 12px; }
-    .convo-details input.input--add-field:hover, .convo-details input.input--add-field:focus, .convo-details input.input--add-field:active {
+    div.convo-details input.input--add-field:hover, div.convo-details input.input--add-field:focus, div.convo-details input.input--add-field:active {
       border-color: #2f74ea; }
-  .convo-details input[data-valid="false"] {
+  div.convo-details input[data-valid="false"] {
     border-color: #d9543e; }
-  .convo-details .select {
+  div.convo-details .select {
     position: relative;
     padding: 0;
     border: none; }
-  .convo-details .select__list {
+  div.convo-details .select__list {
     position: absolute;
     top: 100%;
     left: 0;
@@ -719,13 +719,13 @@
     overflow: hidden;
     box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.14);
     font-size: 14px; }
-    .convo-details .select__list li {
+    div.convo-details .select__list li {
       padding: 10px;
       cursor: pointer;
       transition: 0.22s; }
-      .convo-details .select__list li:hover {
+      div.convo-details .select__list li:hover {
         background: rgba(0, 0, 0, 0.1); }
-  .convo-details .btn {
+  div.convo-details .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -735,13 +735,13 @@
     font-weight: 500;
     line-height: 1;
     height: 38px; }
-  .convo-details .btn--primary {
+  div.convo-details .btn--primary {
     background: #2f74ea;
     color: #ffffff;
     border: none;
     outline: none;
     border-radius: 8px; }
-  .convo-details .btn--remove {
+  div.convo-details .btn--remove {
     margin-left: auto;
     cursor: pointer;
     background: transparent;
@@ -753,13 +753,13 @@
     transition: 0.22s;
     opacity: 0.4;
     visibility: hidden; }
-    .convo-details .btn--remove svg path {
+    div.convo-details .btn--remove svg path {
       transition: 0.22s; }
-    .convo-details .btn--remove:hover {
+    div.convo-details .btn--remove:hover {
       opacity: 1; }
-      .convo-details .btn--remove:hover svg path {
+      div.convo-details .btn--remove:hover svg path {
         stroke: #d9543e; }
-  .convo-details .dropdown {
+  div.convo-details .dropdown {
     position: absolute;
     top: 100%;
     left: 0;
@@ -780,11 +780,11 @@
     border-radius: 12px;
     overflow: hidden;
     padding: 0 12px; }
-    .convo-details .dropdown--active {
+    div.convo-details .dropdown--active {
       pointer-events: all;
       visibility: visible;
       opacity: 1; }
-  .convo-details .dropdown__inner {
+  div.convo-details .dropdown__inner {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -793,7 +793,7 @@
     padding: 16px 0;
     padding-top: 2px;
     margin-bottom: 16px; }
-    .convo-details .dropdown__inner button {
+    div.convo-details .dropdown__inner button {
       background: transparent;
       border: none;
       outline: none;
@@ -805,22 +805,22 @@
       width: 100%;
       display: block;
       opacity: 0.85; }
-      .convo-details .dropdown__inner button:hover {
+      div.convo-details .dropdown__inner button:hover {
         color: #2f74ea; }
-  .convo-details .dropdown__search-wrap {
+  div.convo-details .dropdown__search-wrap {
     padding-bottom: 8px;
     padding: 10px 0; }
-  .convo-details .editor-input.dropdown__search {
+  div.convo-details .editor-input.dropdown__search {
     width: 100%;
     border: none;
     border: 1px solid rgba(26, 26, 26, 0.3);
     font-size: 14px;
     padding: 8px 12px;
     border-radius: 4px; }
-    .convo-details .editor-input.dropdown__search:focus, .convo-details .editor-input.dropdown__search:active {
+    div.convo-details .editor-input.dropdown__search:focus, div.convo-details .editor-input.dropdown__search:active {
       outline: none;
       border-color: #2f74ea; }
-  .convo-details .field {
+  div.convo-details .field {
     margin-bottom: 10px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -829,29 +829,29 @@
     align-items: center;
     position: relative;
     transition: 0.22s; }
-    .convo-details .field:hover {
+    div.convo-details .field:hover {
       border-color: rgba(47, 116, 234, 0.5); }
-      .convo-details .field:hover .btn--remove--main {
+      div.convo-details .field:hover .btn--remove--main {
         opacity: 0.4;
         visibility: visible; }
-    .convo-details .field--active:hover {
+    div.convo-details .field--active:hover {
       border-color: #2f74ea; }
-      .convo-details .field--active:hover .btn--remove--main {
+      div.convo-details .field--active:hover .btn--remove--main {
         opacity: 0.85; }
-    .convo-details .field--active .btn--remove--main {
+    div.convo-details .field--active .btn--remove--main {
       opacity: 0.85;
       visibility: visible; }
-    .convo-details .field--active .field__error {
+    div.convo-details .field--active .field__error {
       visibility: visible;
       opacity: 1; }
-    .convo-details .field--remove {
+    div.convo-details .field--remove {
       border-color: #d9543e;
       color: #d9543e; }
-    .convo-details .field .btn--remove:hover {
+    div.convo-details .field .btn--remove:hover {
       opacity: 1; }
-    .convo-details .field > div {
+    div.convo-details .field > div {
       height: 100%; }
-  .convo-details .field__error {
+  div.convo-details .field__error {
     position: absolute;
     top: 100%;
     left: 0;
@@ -868,13 +868,13 @@
     visibility: hidden;
     opacity: 0;
     z-index: 1; }
-  .convo-details .field--error {
+  div.convo-details .field--error {
     border-color: #d9543e; }
-    .convo-details .field--error.field--active {
+    div.convo-details .field--error.field--active {
       border-color: #d9543e; }
-      .convo-details .field--error.field--active:hover {
+      div.convo-details .field--error.field--active:hover {
         border-color: #d9543e; }
-  .convo-details .field--entity {
+  div.convo-details .field--entity {
     min-height: 40px;
     display: flex;
     align-items: center;
@@ -883,35 +883,35 @@
     line-height: 1;
     cursor: pointer;
     min-height: 42px; }
-    .convo-details .field--entity .field__value {
+    div.convo-details .field--entity .field__value {
       width: 25.00%; }
-    .convo-details .field--entity .field__value input {
+    div.convo-details .field--entity .field__value input {
       border: none; }
-  .convo-details .field--intent {
+  div.convo-details .field--intent {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     cursor: pointer;
     transition: 0.22s; }
-    .convo-details .field--intent .field__input {
+    div.convo-details .field--intent .field__input {
       pointer-events: none; }
-    .convo-details .field--intent.field--active .field__input {
+    div.convo-details .field--intent.field--active .field__input {
       pointer-events: all; }
-    .convo-details .field--intent .field__main {
+    div.convo-details .field--intent .field__main {
       width: 100%;
       display: flex;
       position: relative; }
-      .convo-details .field--intent .field__main .field__actions {
+      div.convo-details .field--intent .field__main .field__actions {
         position: absolute;
         right: 0;
         top: 0;
         bottom: 0;
         margin: auto;
         height: 100%; }
-    .convo-details .field--intent .field__input {
+    div.convo-details .field--intent .field__input {
       width: 100%;
       position: relative; }
-    .convo-details .field--intent .field__input > div {
+    div.convo-details .field--intent .field__input > div {
       padding: 10px 12px;
       cursor: text;
       white-space: pre-wrap;
@@ -925,15 +925,15 @@
       height: 40px;
       line-height: normal;
       outline: none; }
-      .convo-details .field--intent .field__input > div::-moz-selection, .convo-details .field--intent .field__input > div ::-moz-selection {
+      div.convo-details .field--intent .field__input > div::-moz-selection, div.convo-details .field--intent .field__input > div ::-moz-selection {
         color: #1a1a1a;
         background: rgba(244, 154, 3, 0.3); }
-      .convo-details .field--intent .field__input > div::selection,
-      .convo-details .field--intent .field__input > div ::-moz-selection,
-      .convo-details .field--intent .field__input > div ::selection {
+      div.convo-details .field--intent .field__input > div::selection,
+      div.convo-details .field--intent .field__input > div ::-moz-selection,
+      div.convo-details .field--intent .field__input > div ::selection {
         color: #1a1a1a;
         background: rgba(244, 154, 3, 0.3); }
-      .convo-details .field--intent .field__input > div * {
+      div.convo-details .field--intent .field__input > div * {
         white-space: inherit;
         word-wrap: inherit;
         word-break: inherit;
@@ -942,16 +942,16 @@
            -moz-user-select: none;
             -ms-user-select: none;
                 user-select: none; }
-      .convo-details .field--intent .field__input > div > div {
+      div.convo-details .field--intent .field__input > div > div {
         display: inline-block; }
-      .convo-details .field--intent .field__input > div span {
+      div.convo-details .field--intent .field__input > div span {
         padding: 1px; }
-      .convo-details .field--intent .field__input > div.error {
+      div.convo-details .field--intent .field__input > div.error {
         color: #d9543e; }
-    .convo-details .field--intent .model {
+    div.convo-details .field--intent .model {
       width: 100%; }
-      .convo-details .field--intent .model header,
-      .convo-details .field--intent .model li {
+      div.convo-details .field--intent .model header,
+      div.convo-details .field--intent .model li {
         display: grid;
         grid-template-columns: repeat(3, 33.3%);
         align-items: center;
@@ -959,7 +959,7 @@
         padding-left: 12px;
         padding-right: 12px;
         position: relative; }
-      .convo-details .field--intent .model header {
+      div.convo-details .field--intent .model header {
         height: 32px;
         line-height: 1;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
@@ -967,55 +967,55 @@
         text-transform: uppercase;
         color: rgba(0, 0, 0, 0.36);
         font-size: 12px; }
-      .convo-details .field--intent .model .btn--remove {
+      div.convo-details .field--intent .model .btn--remove {
         transform: scale(0.85); }
-      .convo-details .field--intent .model li {
+      div.convo-details .field--intent .model li {
         height: 40px; }
-        .convo-details .field--intent .model li:hover .btn--remove {
+        div.convo-details .field--intent .model li:hover .btn--remove {
           opacity: 0.35;
           visibility: visible; }
-      .convo-details .field--intent .model input {
+      div.convo-details .field--intent .model input {
         border: none;
         padding-right: 24px;
         height: 100%;
         font-size: inherit; }
-        .convo-details .field--intent .model input:focus {
+        div.convo-details .field--intent .model input:focus {
           outline: none; }
-    .convo-details .field--intent .field__actions {
+    div.convo-details .field--intent .field__actions {
       height: 100%; }
-  .convo-details .field--active {
+  div.convo-details .field--active {
     border: 1px solid #2f74ea;
     cursor: default; }
-    .convo-details .field--active:hover {
+    div.convo-details .field--active:hover {
       border: 1px solid #2f74ea; }
-  .convo-details .field--padded {
+  div.convo-details .field--padded {
     padding: 14px 12px; }
-  .convo-details .field--edit {
+  div.convo-details .field--edit {
     cursor: default;
     border-color: #2f74ea; }
-    .convo-details .field--edit .field__row {
+    div.convo-details .field--edit .field__row {
       padding-left: 12px;
       padding-right: 12px; }
-  .convo-details .field__inner {
+  div.convo-details .field__inner {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     font-size: 14px;
     line-height: 1; }
-  .convo-details .field__padded-wrapper {
+  div.convo-details .field__padded-wrapper {
     min-height: 40px;
     padding: 10px 12px;
     list-style: none;
     width: 100%; }
-  .convo-details .field__actions {
+  div.convo-details .field__actions {
     display: flex;
     align-items: center;
     position: absolute;
     top: 0;
     right: 0;
     z-index: 1; }
-    .convo-details .field__actions button {
+    div.convo-details .field__actions button {
       border: none;
       height: 100%;
       background: transparent;
@@ -1026,7 +1026,7 @@
       justify-content: center;
       align-items: center;
       cursor: pointer; }
-  .convo-details .field__synonyms {
+  div.convo-details .field__synonyms {
     display: inline-flex;
     align-items: center;
     display: flex;
@@ -1034,9 +1034,9 @@
     padding-right: 44px;
     margin: -4px 0 0 -4px;
     width: calc(100% + 4px); }
-    .convo-details .field__synonyms > * {
+    div.convo-details .field__synonyms > * {
       margin: 4px 0px 0px 4px; }
-  .convo-details .synonym {
+  div.convo-details .synonym {
     padding: 4px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 2px;
@@ -1047,11 +1047,11 @@
     display: flex;
     align-items: center;
     transition: 0.22s; }
-    .convo-details .synonym:hover {
+    div.convo-details .synonym:hover {
       border-color: #2f74ea; }
-      .convo-details .synonym:hover .synonym__remove {
+      div.convo-details .synonym:hover .synonym__remove {
         opacity: 1; }
-  .convo-details .synonym__remove {
+  div.convo-details .synonym__remove {
     display: flex;
     align-items: center;
     background: transparent;
@@ -1062,25 +1062,25 @@
     transform: translateY(1px);
     padding-left: 4px;
     transition: 0.22s; }
-    .convo-details .synonym__remove:focus {
+    div.convo-details .synonym__remove:focus {
       border: none;
       outline: none; }
-    .convo-details .synonym__remove:hover {
+    div.convo-details .synonym__remove:hover {
       cursor: pointer;
       -moz-columns: #d9543e;
            columns: #d9543e; }
-  .convo-details .field__value--primary {
+  div.convo-details .field__value--primary {
     height: 100%;
     width: 100%;
     display: flex;
     align-items: center;
     font-size: 14px; }
-  .convo-details .field__columns {
+  div.convo-details .field__columns {
     display: grid;
     grid-template-columns: repeat(3, 33.33%);
     width: 100%; }
-  .convo-details .highlight,
-  .convo-details mark {
+  div.convo-details .highlight,
+  div.convo-details mark {
     cursor: pointer;
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;
@@ -1097,6 +1097,6 @@
         -ms-user-select: none;
             user-select: none;
     margin: 0 1px; }
-    .convo-details .highlight:hover,
-    .convo-details mark:hover {
+    div.convo-details .highlight:hover,
+    div.convo-details mark:hover {
       outline: 1px solid #2f74ea; }
