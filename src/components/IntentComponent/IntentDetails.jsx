@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List as Utterances } from './intent_utterances.jsx';
+import { List as Utterances } from './IntentUtterances.jsx';
 import _ from 'lodash';
 import { useRef } from 'react';
 import { validateInput } from '../../helpers/validations.jsx';

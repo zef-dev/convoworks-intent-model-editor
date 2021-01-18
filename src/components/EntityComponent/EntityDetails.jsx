@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import EntityValues from './entity_values.jsx';
+import EntityValues from './EntityValues.jsx';
 import _ from 'lodash';
 import { useRef } from 'react';
 import { validateInput } from '../../helpers/validations.jsx';

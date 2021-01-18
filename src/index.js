@@ -1,6 +1,6 @@
 import React from 'react'
-import EntityDetails from './components/EntityComponent/entity_details'
-import IntentDetails from './components/IntentComponent/intent_details'
+import EntityDetails from './components/EntityComponent/EntityDetails'
+import IntentDetails from './components/IntentComponent/IntentDetails'
 import './styles.scss'
 
 export const IntentEditor = (props) => {

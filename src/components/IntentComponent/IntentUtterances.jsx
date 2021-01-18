@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getColor } from '../../helpers/common_constants.jsx';
-import { Modal } from './intent_modal.jsx';
-import Utterance from './utterance/utterance.jsx';
+import { Modal } from './IntentModal.jsx';
+import Utterance from './utterance/Utterance.jsx';
 
 const List = React.memo(function List(props) {
 	const [ modal, setModal ] = useState(false);

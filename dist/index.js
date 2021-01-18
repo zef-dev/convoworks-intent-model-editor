@@ -396,7 +396,7 @@ function Utterance(props) {
     return item.type;
   }).map(function (item) {
     return {
-      value: item.text
+      text: item.text
     };
   })),
       whitelist = _useState4[0],
@@ -407,15 +407,17 @@ function Utterance(props) {
     if (selection) {
       setTimeout(function () {
         var list = [].concat(whitelist);
+        console.log(list, list.filter(function (item) {
+          return selection.includes(item);
+        }));
         list.map(function (item, index) {
-          if (selection.text.includes(item.value) || item.value.includes(selection.text)) {
+          if (selection.includes(item.text) || item.text.includes(selection)) {
             list.splice(index, 1);
           }
         });
         list = [].concat(list, [{
-          value: selection.text
+          text: selection
         }]);
-        console.log(list);
         setWhitelist(list);
         setSelection(null);
       }, 1000);
@@ -464,17 +466,21 @@ function Utterance(props) {
         textRange.select();
       }
     }
+
+    if (sel.toString().length) {
+      setSelection(sel.toString());
+    }
   };
 
   if (props.data && raw) {
     var str = raw;
     whitelist.map(function (item) {
-      str = str.replace(item.value, "" + item.value);
+      str = str.replace(item.text, "" + item.text);
     });
     return /*#__PURE__*/React__default.createElement("div", {
       id: "input"
     }, /*#__PURE__*/React__default.createElement("div", null, whitelist.map(function (item) {
-      return /*#__PURE__*/React__default.createElement("small", null, " / ", item.value, "  ");
+      return /*#__PURE__*/React__default.createElement("small", null, " / ", item.text, "  ");
     })), /*#__PURE__*/React__default.createElement("div", {
       contentEditable: true,
       suppressContentEditableWarning: true,
@@ -484,7 +490,9 @@ function Utterance(props) {
       onKeyUp: function onKeyUp() {
         handleSelection();
       }
-    }, str));
+    }, str.split(' ').map(function (item) {
+      return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, item, "\xA0");
+    })));
   } else {
     return null;
   }

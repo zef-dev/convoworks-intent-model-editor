@@ -9,7 +9,7 @@ export default function Utterance(props) {
 	const [raw, setRaw] = useState(props.data.raw);
 	const [model, setModel] = useState(props.data.model);
 	const [selection, setSelection] = useState(null);
-	const [whitelist, setWhitelist] = useState(props.data.model.filter(item => item.type).map((item) => ({ value: item.text })));
+	const [whitelist, setWhitelist] = useState(props.data.model.filter(item => item.type).map((item) => ({ text: item.text })));
 
 	const input = useRef(null);
 
@@ -18,15 +18,15 @@ export default function Utterance(props) {
 			setTimeout(() => {
 				let list = [...whitelist];
 
+				console.log(list, list.filter(item => selection.includes(item)))
+
 				list.map((item, index) => {
-					if (selection.text.includes(item.value) || item.value.includes(selection.text)) {
+					if (selection.includes(item.text) || item.text.includes(selection)) {
 						list.splice(index, 1);
 					}
 				})
 
-				list = [...list, { value: selection.text }];
-
-				console.log(list);
+				list = [...list, { text: selection }];
 
 				setWhitelist(list);
 				setSelection(null);
@@ -79,6 +79,11 @@ export default function Utterance(props) {
 				textRange.select();
 			}
 		}
+
+		if (sel.toString().length) {
+			setSelection(sel.toString());
+		}
+
 	}
 
 	if (props.data && raw) {
@@ -86,18 +91,20 @@ export default function Utterance(props) {
 		let str = raw;
 
 		whitelist.map(item => {
-			str = str.replace(item.value, `${item.value}`)
+			str = str.replace(item.text, `${item.text}`)
 		})
 
 		return (
 			<div id="input" >
-				<div>{whitelist.map(item => <small> / {item.value}  </small>)}</div>
+				<div>{whitelist.map(item => <small> / {item.text}  </small>)}</div>
 				<div contentEditable={true} suppressContentEditableWarning={true} onClick={() => {
 					handleSelection()
 				}} onKeyUp={() => {
 					handleSelection()
 				}}>
-					{str}
+					{str.split(' ').map(item => {
+						return <React.Fragment>{item}&nbsp;</React.Fragment>
+					})}
 				</div>
 			</div>
 		);

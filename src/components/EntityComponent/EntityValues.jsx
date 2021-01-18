@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import EntityValue from './entity_value.jsx';
+import EntityValue from './EntityValue.jsx';
 
 function EntityValues(props) {
 	const [ activeValue, setActiveValue ] = useState(null);

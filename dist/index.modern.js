@@ -335,22 +335,22 @@ function Utterance(props) {
   const [model, setModel] = useState(props.data.model);
   const [selection, setSelection] = useState(null);
   const [whitelist, setWhitelist] = useState(props.data.model.filter(item => item.type).map(item => ({
-    value: item.text
+    text: item.text
   })));
   const input = useRef(null);
   useEffect(() => {
     if (selection) {
       setTimeout(() => {
         let list = [...whitelist];
+        console.log(list, list.filter(item => selection.includes(item)));
         list.map((item, index) => {
-          if (selection.text.includes(item.value) || item.value.includes(selection.text)) {
+          if (selection.includes(item.text) || item.text.includes(selection)) {
             list.splice(index, 1);
           }
         });
         list = [...list, {
-          value: selection.text
+          text: selection
         }];
-        console.log(list);
         setWhitelist(list);
         setSelection(null);
       }, 1000);
@@ -399,16 +399,20 @@ function Utterance(props) {
         textRange.select();
       }
     }
+
+    if (sel.toString().length) {
+      setSelection(sel.toString());
+    }
   };
 
   if (props.data && raw) {
     let str = raw;
     whitelist.map(item => {
-      str = str.replace(item.value, `${item.value}`);
+      str = str.replace(item.text, `${item.text}`);
     });
     return /*#__PURE__*/React.createElement("div", {
       id: "input"
-    }, /*#__PURE__*/React.createElement("div", null, whitelist.map(item => /*#__PURE__*/React.createElement("small", null, " / ", item.value, "  "))), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", null, whitelist.map(item => /*#__PURE__*/React.createElement("small", null, " / ", item.text, "  "))), /*#__PURE__*/React.createElement("div", {
       contentEditable: true,
       suppressContentEditableWarning: true,
       onClick: () => {
@@ -417,7 +421,9 @@ function Utterance(props) {
       onKeyUp: () => {
         handleSelection();
       }
-    }, str));
+    }, str.split(' ').map(item => {
+      return /*#__PURE__*/React.createElement(React.Fragment, null, item, "\xA0");
+    })));
   } else {
     return null;
   }
