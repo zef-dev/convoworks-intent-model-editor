@@ -7,11 +7,16 @@ import ContentEditable from 'react-contenteditable';
 
 export default function Utterance(props) {
 	const [raw, setRaw] = useState(props.data.raw);
+	const [innerText, setInnerText] = useState(null);
 	const [model, setModel] = useState(props.data.model);
 	const [selection, setSelection] = useState(null);
-	const [whitelist, setWhitelist] = useState(props.data.model.filter(item => item.type).map((item) => ({ text: item.text })));
+	const [whitelist, setWhitelist] = useState(props.data.model.filter(item => item.type).map((item) => ({ text: item.text, type: item.type, slot_value: item.slot_value })));
 
 	const input = useRef(null);
+
+	const isArrayEqual = function (x, y) {
+		return _(x).xorWith(y, _.isEqual).isEmpty();
+	};
 
 	useEffect(() => {
 		if (selection) {
@@ -26,13 +31,25 @@ export default function Utterance(props) {
 					}
 				})
 
-				list = [...list, { text: selection }];
+				list = [...list, { text: selection, type: '', slot_value: '' }];
 
 				setWhitelist(list);
 				setSelection(null);
 			}, 1000)
 		}
 	}, [selection]);
+
+	useEffect(() => {
+		let str = raw.replace(/\s+/g, " ").trim();
+		let regex = new RegExp(whitelist.map(item => item.text.replace(/\s+/g, " ").trim()).join("|"), "gi");
+
+		str = str.replace(regex, function (matched) {
+			return `[[${matched}]]`
+		});
+
+		setInnerText(str);
+
+	}, [whitelist])
 
 	const handleSelection = () => {
 		var sel;
@@ -97,15 +114,16 @@ export default function Utterance(props) {
 		return (
 			<div id="input" >
 				<div>{whitelist.map(item => <small> / {item.text}  </small>)}</div>
-				<div contentEditable={true} suppressContentEditableWarning={true} onClick={() => {
-					handleSelection()
-				}} onKeyUp={() => {
-					handleSelection()
-				}}>
-					{str.split(' ').map(item => {
-						return <React.Fragment>{item}&nbsp;</React.Fragment>
-					})}
-				</div>
+				<ContentEditable
+					innerRef={input}
+					html={innerText} // innerHTML of the editable div
+					disabled={false}
+					onMouseUp={() => {
+						handleSelection()
+					}} onKeyUp={() => {
+						handleSelection()
+					}}      // use true to disable editing
+				/>
 			</div>
 		);
 	} else {

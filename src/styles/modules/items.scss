@@ -353,6 +353,7 @@ mark {
     border: none;
     user-select: none;
     margin: 0 1px;
+    background: $color-highlight;
 
     &:hover {
         outline: 1px solid $color-primary;

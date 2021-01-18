@@ -1066,7 +1066,8 @@
        -moz-user-select: none;
         -ms-user-select: none;
             user-select: none;
-    margin: 0 1px; }
+    margin: 0 1px;
+    background: rgba(244, 154, 3, 0.3); }
     .convo-details .highlight:hover,
     .convo-details mark:hover {
       outline: 1px solid #2f74ea; }

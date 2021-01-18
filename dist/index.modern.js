@@ -6,7 +6,7 @@ import 'react-autocomplete-input/dist/bundle.css';
 import '@yaireo/tagify/dist/react.tagify';
 import '@yaireo/tagify/src/tagify.scss';
 import 'rangy';
-import 'react-contenteditable';
+import ContentEditable from 'react-contenteditable';
 
 function IconTrash() {
   return /*#__PURE__*/React.createElement("svg", {
@@ -332,12 +332,16 @@ function EntityDetails(props) {
 
 function Utterance(props) {
   const [raw, setRaw] = useState(props.data.raw);
+  const [innerText, setInnerText] = useState(null);
   const [model, setModel] = useState(props.data.model);
   const [selection, setSelection] = useState(null);
   const [whitelist, setWhitelist] = useState(props.data.model.filter(item => item.type).map(item => ({
-    text: item.text
+    text: item.text,
+    type: item.type,
+    slot_value: item.slot_value
   })));
   const input = useRef(null);
+
   useEffect(() => {
     if (selection) {
       setTimeout(() => {
@@ -349,13 +353,23 @@ function Utterance(props) {
           }
         });
         list = [...list, {
-          text: selection
+          text: selection,
+          type: '',
+          slot_value: ''
         }];
         setWhitelist(list);
         setSelection(null);
       }, 1000);
     }
   }, [selection]);
+  useEffect(() => {
+    let str = raw.replace(/\s+/g, " ").trim();
+    let regex = new RegExp(whitelist.map(item => item.text.replace(/\s+/g, " ").trim()).join("|"), "gi");
+    str = str.replace(regex, function (matched) {
+      return `[[${matched}]]`;
+    });
+    setInnerText(str);
+  }, [whitelist]);
 
   const handleSelection = () => {
     var sel;
@@ -412,18 +426,17 @@ function Utterance(props) {
     });
     return /*#__PURE__*/React.createElement("div", {
       id: "input"
-    }, /*#__PURE__*/React.createElement("div", null, whitelist.map(item => /*#__PURE__*/React.createElement("small", null, " / ", item.text, "  "))), /*#__PURE__*/React.createElement("div", {
-      contentEditable: true,
-      suppressContentEditableWarning: true,
-      onClick: () => {
+    }, /*#__PURE__*/React.createElement("div", null, whitelist.map(item => /*#__PURE__*/React.createElement("small", null, " / ", item.text, "  "))), /*#__PURE__*/React.createElement(ContentEditable, {
+      innerRef: input,
+      html: innerText,
+      disabled: false,
+      onMouseUp: () => {
         handleSelection();
       },
       onKeyUp: () => {
         handleSelection();
       }
-    }, str.split(' ').map(item => {
-      return /*#__PURE__*/React.createElement(React.Fragment, null, item, "\xA0");
-    })));
+    }));
   } else {
     return null;
   }

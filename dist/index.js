@@ -9,7 +9,7 @@ require('react-autocomplete-input/dist/bundle.css');
 require('@yaireo/tagify/dist/react.tagify');
 require('@yaireo/tagify/src/tagify.scss');
 require('rangy');
-require('react-contenteditable');
+var ContentEditable = _interopDefault(require('react-contenteditable'));
 
 function IconTrash() {
   return /*#__PURE__*/React__default.createElement("svg", {
@@ -386,23 +386,30 @@ function Utterance(props) {
   var _useState = React.useState(props.data.raw),
       raw = _useState[0];
 
-  var _useState2 = React.useState(props.data.model);
+  var _useState2 = React.useState(null),
+      innerText = _useState2[0],
+      setInnerText = _useState2[1];
 
-  var _useState3 = React.useState(null),
-      selection = _useState3[0],
-      setSelection = _useState3[1];
+  var _useState3 = React.useState(props.data.model);
 
-  var _useState4 = React.useState(props.data.model.filter(function (item) {
+  var _useState4 = React.useState(null),
+      selection = _useState4[0],
+      setSelection = _useState4[1];
+
+  var _useState5 = React.useState(props.data.model.filter(function (item) {
     return item.type;
   }).map(function (item) {
     return {
-      text: item.text
+      text: item.text,
+      type: item.type,
+      slot_value: item.slot_value
     };
   })),
-      whitelist = _useState4[0],
-      setWhitelist = _useState4[1];
+      whitelist = _useState5[0],
+      setWhitelist = _useState5[1];
 
   var input = React.useRef(null);
+
   React.useEffect(function () {
     if (selection) {
       setTimeout(function () {
@@ -416,13 +423,25 @@ function Utterance(props) {
           }
         });
         list = [].concat(list, [{
-          text: selection
+          text: selection,
+          type: '',
+          slot_value: ''
         }]);
         setWhitelist(list);
         setSelection(null);
       }, 1000);
     }
   }, [selection]);
+  React.useEffect(function () {
+    var str = raw.replace(/\s+/g, " ").trim();
+    var regex = new RegExp(whitelist.map(function (item) {
+      return item.text.replace(/\s+/g, " ").trim();
+    }).join("|"), "gi");
+    str = str.replace(regex, function (matched) {
+      return "[[" + matched + "]]";
+    });
+    setInnerText(str);
+  }, [whitelist]);
 
   var handleSelection = function handleSelection() {
     var sel;
@@ -481,18 +500,17 @@ function Utterance(props) {
       id: "input"
     }, /*#__PURE__*/React__default.createElement("div", null, whitelist.map(function (item) {
       return /*#__PURE__*/React__default.createElement("small", null, " / ", item.text, "  ");
-    })), /*#__PURE__*/React__default.createElement("div", {
-      contentEditable: true,
-      suppressContentEditableWarning: true,
-      onClick: function onClick() {
+    })), /*#__PURE__*/React__default.createElement(ContentEditable, {
+      innerRef: input,
+      html: innerText,
+      disabled: false,
+      onMouseUp: function onMouseUp() {
         handleSelection();
       },
       onKeyUp: function onKeyUp() {
         handleSelection();
       }
-    }, str.split(' ').map(function (item) {
-      return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, item, "\xA0");
-    })));
+    }));
   } else {
     return null;
   }
