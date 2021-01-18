@@ -5,7 +5,7 @@ import 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
 import '@yaireo/tagify/dist/react.tagify';
 import '@yaireo/tagify/src/tagify.scss';
-import rangy from 'rangy';
+import 'rangy';
 import 'react-contenteditable';
 
 function IconTrash() {
@@ -358,16 +358,46 @@ function Utterance(props) {
   }, [selection]);
 
   const handleSelection = () => {
-    let sel = rangy.getSelection();
+    var sel;
 
-    if (sel.toString().trim().length) {
-      let nodes = sel.getRangeAt(0).getNodes();
-      let nodeArray = Array.from(nodes).filter(node => node.nodeName === '#text').filter(node => node.textContent.trim().length);
-      let selectedString = nodeArray.map(node => node.textContent).join(' ');
-      setSelection({
-        text: selectedString,
-        nodes: nodeArray
-      });
+    if (window.getSelection && (sel = window.getSelection()).modify) {
+      sel = window.getSelection();
+
+      if (!sel.isCollapsed) {
+        var range = document.createRange();
+        range.setStart(sel.anchorNode, sel.anchorOffset);
+        range.setEnd(sel.focusNode, sel.focusOffset);
+        var backwards = range.collapsed;
+        range.detach();
+        var endNode = sel.focusNode,
+            endOffset = sel.focusOffset;
+        sel.collapse(sel.anchorNode, sel.anchorOffset);
+        var direction = [];
+
+        if (backwards) {
+          direction = ['backward', 'forward'];
+        } else {
+          direction = ['forward', 'backward'];
+        }
+
+        sel.modify("move", direction[0], "character");
+        sel.modify("move", direction[1], "word");
+        sel.extend(endNode, endOffset);
+        sel.modify("extend", direction[1], "character");
+        sel.modify("extend", direction[0], "word");
+      }
+    } else if ((sel = document.selection) && sel.type != "Control") {
+      var textRange = sel.createRange();
+
+      if (textRange.text) {
+        textRange.expand("word");
+
+        while (/\s$/.test(textRange.text)) {
+          textRange.moveEnd("character", -1);
+        }
+
+        textRange.select();
+      }
     }
   };
 
@@ -376,24 +406,18 @@ function Utterance(props) {
     whitelist.map(item => {
       str = str.replace(item.value, `${item.value}`);
     });
-    str = str.split(' ').map(item => {
-      return `<span>${item}</span>`;
-    }).join(' ');
     return /*#__PURE__*/React.createElement("div", {
-      id: "input",
-      onKeyUp: () => {
-        handleSelection();
-      },
-      onMouseUp: () => {
-        handleSelection();
-      }
+      id: "input"
     }, /*#__PURE__*/React.createElement("div", null, whitelist.map(item => /*#__PURE__*/React.createElement("small", null, " / ", item.value, "  "))), /*#__PURE__*/React.createElement("div", {
       contentEditable: true,
       suppressContentEditableWarning: true,
-      dangerouslySetInnerHTML: {
-        __html: str
+      onClick: () => {
+        handleSelection();
+      },
+      onKeyUp: () => {
+        handleSelection();
       }
-    }));
+    }, str));
   } else {
     return null;
   }
