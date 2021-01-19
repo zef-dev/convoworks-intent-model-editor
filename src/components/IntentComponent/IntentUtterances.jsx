@@ -33,7 +33,7 @@ const List = React.memo(function List(props) {
 
 	const makeItems = (items) => {
 		return items.map((item, index) => {
-			return <Utterance key={index} data={item} />;
+			return <Utterance key={index} data={item} index={index} />;
 		});
 	};
 

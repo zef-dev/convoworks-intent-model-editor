@@ -1,5 +1,5 @@
-.item {
-    margin-bottom: 0.625rem;
+.field {
+    margin-bottom: 10px;
     border: $border--gray-lighter;
     border-radius: $input-radius;
     //overflow: hidden;
@@ -32,7 +32,7 @@
             visibility: visible;
         }
 
-        .item__error {
+        .field__error {
             visibility: visible;
             opacity: 1;
         }
@@ -47,34 +47,34 @@
         opacity: 1;
     }
 
-    >div {
+    > div {
         height: 100%;
     }
 }
 
-.item__error {
+.field__error {
     position: absolute;
     top: 100%;
     left: 0;
-    transform: translateY(0.45rem);
+    transform: translateY(7.2px);
     line-height: 1.25;
-    font-size: 0.875rem;
+    font-size: 14px;
     margin: 0;
     border: none;
     background: $color-alert;
     color: $white;
     border-radius: $input-radius;
-    padding: 0.5rem 0.75rem;
+    padding: 8px 12px;
     transition: $transition-time;
     visibility: hidden;
     opacity: 0;
     z-index: 1;
 }
 
-.item--error {
+.field--error {
     border-color: $color-alert;
 
-    &.item--active {
+    &.field--active {
         border-color: $color-alert;
 
         &:hover {
@@ -83,39 +83,45 @@
     }
 }
 
-.item--entity {
+.field--entity {
     // height: $input-height;
     min-height: $input-height;
     display: flex;
     align-items: center;
-    padding: 0.5rem 0.75rem;
+    justify-content: flex-start;
+    padding: 8px 12px;
     line-height: 1;
     cursor: pointer;
+    min-height: 42px;
+
+    .field__value {
+        width: 25%;
+    }
+
+    .field__value input {
+        border: none;
+    }
 }
 
-.item--intent {
+.field--intent {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     cursor: pointer;
     transition: $transition-time;
 
-    .item__input {
-        pointer-events: none;
-    }
-
-    &.item--active {
-        .item__input {
+    &.field--active {
+        .field__input {
             pointer-events: all;
         }
     }
 
-    .item__main {
+    .field__main {
         width: 100%;
         display: flex;
         position: relative;
 
-        .item__buttons {
+        .field__actions {
             position: absolute;
             right: 0;
             top: 0;
@@ -125,13 +131,13 @@
         }
     }
 
-    .item__input {
+    .field__input {
         width: 100%;
         position: relative;
     }
 
-    .item__input>div {
-        padding: 0.625rem 0.75rem;
+    .field__input > div {
+        padding: 10px 12px;
         cursor: text;
         white-space: pre-wrap;
         white-space: -moz-pre-wrap;
@@ -140,7 +146,7 @@
         word-wrap: break-word;
         word-break: break-word;
         vertical-align: bottom;
-        caret-color: #2F74EA;
+        caret-color: #2f74ea;
         height: $input-height;
         line-height: normal;
         outline: none;
@@ -160,7 +166,7 @@
             user-select: none;
         }
 
-        >div {
+        > div {
             display: inline-block;
         }
 
@@ -182,23 +188,23 @@
             grid-template-columns: repeat(3, 33.3%);
             align-items: center;
             width: 100%;
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
+            padding-left: 12px;
+            padding-right: 12px;
             position: relative;
         }
 
         header {
-            height: 2rem;
+            height: 32px;
             line-height: 1;
             border-top: 1px solid $color-gray--lighter;
             border-bottom: 1px solid $color-gray--lighter;
             text-transform: uppercase;
             color: $color-gray--light;
-            font-size: 0.75rem;
+            font-size: 12px;
         }
 
         .btn--remove {
-            transform: scale(.85);
+            transform: scale(0.85);
         }
 
         li {
@@ -211,14 +217,25 @@
                 }
             }
         }
+
+        input {
+            border: none;
+            padding-right: 24px;
+            height: 100%;
+            font-size: inherit;
+
+            &:focus {
+                outline: none;
+            }
+        }
     }
 
-    .item__buttons {
+    .field__actions {
         height: 100%;
     }
 }
 
-.item--active {
+.field--active {
     border: 1px solid $color-primary;
     cursor: default;
 
@@ -227,39 +244,40 @@
     }
 }
 
-.item--padded {
-    padding: 0.875rem 0.75rem;
+.field--padded {
+    padding: 14px 12px;
 }
 
-.item--edit {
+.field--edit {
     cursor: default;
     border-color: $color-primary;
 
-    .item__inner {}
+    .field__inner {
+    }
 
-    .item__row {
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
+    .field__row {
+        padding-left: 12px;
+        padding-right: 12px;
     }
 }
 
-.item__inner {
+.field__inner {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    font-size: 0.875rem;
+    font-size: 14px;
     line-height: 1;
 }
 
-.item__padded-wrapper {
+.field__padded-wrapper {
     min-height: $input-height;
-    padding: 10px 0.75rem;
+    padding: 10px 12px;
     list-style: none;
     width: 100%;
 }
 
-.item__buttons {
+.field__actions {
     display: flex;
     align-items: center;
     position: absolute;
@@ -271,9 +289,9 @@
         border: none;
         height: 100%;
         background: transparent;
-        width: 2.375rem;
+        width: 38px;
         padding: 0;
-        padding: 0.625rem;
+        padding: 10px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -281,81 +299,107 @@
     }
 }
 
-.item__values {
-    display: flex;
+.field__synonyms {
+    display: inline-flex;
     align-items: center;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 0.625rem 0;
     display: flex;
     flex-wrap: wrap;
+    padding-right: 44px;
+    margin: -4px 0 0 -4px;
+    width: calc(100% + 4px);
 
-    >.synonym {
-        margin-right: 0.25rem;
+    > * {
+        margin: 4px 0px 0px 4px;
     }
 }
 
 .synonym {
-    padding: 0.25rem;
+    padding: 4px;
     border: $input-border;
-    border-radius: 0.125rem;
-    font-size: 0.875rem;
+    border-radius: 2px;
+    font-size: 14px;
     position: relative;
     white-space: nowrap;
     line-height: 100%;
     display: flex;
     align-items: center;
+    transition: $transition-time;
 
-    &--edit {
-        padding-right: 1.75rem;
+    &:hover {
+        border-color: $color-primary;
+
+        .synonym__remove {
+            opacity: 1;
+        }
     }
 }
-
 .synonym__remove {
     display: flex;
     align-items: center;
     background: transparent;
     border: none;
     padding: 0;
-    font-size: 0.875rem;
+    font-size: 14px;
     opacity: 0.5;
     transform: translateY(1px);
-    margin-left: 0.125rem;
+    padding-left: 4px;
+    transition: $transition-time;
+
+    &:focus {
+        border: none;
+        outline: none;
+    }
+
+    &:hover {
+        cursor: pointer;
+        columns: $color-alert;
+    }
 }
 
-.item__value--primary {
+.field__value--primary {
     height: 100%;
     width: 100%;
     display: flex;
     align-items: center;
-    font-size: 0.875rem;
+    font-size: 14px;
 }
 
-.item__columns {
+.field__columns {
     display: grid;
     grid-template-columns: repeat(3, 33.33%);
     width: 100%;
 }
 
+.taggable-text {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
 
-.highlight,
-mark {
-    cursor: pointer;
-    white-space: pre-wrap;
-    white-space: -moz-pre-wrap;
-    white-space: -pre-wrap;
-    white-space: -o-pre-wrap;
-    word-wrap: break-word;
-    word-break: break-word;
-    text-align: inherit;
-    padding: 0 !important;
-    margin: 0;
-    border: none;
-    user-select: none;
-    margin: 0 1px;
-    background: $color-highlight;
+.taggable-text__input,
+.taggable-text__tags {
+    position: absolute;
+    width: 100%;
+}
 
-    &:hover {
-        outline: 1px solid $color-primary;
+.taggable-text__tags {
+    color: transparent;
+    z-index: -1;
+
+    mark {
+        color: transparent;
+        animation-name: example;
+        display: inline-block;
+        animation-duration: 220ms;
+    }
+}
+
+@keyframes example {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
     }
 }
