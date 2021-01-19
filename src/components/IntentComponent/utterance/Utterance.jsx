@@ -35,7 +35,7 @@ export default function Utterance(props) {
 
 				setWhitelist(list);
 				setSelection(null);
-			}, 1000)
+			}, 660)
 		}
 	}, [selection]);
 
@@ -103,6 +103,42 @@ export default function Utterance(props) {
 
 	}
 
+	// generate a random color (in HSL format, which I like to use)
+	function getRandomColor() {
+		function rand(min, max) {
+			return min + Math.random() * (max - min);
+		}
+
+		var h = rand(1, 360) | 0,
+			s = rand(40, 70) | 0,
+			l = rand(65, 72) | 0;
+
+		return 'hsl(' + h + ',' + s + '%,' + l + '%)';
+	}
+
+	function transformTag(tagData) {
+		tagData.style = "--tag-bg:" + getRandomColor();
+
+		if (tagData.value.toLowerCase() == 'shit')
+			tagData.value = 's✲✲t'
+	}
+
+
+	const settings = {
+		mode: "mix",
+		pattern: /@/,
+		dropdown: {
+			enabled: 1,
+			position: "text"
+		},
+		transformTag: transformTag,
+		editTags: {
+			clicks: 1,              // single click to edit a tag
+			keepInvalid: false      // if after editing, tag is invalid, auto-revert
+		},
+		whitelist: whitelist
+	}
+
 	if (props.data && raw) {
 
 		let str = raw;
@@ -112,17 +148,22 @@ export default function Utterance(props) {
 		})
 
 		return (
-			<div id="input" >
-				<div>{whitelist.map(item => <small> / {item.text}  </small>)}</div>
-				<ContentEditable
+			<div className="item item--intent" id="input" onMouseUp={() => {
+				handleSelection()
+			}} onKeyUp={() => {
+				handleSelection()
+			}}>
+				{/* <div>{whitelist.map(item => <small> / {item.text}  </small>)}</div> */}
+				{/* <ContentEditable
 					innerRef={input}
 					html={innerText} // innerHTML of the editable div
 					disabled={false}
-					onMouseUp={() => {
-						handleSelection()
-					}} onKeyUp={() => {
-						handleSelection()
-					}}      // use true to disable editing
+					     // use true to disable editing
+				/> */}
+				<Tags
+					tagifyRef={input} // optional Ref object for the Tagify instance itself, to get access to  inner-methods
+					settings={settings}  // tagify settings object
+					value={innerText}
 				/>
 			</div>
 		);
