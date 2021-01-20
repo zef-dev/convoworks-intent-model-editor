@@ -884,7 +884,7 @@ div.convo-details {
     cursor: pointer;
     min-height: 42px; }
     div.convo-details .field--entity .field__value {
-      width: 25.00%; }
+      width: 25%; }
     div.convo-details .field--entity .field__value input {
       border: none; }
   div.convo-details .field--intent {
@@ -921,10 +921,14 @@ div.convo-details {
       word-wrap: break-word;
       word-break: break-word;
       vertical-align: bottom;
-      caret-color: #2F74EA;
+      caret-color: #2f74ea;
       height: 40px;
       line-height: normal;
-      outline: none; }
+      outline: none;
+      -webkit-user-select: text;
+         -moz-user-select: text;
+          -ms-user-select: text;
+              user-select: text; }
       div.convo-details .field--intent .field__input > div::-moz-selection, div.convo-details .field--intent .field__input > div ::-moz-selection {
         color: #1a1a1a;
         background: rgba(244, 154, 3, 0.3); }
@@ -933,19 +937,8 @@ div.convo-details {
       div.convo-details .field--intent .field__input > div ::selection {
         color: #1a1a1a;
         background: rgba(244, 154, 3, 0.3); }
-      div.convo-details .field--intent .field__input > div * {
-        white-space: inherit;
-        word-wrap: inherit;
-        word-break: inherit;
-        vertical-align: inherit;
-        -webkit-user-select: none;
-           -moz-user-select: none;
-            -ms-user-select: none;
-                user-select: none; }
       div.convo-details .field--intent .field__input > div > div {
         display: inline-block; }
-      div.convo-details .field--intent .field__input > div span {
-        padding: 1px; }
       div.convo-details .field--intent .field__input > div.error {
         color: #d9543e; }
     div.convo-details .field--intent .model {
@@ -1082,21 +1075,10 @@ div.convo-details {
   div.convo-details .highlight,
   div.convo-details mark {
     cursor: pointer;
+    padding: 1px 0;
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;
     white-space: -pre-wrap;
     white-space: -o-pre-wrap;
     word-wrap: break-word;
-    word-break: break-word;
-    text-align: inherit;
-    padding: 0 !important;
-    margin: 0;
-    border: none;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-    margin: 0 1px; }
-    div.convo-details .highlight:hover,
-    div.convo-details mark:hover {
-      outline: 1px solid #2f74ea; }
+    word-break: break-word; }

@@ -2,6 +2,7 @@ import { times } from 'lodash';
 import React from 'react';
 import ContentEditable from 'react-contenteditable';
 import reactHtmlParser from 'react-html-parser';
+import { stringToColor } from '../../../helpers/common_constants';
 
 class Input extends React.Component {
 	constructor(props) {
@@ -83,9 +84,9 @@ class Input extends React.Component {
 		if (this.props.model) {
 			let mappedModel = this.props.model.filter((item) => item.text.trim().length);
 
-			mappedModel = this.props.model.map((item, index) => {
+			mappedModel = this.props.model.map((item) => {
 				if (item.type) {
-					return `<span data-token="true" style="background:${item.color}" data-slot-value="${item.slot_value}" data-type="${item.type}" class="highlight">${item.text.trim()}</span>`;
+					return `<span data-token="true" style="background:${stringToColor(item.text.trim())}" data-slot-value="${item.slot_value}" data-type="${item.type}" class="highlight">${item.text.trim()}</span>`;
 				} else {
 					return item.text;
 				}
@@ -106,7 +107,7 @@ class Input extends React.Component {
 						<div className="field__input">
 							<ContentEditable
 								innerRef={this.text}
-								html={`${mappedModel.join(' ')}`}
+								html={`${mappedModel.join(' ')}&#65279;`}
 								onClick={(e) => {
 									if (e.target.getAttribute('data-token')) {
 										let parentPos = document.querySelector('.convo-details').getBoundingClientRect();

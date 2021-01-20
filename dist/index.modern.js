@@ -29,9 +29,25 @@ const preventSubmit = e => {
     return false;
   }
 };
-const getColor = index => {
-  let arr = ["#56ebd3", "#fbacf6", "#9ee786", "#e4b5ff", "#c2e979", "#20d8fd", "#e8d25c", "#42edec", "#f3c46f", "#5cefba", "#e8de7a", "#7ee8c0", "#e8d98c", "#88e99a", "#cfdd73", "#8be8ad", "#dff799", "#b5eaa1", "#c2d681", "#b5e287"];
-  return arr[index % arr.length];
+const stringToColor = value => {
+  return value.getHashCode().intToHSL();
+};
+
+String.prototype.getHashCode = function () {
+  var hash = 0;
+  if (this.length == 0) return hash;
+
+  for (var i = 0; i < this.length; i++) {
+    hash = this.charCodeAt(i) + ((hash << 5) - hash);
+    hash = hash & hash;
+  }
+
+  return hash;
+};
+
+Number.prototype.intToHSL = function () {
+  var shortened = this % 360;
+  return "hsl(" + shortened + ",100%,75%)";
 };
 
 const EntityValue = props => {
@@ -476,9 +492,9 @@ class Input extends React.Component {
   render() {
     if (this.props.model) {
       let mappedModel = this.props.model.filter(item => item.text.trim().length);
-      mappedModel = this.props.model.map((item, index) => {
+      mappedModel = this.props.model.map(item => {
         if (item.type) {
-          return `<span data-token="true" style="background:${item.color}" data-slot-value="${item.slot_value}" data-type="${item.type}" class="highlight">${item.text.trim()}</span>`;
+          return `<span data-token="true" style="background:${stringToColor(item.text.trim())}" data-slot-value="${item.slot_value}" data-type="${item.type}" class="highlight">${item.text.trim()}</span>`;
         } else {
           return item.text;
         }
@@ -498,7 +514,7 @@ class Input extends React.Component {
           className: "field__input"
         }, /*#__PURE__*/React.createElement(ContentEditable, {
           innerRef: this.text,
-          html: `${mappedModel.join(' ')}`,
+          html: `${mappedModel.join(' ')}&#65279;`,
           onClick: e => {
             if (e.target.getAttribute('data-token')) {
               let parentPos = document.querySelector('.convo-details').getBoundingClientRect();
@@ -705,7 +721,7 @@ const List = React.memo(function List(props) {
     return items.map((item, index) => {
       let model = item.model.map(val => {
         return { ...val,
-          color: getColor(val.text.length)
+          color: stringToColor(val.text)
         };
       });
       let data = {

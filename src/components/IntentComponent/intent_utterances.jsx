@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getColor } from '../../helpers/common_constants.jsx';
+import { stringToColor } from '../../helpers/common_constants.jsx';
 import { Modal } from './intent_modal.jsx';
 import Utterance from './utterance/utterance.jsx';
 
@@ -64,7 +64,7 @@ const List = React.memo(function List(props) {
 	const makeItems = (items) => {
 		return items.map((item, index) => {
 			let model = item.model.map((val) => {
-				return { ...val, color: getColor(val.text.length) };
+				return { ...val, color: stringToColor(val.text) };
 			});
 
 			let data = {

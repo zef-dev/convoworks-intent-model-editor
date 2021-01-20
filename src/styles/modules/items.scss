@@ -47,7 +47,7 @@
         opacity: 1;
     }
 
-    >div {
+    > div {
         height: 100%;
     }
 }
@@ -95,7 +95,7 @@
     min-height: 42px;
 
     .field__value {
-        width: 25.00%;
+        width: 25%;
     }
 
     .field__value input {
@@ -140,7 +140,7 @@
         position: relative;
     }
 
-    .field__input>div {
+    .field__input > div {
         padding: 10px 12px;
         cursor: text;
         white-space: pre-wrap;
@@ -150,10 +150,13 @@
         word-wrap: break-word;
         word-break: break-word;
         vertical-align: bottom;
-        caret-color: #2F74EA;
+        caret-color: #2f74ea;
         height: $input-height;
         line-height: normal;
         outline: none;
+
+        user-select: text;
+
 
         &::selection,
         ::-moz-selection,
@@ -162,20 +165,8 @@
             background: $color-highlight;
         }
 
-        * {
-            white-space: inherit;
-            word-wrap: inherit;
-            word-break: inherit;
-            vertical-align: inherit;
-            user-select: none;
-        }
-
-        >div {
+        > div {
             display: inline-block;
-        }
-
-        span {
-            padding: 1px;
         }
 
         &.error {
@@ -208,7 +199,7 @@
         }
 
         .btn--remove {
-            transform: scale(.85);
+            transform: scale(0.85);
         }
 
         li {
@@ -227,7 +218,7 @@
             padding-right: 24px;
             height: 100%;
             font-size: inherit;
-            
+
             &:focus {
                 outline: none;
             }
@@ -256,7 +247,8 @@
     cursor: default;
     border-color: $color-primary;
 
-    .field__inner {}
+    .field__inner {
+    }
 
     .field__row {
         padding-left: 12px;
@@ -311,7 +303,7 @@
     margin: -4px 0 0 -4px;
     width: calc(100% + 4px);
 
-    >* {
+    > * {
         margin: 4px 0px 0px 4px;
     }
 }
@@ -335,7 +327,6 @@
             opacity: 1;
         }
     }
-
 }
 .synonym__remove {
     display: flex;
@@ -374,24 +365,15 @@
     width: 100%;
 }
 
-
 .highlight,
 mark {
     cursor: pointer;
+    padding: 1px 0;
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;
     white-space: -pre-wrap;
     white-space: -o-pre-wrap;
     word-wrap: break-word;
     word-break: break-word;
-    text-align: inherit;
-    padding: 0 !important;
-    margin: 0;
-    border: none;
-    user-select: none;
-    margin: 0 1px;
-
-    &:hover {
-        outline: 1px solid $color-primary;
-    }
 }
+ 
