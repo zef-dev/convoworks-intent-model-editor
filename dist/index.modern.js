@@ -498,7 +498,7 @@ class Input extends React.Component {
           className: "field__input"
         }, /*#__PURE__*/React.createElement(ContentEditable, {
           innerRef: this.text,
-          html: `${mappedModel.join(' ')} `,
+          html: `${mappedModel.join(' ')}`,
           onClick: e => {
             if (e.target.getAttribute('data-token')) {
               let parentPos = document.querySelector('.convo-details').getBoundingClientRect();
@@ -550,15 +550,23 @@ const Utterance = props => {
   let data = props.data;
   useEffect(() => {
     let slotValues = props.data.model.map(item => item.slot_value).filter(item => item);
-    let invalidValues = slotValues.filter(item => !item.match(/^[A-Za-z](_*[A-Za-z/"/'/`/`/])*_*$/));
+    let invalidValues = slotValues.filter(item => !item.match(/^[A-Za-z](_*[A-Za-z])*_*$/));
     let term = props.data.model.filter(item => !item.type).map(item => item.text).join(' ');
     let types = props.data.model.filter(item => item.type);
     let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
 
-    if (reg.test(term) && !invalidValues.length || types.length && !term.length) {
-      setValid(true);
+    if (term.trim().length) {
+      if (reg.test(term) && !invalidValues.length) {
+        setValid(true);
+      } else {
+        setValid(false);
+      }
     } else {
-      setValid(false);
+      if (types.length && !invalidValues.length) {
+        setValid(true);
+      } else {
+        setValid(false);
+      }
     }
   }, [props.data.model]);
   return /*#__PURE__*/React.createElement("li", {

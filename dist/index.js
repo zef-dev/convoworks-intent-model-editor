@@ -590,7 +590,7 @@ var Input = /*#__PURE__*/function (_React$Component) {
           className: "field__input"
         }, /*#__PURE__*/React__default.createElement(ContentEditable, {
           innerRef: this.text,
-          html: mappedModel.join(' ') + " ",
+          html: "" + mappedModel.join(' '),
           onClick: function onClick(e) {
             if (e.target.getAttribute('data-token')) {
               var parentPos = document.querySelector('.convo-details').getBoundingClientRect();
@@ -656,7 +656,7 @@ var Utterance = function Utterance(props) {
       return item;
     });
     var invalidValues = slotValues.filter(function (item) {
-      return !item.match(/^[A-Za-z](_*[A-Za-z/"/'/`/`/])*_*$/);
+      return !item.match(/^[A-Za-z](_*[A-Za-z])*_*$/);
     });
     var term = props.data.model.filter(function (item) {
       return !item.type;
@@ -668,10 +668,18 @@ var Utterance = function Utterance(props) {
     });
     var reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
 
-    if (reg.test(term) && !invalidValues.length || types.length && !term.length) {
-      setValid(true);
+    if (term.trim().length) {
+      if (reg.test(term) && !invalidValues.length) {
+        setValid(true);
+      } else {
+        setValid(false);
+      }
     } else {
-      setValid(false);
+      if (types.length && !invalidValues.length) {
+        setValid(true);
+      } else {
+        setValid(false);
+      }
     }
   }, [props.data.model]);
   return /*#__PURE__*/React__default.createElement("li", {

@@ -106,7 +106,7 @@ class Input extends React.Component {
 						<div className="field__input">
 							<ContentEditable
 								innerRef={this.text}
-								html={`${mappedModel.join(' ')} `}
+								html={`${mappedModel.join(' ')}`}
 								onClick={(e) => {
 									if (e.target.getAttribute('data-token')) {
 										let parentPos = document.querySelector('.convo-details').getBoundingClientRect();
