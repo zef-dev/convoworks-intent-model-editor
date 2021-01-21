@@ -1,4 +1,3 @@
-import { times } from 'lodash';
 import React from 'react';
 import ContentEditable from 'react-contenteditable';
 import reactHtmlParser from 'react-html-parser';

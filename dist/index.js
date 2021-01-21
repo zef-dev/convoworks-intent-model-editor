@@ -766,7 +766,7 @@ var Utterance = function Utterance(props) {
           data.setUtterances(arr);
         },
         placeholder: "Set parameter name"
-      }), /*#__PURE__*/React__default.createElement("div", null, /*#__PURE__*/React__default.createElement("span", {
+      }), /*#__PURE__*/React__default.createElement("div", null, /*#__PURE__*/React__default.createElement("mark", {
         className: "highlight",
         style: {
           background: item.color

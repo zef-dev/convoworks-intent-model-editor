@@ -649,7 +649,7 @@ const Utterance = props => {
           data.setUtterances(arr);
         },
         placeholder: "Set parameter name"
-      }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("mark", {
         className: "highlight",
         style: {
           background: item.color

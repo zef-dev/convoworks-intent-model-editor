@@ -16,10 +16,10 @@
 	opacity: 0;
 	pointer-events: none;
 	visibility: hidden;
-	font-size: 14px;
-	border-radius: 12px;
+	font-size: 12px;
+	border-radius: 10px;
 	overflow: hidden;
-	padding: 0 12px;
+	padding: 0 10px;
 
 	&--active {
 		pointer-events: all;
@@ -44,7 +44,7 @@
 		outline: none;
 		text-align: left;
 		padding: 6px 0;
-		font-size: 14px;
+		font-size: 12px;
 		cursor: pointer;
 		transition: $transition-time;
 		width: 100%;
@@ -66,7 +66,7 @@
 	width: 100%;
 	border: none;
 	border: 1px solid rgba($black, 0.3);
-	font-size: 14px;
+	font-size: 12px;
 	padding: 8px 12px;
 	border-radius: 4px;
 

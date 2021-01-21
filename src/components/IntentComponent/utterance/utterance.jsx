@@ -114,9 +114,9 @@ const Utterance = (props) => {
 										placeholder="Set parameter name"
 									/>
 									<div>
-										<span className="highlight" style={{ background: item.color }}>
+										<mark className="highlight" style={{ background: item.color }}>
 											{type}
-										</span>
+										</mark>
 									</div>
 									<div>{item.text}</div>
 									<div className="field__actions">

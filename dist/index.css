@@ -776,10 +776,10 @@ div.convo-details {
     opacity: 0;
     pointer-events: none;
     visibility: hidden;
-    font-size: 14px;
-    border-radius: 12px;
+    font-size: 12px;
+    border-radius: 10px;
     overflow: hidden;
-    padding: 0 12px; }
+    padding: 0 10px; }
     div.convo-details .dropdown--active {
       pointer-events: all;
       visibility: visible;
@@ -799,7 +799,7 @@ div.convo-details {
       outline: none;
       text-align: left;
       padding: 6px 0;
-      font-size: 14px;
+      font-size: 12px;
       cursor: pointer;
       transition: 0.22s;
       width: 100%;
@@ -814,7 +814,7 @@ div.convo-details {
     width: 100%;
     border: none;
     border: 1px solid rgba(26, 26, 26, 0.3);
-    font-size: 14px;
+    font-size: 12px;
     padding: 8px 12px;
     border-radius: 4px; }
     div.convo-details .editor-input.dropdown__search:focus, div.convo-details .editor-input.dropdown__search:active {
@@ -921,7 +921,7 @@ div.convo-details {
       word-wrap: break-word;
       word-break: break-word;
       vertical-align: bottom;
-      caret-color: #2f74ea;
+      caret-color: #1a1a1a;
       height: 40px;
       line-height: normal;
       outline: none;
@@ -959,11 +959,14 @@ div.convo-details {
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         text-transform: uppercase;
         color: rgba(0, 0, 0, 0.36);
-        font-size: 12px; }
+        font-size: 10px;
+        letter-spacing: 0.5px;
+        font-weight: 500; }
       div.convo-details .field--intent .model .btn--remove {
         transform: scale(0.85); }
       div.convo-details .field--intent .model li {
-        height: 40px; }
+        height: 40px;
+        font-size: 14px; }
         div.convo-details .field--intent .model li:hover .btn--remove {
           opacity: 0.35;
           visibility: visible; }
@@ -1074,8 +1077,6 @@ div.convo-details {
     width: 100%; }
   div.convo-details .highlight,
   div.convo-details mark {
-    cursor: pointer;
-    padding: 1px 0;
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;
     white-space: -pre-wrap;
