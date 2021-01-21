@@ -431,20 +431,26 @@ var getCaretCharacterOffsetWithin = function getCaretCharacterOffsetWithin(eleme
 };
 
 function Utterance(props) {
-  var _useState = React.useState(props.data.raw),
-      raw = _useState[0];
+  var _useState = React.useState('');
 
-  var _useState2 = React.useState(null),
-      inputText = _useState2[0],
-      setInputText = _useState2[1];
+  var _useState2 = React.useState(false);
 
-  var _useState3 = React.useState(props.data.model);
+  var _useState3 = React.useState({
+    position: 0,
+    active: false
+  }),
+      modalState = _useState3[0],
+      setModalState = _useState3[1];
 
-  var _useState4 = React.useState(null),
-      selection = _useState4[0],
-      setSelection = _useState4[1];
+  var _useState4 = React.useState(null);
 
-  var _useState5 = React.useState(props.data.model.filter(function (item) {
+  var _useState5 = React.useState(props.data.model);
+
+  var _useState6 = React.useState(null),
+      selection = _useState6[0],
+      setSelection = _useState6[1];
+
+  var _useState7 = React.useState(props.data.model.filter(function (item) {
     return item.type;
   }).map(function (item) {
     return {
@@ -453,35 +459,23 @@ function Utterance(props) {
       slot_value: item.slot_value
     };
   })),
-      whitelist = _useState5[0],
-      setWhitelist = _useState5[1];
+      whitelist = _useState7[0],
+      setWhitelist = _useState7[1];
 
   var input = React.useRef('');
+  var modalRef = React.useRef('');
+  var tagsRef = React.useRef('');
+  var text = React.useRef('');
   var targetText = React.useRef('');
 
   React.useEffect(function () {
-    if (selection) {
-      setTimeout(function () {
-        var list = [].concat(whitelist);
-        list.map(function (item, index) {
-          if (selection.includes(item.text) || item.text.includes(selection)) {
-            list.splice(index, 1);
-          }
-        });
-        list = [].concat(list, [{
-          text: selection,
-          type: '',
-          slot_value: ''
-        }]);
-        setWhitelist(list);
-        setSelection(null);
-      }, 660);
-    }
-  }, [selection]);
-  React.useEffect(function () {
-    input.current = props.data.raw;
-    setInputText(props.data.raw);
+    text.current = props.data.raw;
   }, []);
+
+  var handleChange = function handleChange(evt) {
+    text.current = evt.target.value;
+    tagsRef.current.innerHTML = parseText(evt.target.value);
+  };
 
   function parseText(string) {
     if (string) {
@@ -495,6 +489,24 @@ function Utterance(props) {
       return str;
     }
   }
+
+  var tagSelection = function tagSelection() {
+    setTimeout(function () {
+      var list = [].concat(whitelist);
+      list.map(function (item, index) {
+        if (selection.includes(item.text) || item.text.includes(selection)) {
+          list.splice(index, 1);
+        }
+      });
+      list = [].concat(list, [{
+        text: selection,
+        type: '',
+        slot_value: ''
+      }]);
+      setWhitelist(list);
+      setSelection(null);
+    }, 220);
+  };
 
   var handleSelection = function handleSelection() {
     var sel;
@@ -541,44 +553,75 @@ function Utterance(props) {
 
     if (sel.toString().length) {
       setSelection(sel.toString());
+    } else {
+      setSelection(null);
     }
   };
 
-  if (props.data && raw) {
+  React.useEffect(function () {
+    var s = window.getSelection();
+    var oRange = s.getRangeAt(0);
+    var oRect = oRange.getBoundingClientRect();
+    setModalState({
+      position: oRect.x,
+      active: selection !== null
+    });
+  }, [selection]);
+
+  if (props.data) {
+    var modalStyles = {
+      position: 'absolute',
+      top: '100%',
+      transition: 'all 220ms ease-in-out',
+      visibility: modalState.active ? 'visible' : 'hidden',
+      opacity: modalState.active ? '1' : '0',
+      left: modalState.position
+    };
     return /*#__PURE__*/React__default.createElement("div", {
-      "class": "field field--intent"
+      "class": "field field--intent " + (props.active === props.index ? 'field--active' : ''),
+      onClick: function onClick() {
+        props.setActive(props.index);
+      }
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "field__main",
-      id: "input",
-      onMouseUp: function onMouseUp() {
-        handleSelection();
-      },
-      onKeyUp: function onKeyUp() {
-        handleSelection();
-      }
+      id: "input"
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "field__input"
     }, /*#__PURE__*/React__default.createElement("div", {
       "class": "taggable-text"
     }, /*#__PURE__*/React__default.createElement(ContentEditable, {
       className: "taggable-text__input",
-      html: input.current,
-      onChange: function onChange(e) {
-        input.current = e.target.value;
-        setInputText(e.target.value);
-      },
+      html: text.current,
+      onChange: handleChange,
       onKeyDown: function onKeyDown(e) {
         console.log(getCaretCharacterOffsetWithin(e.target));
       },
       onMouseUp: function onMouseUp(e) {
+        handleSelection();
         console.log(getCaretCharacterOffsetWithin(e.target));
+      },
+      onKeyUp: function onKeyUp(e) {
+        handleSelection();
       }
     }), /*#__PURE__*/React__default.createElement("div", {
+      ref: tagsRef,
       className: "taggable-text__tags",
-      dangerouslySetInnerHTML: {
-        __html: "" + parseText(inputText)
+      contentEditable: false
+    })))), /*#__PURE__*/React__default.createElement("div", null, whitelist.map(function (item) {
+      return /*#__PURE__*/React__default.createElement("div", null, item.text);
+    })), /*#__PURE__*/React__default.createElement("div", {
+      "class": "dropdown",
+      ref: modalRef,
+      style: modalStyles
+    }, /*#__PURE__*/React__default.createElement("div", {
+      "class": "dropdown__inner"
+    }, /*#__PURE__*/React__default.createElement("div", {
+      "class": "dropdown__selection"
+    }, "Selection: ", /*#__PURE__*/React__default.createElement("strong", null, selection))), /*#__PURE__*/React__default.createElement("button", {
+      onClick: function onClick() {
+        tagSelection();
       }
-    })))));
+    }, "TAG!")));
   } else {
     return null;
   }
@@ -596,6 +639,10 @@ var List = React__default.memo(function List(props) {
 
   var _useState5 = React.useState(null),
       setParamValues = _useState5[1];
+
+  var _useState6 = React.useState(null),
+      active = _useState6[0],
+      setActive = _useState6[1];
 
   React.useEffect(function () {
     var arr = props.utterances.map(function (item) {
@@ -621,7 +668,9 @@ var List = React__default.memo(function List(props) {
       return /*#__PURE__*/React__default.createElement(Utterance, {
         key: index,
         data: item,
-        index: index
+        index: index,
+        active: active,
+        setActive: setActive
       });
     });
   };

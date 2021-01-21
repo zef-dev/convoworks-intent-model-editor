@@ -7,7 +7,13 @@ import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor } from '../../../helpers/common_constants'
 
 export default function Utterance(props) {
-	const [raw, setRaw] = useState(props.data.raw)
+	const [raw, setRaw] = useState('');
+	const [state, setState] = useState(false);
+
+	const [modalState, setModalState] = useState({
+		position: 0,
+		active: false
+	});
 
 	const [inputText, setInputText] = useState(null)
 
@@ -23,7 +29,10 @@ export default function Utterance(props) {
 			}))
 	)
 
-	const input = useRef('')
+	const input = useRef('');
+	const modalRef = useRef('');
+	const tagsRef = useRef('');
+	const text = useRef('');
 	const targetText = useRef('')
 
 	const isArrayEqual = function (x, y) {
@@ -31,30 +40,13 @@ export default function Utterance(props) {
 	}
 
 	useEffect(() => {
-		if (selection) {
-			setTimeout(() => {
-				let list = [...whitelist]
-
-				//				console.log(list, list.filter(item => selection.includes(item)))
-
-				list.map((item, index) => {
-					if (selection.includes(item.text) || item.text.includes(selection)) {
-						list.splice(index, 1)
-					}
-				})
-
-				list = [...list, { text: selection, type: '', slot_value: '' }]
-
-				setWhitelist(list)
-				setSelection(null)
-			}, 660)
-		}
-	}, [selection])
-
-	useEffect(() => {
-		input.current = props.data.raw
-		setInputText(props.data.raw)
+		text.current = props.data.raw;
 	}, [])
+
+	const handleChange = evt => {
+		text.current = evt.target.value;
+		tagsRef.current.innerHTML = parseText(evt.target.value);
+	};
 
 	function parseText(string) {
 		if (string) {
@@ -72,6 +64,25 @@ export default function Utterance(props) {
 
 			return str
 		}
+	}
+
+	const tagSelection = () => {
+		setTimeout(() => {
+			let list = [...whitelist]
+
+			//				console.log(list, list.filter(item => selection.includes(item)))
+
+			list.map((item, index) => {
+				if (selection.includes(item.text) || item.text.includes(selection)) {
+					list.splice(index, 1)
+				}
+			})
+
+			list = [...list, { text: selection, type: '', slot_value: '' }]
+
+			setWhitelist(list);
+			setSelection(null);
+		}, 220)
 	}
 
 	const handleSelection = () => {
@@ -122,6 +133,8 @@ export default function Utterance(props) {
 
 		if (sel.toString().length) {
 			setSelection(sel.toString())
+		} else {
+			setSelection(null);
 		}
 	}
 
@@ -138,41 +151,69 @@ export default function Utterance(props) {
 		return 'hsl(' + h + ',' + s + '%,' + l + '%)'
 	}
 
-	if (props.data && raw) {
+	useEffect(() => {
+		let s = window.getSelection();
+		let oRange = s.getRangeAt(0); //get the text range
+		let oRect = oRange.getBoundingClientRect();
+
+		setModalState({
+			position: oRect.x,
+			active: selection !== null
+		})
+
+
+	}, [selection]);
+
+	if (props.data) {
+
+		let modalStyles = {
+			position: 'absolute',
+			top: '100%',
+			transition: 'all 220ms ease-in-out',
+			visibility: modalState.active ? 'visible' : 'hidden',
+			opacity: modalState.active ? '1' : '0',
+			left: modalState.position
+		}
+
 		return (
-			<div class='field field--intent'>
+			<div class={`field field--intent ${props.active === props.index ? 'field--active' : ''}`} onClick={() => {
+				props.setActive(props.index)
+			}}>
 				<div
 					className='field__main'
 					id='input'
-					onMouseUp={() => {
-						handleSelection()
-					}}
-					onKeyUp={() => {
-						handleSelection()
-					}}
 				>
 					<div className='field__input'>
 						<div class='taggable-text'>
 							<ContentEditable
 								className='taggable-text__input'
-								html={input.current}
-								onChange={(e) => {
-									input.current = e.target.value
-									setInputText(e.target.value)
-								}}
+								html={text.current}
+								onChange={handleChange}
 								onKeyDown={(e) => {
 									console.log(getCaretCharacterOffsetWithin(e.target))
 								}}
 								onMouseUp={(e) => {
+									handleSelection()
 									console.log(getCaretCharacterOffsetWithin(e.target))
 								}}
+								onKeyUp={(e) => {
+									handleSelection();
+								}}
 							/>
-							<div
-								className='taggable-text__tags'
-								dangerouslySetInnerHTML={{ __html: `${parseText(inputText)}` }}
-							/>
+							<div ref={tagsRef} className="taggable-text__tags" contentEditable={false} />
 						</div>
 					</div>
+				</div>
+				<div>
+					{whitelist.map(item => {
+						return (<div>
+							{item.text}
+						</div>)
+					})}
+				</div>
+				<div class="dropdown" ref={modalRef} style={modalStyles}>
+					<div class="dropdown__inner"><div class="dropdown__selection">Selection: <strong>{selection}</strong></div></div>
+					<button onClick={() => {tagSelection()}}>TAG!</button>
 				</div>
 			</div>
 		)

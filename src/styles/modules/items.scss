@@ -46,10 +46,6 @@
     .btn--remove:hover {
         opacity: 1;
     }
-
-    > div {
-        height: 100%;
-    }
 }
 
 .field__error {
@@ -109,8 +105,11 @@
     align-items: flex-start;
     cursor: pointer;
     transition: $transition-time;
+    position: relative;
 
     &.field--active {
+        z-index: 5;
+
         .field__input {
             pointer-events: all;
         }
@@ -139,40 +138,10 @@
     .field__input > div {
         padding: 10px 12px;
         cursor: text;
-        white-space: pre-wrap;
-        white-space: -moz-pre-wrap;
-        white-space: -pre-wrap;
-        white-space: -o-pre-wrap;
-        word-wrap: break-word;
-        word-break: break-word;
-        vertical-align: bottom;
-        caret-color: #2f74ea;
+        caret-color: $black;
         height: $input-height;
         line-height: normal;
         outline: none;
-
-        &::selection,
-        ::-moz-selection,
-        ::selection {
-            color: $black;
-            background: $color-highlight;
-        }
-
-        * {
-            white-space: inherit;
-            word-wrap: inherit;
-            word-break: inherit;
-            vertical-align: inherit;
-            user-select: none;
-        }
-
-        > div {
-            display: inline-block;
-        }
-
-        span {
-            padding: 1px;
-        }
 
         &.error {
             color: $color-alert;
@@ -238,6 +207,7 @@
 .field--active {
     border: 1px solid $color-primary;
     cursor: default;
+    z-index: 2;
 
     &:hover {
         border: 1px solid $color-primary;

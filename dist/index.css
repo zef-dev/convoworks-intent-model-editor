@@ -763,18 +763,15 @@
     position: absolute;
     top: 100%;
     left: 0;
-    bottom: 0;
-    right: 0;
     display: flex;
     flex-direction: column;
     width: 18rem;
     height: 18.75rem;
     background: #ffffff;
     box-shadow: 0 0.125rem 0.375rem 0 rgba(0, 0, 0, 0.2);
-    z-index: 10;
+    z-index: 99;
     transition: 0.22s;
     opacity: 0;
-    pointer-events: none;
     visibility: hidden;
     font-size: 0.875rem;
     border-radius: 0.75rem;
@@ -843,8 +840,6 @@
       color: #d9543e; }
     .convo-details .field .btn--remove:hover {
       opacity: 1; }
-    .convo-details .field > div {
-      height: 100%; }
   .convo-details .field__error {
     position: absolute;
     top: 100%;
@@ -886,9 +881,12 @@
     justify-content: flex-start;
     align-items: flex-start;
     cursor: pointer;
-    transition: 0.22s; }
-    .convo-details .field--intent.field--active .field__input {
-      pointer-events: all; }
+    transition: 0.22s;
+    position: relative; }
+    .convo-details .field--intent.field--active {
+      z-index: 5; }
+      .convo-details .field--intent.field--active .field__input {
+        pointer-events: all; }
     .convo-details .field--intent .field__main {
       width: 100%;
       display: flex;
@@ -906,38 +904,10 @@
     .convo-details .field--intent .field__input > div {
       padding: 10px 12px;
       cursor: text;
-      white-space: pre-wrap;
-      white-space: -moz-pre-wrap;
-      white-space: -pre-wrap;
-      white-space: -o-pre-wrap;
-      word-wrap: break-word;
-      word-break: break-word;
-      vertical-align: bottom;
-      caret-color: #2f74ea;
+      caret-color: #1a1a1a;
       height: 2.5rem;
       line-height: normal;
       outline: none; }
-      .convo-details .field--intent .field__input > div::-moz-selection, .convo-details .field--intent .field__input > div ::-moz-selection {
-        color: #1a1a1a;
-        background: rgba(244, 154, 3, 0.3); }
-      .convo-details .field--intent .field__input > div::selection,
-      .convo-details .field--intent .field__input > div ::-moz-selection,
-      .convo-details .field--intent .field__input > div ::selection {
-        color: #1a1a1a;
-        background: rgba(244, 154, 3, 0.3); }
-      .convo-details .field--intent .field__input > div * {
-        white-space: inherit;
-        word-wrap: inherit;
-        word-break: inherit;
-        vertical-align: inherit;
-        -webkit-user-select: none;
-           -moz-user-select: none;
-            -ms-user-select: none;
-                user-select: none; }
-      .convo-details .field--intent .field__input > div > div {
-        display: inline-block; }
-      .convo-details .field--intent .field__input > div span {
-        padding: 1px; }
       .convo-details .field--intent .field__input > div.error {
         color: #d9543e; }
     .convo-details .field--intent .model {
@@ -977,7 +947,8 @@
       height: 100%; }
   .convo-details .field--active {
     border: 1px solid #2f74ea;
-    cursor: default; }
+    cursor: default;
+    z-index: 2; }
     .convo-details .field--active:hover {
       border: 1px solid #2f74ea; }
   .convo-details .field--padded {

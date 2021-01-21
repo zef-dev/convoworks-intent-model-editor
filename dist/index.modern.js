@@ -379,7 +379,12 @@ const getCaretCharacterOffsetWithin = element => {
 };
 
 function Utterance(props) {
-  const [raw, setRaw] = useState(props.data.raw);
+  const [raw, setRaw] = useState('');
+  const [state, setState] = useState(false);
+  const [modalState, setModalState] = useState({
+    position: 0,
+    active: false
+  });
   const [inputText, setInputText] = useState(null);
   const [model, setModel] = useState(props.data.model);
   const [selection, setSelection] = useState(null);
@@ -389,31 +394,19 @@ function Utterance(props) {
     slot_value: item.slot_value
   })));
   const input = useRef('');
+  const modalRef = useRef('');
+  const tagsRef = useRef('');
+  const text = useRef('');
   const targetText = useRef('');
 
   useEffect(() => {
-    if (selection) {
-      setTimeout(() => {
-        let list = [...whitelist];
-        list.map((item, index) => {
-          if (selection.includes(item.text) || item.text.includes(selection)) {
-            list.splice(index, 1);
-          }
-        });
-        list = [...list, {
-          text: selection,
-          type: '',
-          slot_value: ''
-        }];
-        setWhitelist(list);
-        setSelection(null);
-      }, 660);
-    }
-  }, [selection]);
-  useEffect(() => {
-    input.current = props.data.raw;
-    setInputText(props.data.raw);
+    text.current = props.data.raw;
   }, []);
+
+  const handleChange = evt => {
+    text.current = evt.target.value;
+    tagsRef.current.innerHTML = parseText(evt.target.value);
+  };
 
   function parseText(string) {
     if (string) {
@@ -425,6 +418,24 @@ function Utterance(props) {
       return str;
     }
   }
+
+  const tagSelection = () => {
+    setTimeout(() => {
+      let list = [...whitelist];
+      list.map((item, index) => {
+        if (selection.includes(item.text) || item.text.includes(selection)) {
+          list.splice(index, 1);
+        }
+      });
+      list = [...list, {
+        text: selection,
+        type: '',
+        slot_value: ''
+      }];
+      setWhitelist(list);
+      setSelection(null);
+    }, 220);
+  };
 
   const handleSelection = () => {
     var sel;
@@ -471,44 +482,75 @@ function Utterance(props) {
 
     if (sel.toString().length) {
       setSelection(sel.toString());
+    } else {
+      setSelection(null);
     }
   };
 
-  if (props.data && raw) {
+  useEffect(() => {
+    let s = window.getSelection();
+    let oRange = s.getRangeAt(0);
+    let oRect = oRange.getBoundingClientRect();
+    setModalState({
+      position: oRect.x,
+      active: selection !== null
+    });
+  }, [selection]);
+
+  if (props.data) {
+    let modalStyles = {
+      position: 'absolute',
+      top: '100%',
+      transition: 'all 220ms ease-in-out',
+      visibility: modalState.active ? 'visible' : 'hidden',
+      opacity: modalState.active ? '1' : '0',
+      left: modalState.position
+    };
     return /*#__PURE__*/React.createElement("div", {
-      class: "field field--intent"
+      class: `field field--intent ${props.active === props.index ? 'field--active' : ''}`,
+      onClick: () => {
+        props.setActive(props.index);
+      }
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__main",
-      id: "input",
-      onMouseUp: () => {
-        handleSelection();
-      },
-      onKeyUp: () => {
-        handleSelection();
-      }
+      id: "input"
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__input"
     }, /*#__PURE__*/React.createElement("div", {
       class: "taggable-text"
     }, /*#__PURE__*/React.createElement(ContentEditable, {
       className: "taggable-text__input",
-      html: input.current,
-      onChange: e => {
-        input.current = e.target.value;
-        setInputText(e.target.value);
-      },
+      html: text.current,
+      onChange: handleChange,
       onKeyDown: e => {
         console.log(getCaretCharacterOffsetWithin(e.target));
       },
       onMouseUp: e => {
+        handleSelection();
         console.log(getCaretCharacterOffsetWithin(e.target));
+      },
+      onKeyUp: e => {
+        handleSelection();
       }
     }), /*#__PURE__*/React.createElement("div", {
+      ref: tagsRef,
       className: "taggable-text__tags",
-      dangerouslySetInnerHTML: {
-        __html: `${parseText(inputText)}`
+      contentEditable: false
+    })))), /*#__PURE__*/React.createElement("div", null, whitelist.map(item => {
+      return /*#__PURE__*/React.createElement("div", null, item.text);
+    })), /*#__PURE__*/React.createElement("div", {
+      class: "dropdown",
+      ref: modalRef,
+      style: modalStyles
+    }, /*#__PURE__*/React.createElement("div", {
+      class: "dropdown__inner"
+    }, /*#__PURE__*/React.createElement("div", {
+      class: "dropdown__selection"
+    }, "Selection: ", /*#__PURE__*/React.createElement("strong", null, selection))), /*#__PURE__*/React.createElement("button", {
+      onClick: () => {
+        tagSelection();
       }
-    })))));
+    }, "TAG!")));
   } else {
     return null;
   }
@@ -520,6 +562,7 @@ const List = React.memo(function List(props) {
   const [selection, setSelection] = useState(null);
   const [update, setUpdate] = useState(false);
   const [paramValues, setParamValues] = useState(null);
+  const [active, setActive] = useState(null);
   useEffect(() => {
     let arr = props.utterances.map(item => item.model).flat().filter(item => item.slot_value).map(item => ({
       type: item.type,
@@ -534,7 +577,9 @@ const List = React.memo(function List(props) {
       return /*#__PURE__*/React.createElement(Utterance, {
         key: index,
         data: item,
-        index: index
+        index: index,
+        active: active,
+        setActive: setActive
       });
     });
   };
