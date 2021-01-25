@@ -11,7 +11,6 @@ function IntentDetails(props) {
 
   const [name, setName] = useState('');
   const [utterances, setUtterances] = useState([]);
-  const [active, setActive] = useState(null);
   const [newExpression, setNewExpression] = useState(null);
 
   const [valid, setValid] = useState(true);
@@ -35,16 +34,6 @@ function IntentDetails(props) {
     setUtterances(arr);
     setActive(0);
   }
-
-  const removeFromModel = (utteranceIndex, index) => {
-    let arr = [...utterances];
-    let model = arr[utteranceIndex].model;
-    model[index] = {
-      text: model[index].text,
-    };
-
-    setUtterances(arr);
-  };
 
   // check if data is passed in props
   useEffect(() => {
@@ -124,11 +113,8 @@ function IntentDetails(props) {
                 </form>
                 <Utterances
                   addNewValue={addNewValue}
-                  active={active}
-                  setActive={setActive}
                   utterances={utterances}
                   setUtterances={setUtterances}
-                  removeFromModel={removeFromModel}
                   entities={[entities, ...systemEntities]}
                   focusOnExpressionInput={focusOnExpressionInput}
                 />

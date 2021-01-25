@@ -135,72 +135,66 @@
         position: relative;
     }
 
-    .field__input > div {
-        padding: 10px 12px;
-        cursor: text;
-        caret-color: $black;
-        height: $input-height;
-        line-height: normal;
-        outline: none;
-
+    .field__input {
         &.error {
             color: $color-alert;
         }
     }
 
-    .model {
-        width: 100%;
-
-        header,
-        li {
-            display: grid;
-            grid-template-columns: repeat(3, 33.3%);
-            align-items: center;
-            width: 100%;
-            padding-left: 12px;
-            padding-right: 12px;
-            position: relative;
-        }
-
-        header {
-            height: 32px;
-            line-height: 1;
-            border-top: 1px solid $color-gray--lighter;
-            border-bottom: 1px solid $color-gray--lighter;
-            text-transform: uppercase;
-            color: $color-gray--light;
-            font-size: 12px;
-        }
-
-        .btn--remove {
-            transform: scale(0.85);
-        }
-
-        li {
-            height: $input-height;
-
-            &:hover {
-                .btn--remove {
-                    opacity: 0.35;
-                    visibility: visible;
-                }
-            }
-        }
-
-        input {
-            border: none;
-            padding-right: 24px;
-            height: 100%;
-            font-size: inherit;
-
-            &:focus {
-                outline: none;
-            }
-        }
-    }
-
     .field__actions {
         height: 100%;
+    }
+}
+
+.model-list {
+    width: 100%;
+    font-size: 12px;
+
+    .btn--remove {
+        transform: scale(0.85);
+    }
+}
+
+.model-list__header {
+    display: grid;
+    grid-template-columns: repeat(3, 33.3%);
+    align-items: center;
+    width: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+    position: relative;
+    font-size: inherit;
+    height: 32px;
+    line-height: 1;
+    border-top: 1px solid $color-gray--lighter;
+    border-bottom: 1px solid $color-gray--lighter;
+    text-transform: uppercase;
+    color: $color-gray--light;
+
+    strong {
+        font-weight: $font-weight--medium;
+    }
+}
+
+.model-list__item {
+    display: grid;
+    grid-template-columns: repeat(3, 33.3%);
+    align-items: center;
+    width: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+    line-height: 1.5;
+    padding: 12px;
+
+    input {
+        border: none;
+        padding-right: 24px;
+        height: 100%;
+        font-size: inherit;
+
+        &:focus {
+            outline: none;
+        }
     }
 }
 
@@ -345,6 +339,12 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+    padding: 10px 12px;
+    cursor: text;
+    caret-color: $black;
+    height: $input-height;
+    line-height: normal;
+    outline: none;
 }
 
 .taggable-text__input,

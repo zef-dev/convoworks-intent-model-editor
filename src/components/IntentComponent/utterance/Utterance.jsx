@@ -5,12 +5,13 @@ import rangy from 'rangy'
 import _, { debounce } from 'lodash'
 import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor } from '../../../helpers/common_constants'
+import Dropdown from '../Dropdown'
 
-export default function Utterance(props) {
+function Utterance(props) {
 	const [raw, setRaw] = useState('');
 	const [state, setState] = useState(false);
 
-	const [modalState, setModalState] = useState({
+	const [dropdownState, setDropdownState] = useState({
 		position: 0,
 		active: false
 	});
@@ -30,51 +31,88 @@ export default function Utterance(props) {
 	)
 
 	const input = useRef('');
-	const modalRef = useRef('');
-	const tagsRef = useRef('');
 	const text = useRef('');
 	const targetText = useRef('')
 
-	const isArrayEqual = function (x, y) {
-		return _(x).xorWith(y, _.isEqual).isEmpty()
-	}
-
 	useEffect(() => {
+		input.current.innerHTML = parseText(props.data.raw);
 		text.current = props.data.raw;
-	}, [])
+	}, []);
 
 	const handleChange = evt => {
-		text.current = evt.target.value;
-		tagsRef.current.innerHTML = parseText(evt.target.value);
+		if (evt.type === 'input') {
+			text.current = evt.currentTarget.textContent;
+		}
 	};
 
 	function parseText(string) {
 		if (string) {
-			let str = string.replace(/\s+/g, ' ').trim()
+			let str = string.replace(/\s+/g, ' ').trim();
+
 			let regex = new RegExp(
 				whitelist
 					.map((item) => item.text.replace(/\s+/g, ' ').trim())
 					.join('|'),
-				'gi'
+				'gi\s'
 			)
 
 			str = str.replace(regex, function (matched) {
 				return `<mark style="background:${stringToColor(matched)}">${matched}</mark>`
-			})
+			});
 
 			return str
 		}
 	}
 
-	const tagSelection = () => {
+	const tagSelection = (type, slot_value) => {
 		setTimeout(() => {
-			let list = [...whitelist]
 
-			//				console.log(list, list.filter(item => selection.includes(item)))
+
+			let list = [...whitelist];
+
+			let selectionPosition = {
+				from: text.current.indexOf(selection),
+				to: text.current.indexOf(selection) + selection.length
+			}
+
+			console.log(text.current)
 
 			list.map((item, index) => {
-				if (selection.includes(item.text) || item.text.includes(selection)) {
-					list.splice(index, 1)
+
+				let itemPosition = {
+					from: text.current.indexOf(item.text),
+					to: text.current.indexOf(item.text) + item.text.length
+				}
+
+				console.log('item: ', item.text, itemPosition, 'selection: ', selectionPosition);
+
+				switch (true) {
+					case (selectionPosition.from === itemPosition.from):
+						list.splice(index, 1);
+						break;
+					case (selectionPosition.to === itemPosition.to):
+						list.splice(index, 1);
+						break;
+					// if wider 
+					case (selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.to):
+						list.splice(index, 1);
+						break;
+					// if narrower
+					case (selectionPosition.from >= itemPosition.from && selectionPosition.to <= itemPosition.to):
+						list.splice(index, 1);
+						break;
+					// if offset left
+					case (selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.from):
+						list.splice(index, 1);
+						break;
+					case (selectionPosition.from >= itemPosition.from && selectionPosition.from <= itemPosition.to):
+						list.splice(index, 1);
+						break;
+					case (item.text === selection):
+						list.splice(index, 1);
+						break;
+					default:
+						break;
 				}
 			})
 
@@ -132,49 +170,26 @@ export default function Utterance(props) {
 		}
 
 		if (sel.toString().length) {
-			setSelection(sel.toString())
+			setSelection(sel.toString().trim())
 		} else {
 			setSelection(null);
 		}
 	}
 
-	// generate a random color (in HSL format, which I like to use)
-	function getRandomColor() {
-		function rand(min, max) {
-			return min + Math.random() * (max - min)
-		}
-
-		var h = rand(1, 360) | 0,
-			s = rand(40, 70) | 0,
-			l = rand(65, 72) | 0
-
-		return 'hsl(' + h + ',' + s + '%,' + l + '%)'
-	}
-
 	useEffect(() => {
 		let s = window.getSelection();
-		let oRange = s.getRangeAt(0); //get the text range
-		let oRect = oRange.getBoundingClientRect();
+		if (s && s.rangeCount > 0) {
+			let oRange = s.getRangeAt(0); //get the text range
+			let oRect = oRange.getBoundingClientRect();
 
-		setModalState({
-			position: oRect.x,
-			active: selection !== null
-		})
-
-
+			setDropdownState({
+				position: oRect.x,
+				active: selection !== null
+			})
+		}
 	}, [selection]);
 
-	if (props.data) {
-
-		let modalStyles = {
-			position: 'absolute',
-			top: '100%',
-			transition: 'all 220ms ease-in-out',
-			visibility: modalState.active ? 'visible' : 'hidden',
-			opacity: modalState.active ? '1' : '0',
-			left: modalState.position
-		}
-
+	if (props.data && props.data.raw) {
 		return (
 			<div class={`field field--intent ${props.active === props.index ? 'field--active' : ''}`} onClick={() => {
 				props.setActive(props.index)
@@ -186,9 +201,10 @@ export default function Utterance(props) {
 					<div className='field__input'>
 						<div class='taggable-text'>
 							<ContentEditable
+								innerRef={input}
 								className='taggable-text__input'
-								html={text.current}
-								onChange={handleChange}
+								html={parseText(text.current)}
+								onChange={(e) => { console.log(e); handleChange(e) }}
 								onKeyDown={(e) => {
 									console.log(getCaretCharacterOffsetWithin(e.target))
 								}}
@@ -200,24 +216,32 @@ export default function Utterance(props) {
 									handleSelection();
 								}}
 							/>
-							<div ref={tagsRef} className="taggable-text__tags" contentEditable={false} />
-						</div>
+							{/* 							<div ref={tagsRef} className="taggable-text__tags" contentEditable={false} />
+ */}						</div>
+						<Dropdown dropdownState={dropdownState} entities={props.entities} selection={selection} setSelection={setSelection} tagSelection={tagSelection} />
 					</div>
 				</div>
-				<div>
+				<ul className="model-list">
+					<header className="model-list__header">
+						<strong>Parameter name</strong>
+						<strong>Entity</strong>
+						<strong>Resolved value</strong>
+					</header>
 					{whitelist.map(item => {
-						return (<div>
-							{item.text}
-						</div>)
+						return (
+							<li className="model-list__item">
+								<div>{item.slot_value.length ? item.slot_value : item.type}</div>
+								<div><mark style={{ background: stringToColor(item.text) }}>{item.type}</mark></div>
+								<div>{item.text}</div>
+							</li>
+						)
 					})}
-				</div>
-				<div class="dropdown" ref={modalRef} style={modalStyles}>
-					<div class="dropdown__inner"><div class="dropdown__selection">Selection: <strong>{selection}</strong></div></div>
-					<button onClick={() => {tagSelection()}}>TAG!</button>
-				</div>
+				</ul>
 			</div>
 		)
 	} else {
 		return null
 	}
 }
+
+export default Utterance;

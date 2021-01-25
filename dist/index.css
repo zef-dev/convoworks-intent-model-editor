@@ -901,50 +901,48 @@
     .convo-details .field--intent .field__input {
       width: 100%;
       position: relative; }
-    .convo-details .field--intent .field__input > div {
-      padding: 10px 12px;
-      cursor: text;
-      caret-color: #1a1a1a;
-      height: 2.5rem;
-      line-height: normal;
-      outline: none; }
-      .convo-details .field--intent .field__input > div.error {
-        color: #d9543e; }
-    .convo-details .field--intent .model {
-      width: 100%; }
-      .convo-details .field--intent .model header,
-      .convo-details .field--intent .model li {
-        display: grid;
-        grid-template-columns: repeat(3, 33.3%);
-        align-items: center;
-        width: 100%;
-        padding-left: 12px;
-        padding-right: 12px;
-        position: relative; }
-      .convo-details .field--intent .model header {
-        height: 32px;
-        line-height: 1;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        text-transform: uppercase;
-        color: rgba(0, 0, 0, 0.36);
-        font-size: 12px; }
-      .convo-details .field--intent .model .btn--remove {
-        transform: scale(0.85); }
-      .convo-details .field--intent .model li {
-        height: 2.5rem; }
-        .convo-details .field--intent .model li:hover .btn--remove {
-          opacity: 0.35;
-          visibility: visible; }
-      .convo-details .field--intent .model input {
-        border: none;
-        padding-right: 24px;
-        height: 100%;
-        font-size: inherit; }
-        .convo-details .field--intent .model input:focus {
-          outline: none; }
+    .convo-details .field--intent .field__input.error {
+      color: #d9543e; }
     .convo-details .field--intent .field__actions {
       height: 100%; }
+  .convo-details .model-list {
+    width: 100%;
+    font-size: 12px; }
+    .convo-details .model-list .btn--remove {
+      transform: scale(0.85); }
+  .convo-details .model-list__header {
+    display: grid;
+    grid-template-columns: repeat(3, 33.3%);
+    align-items: center;
+    width: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+    position: relative;
+    font-size: inherit;
+    height: 32px;
+    line-height: 1;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.36); }
+    .convo-details .model-list__header strong {
+      font-weight: 500; }
+  .convo-details .model-list__item {
+    display: grid;
+    grid-template-columns: repeat(3, 33.3%);
+    align-items: center;
+    width: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+    line-height: 1.5;
+    padding: 12px; }
+    .convo-details .model-list__item input {
+      border: none;
+      padding-right: 24px;
+      height: 100%;
+      font-size: inherit; }
+      .convo-details .model-list__item input:focus {
+        outline: none; }
   .convo-details .field--active {
     border: 1px solid #2f74ea;
     cursor: default;
@@ -1046,7 +1044,13 @@
     position: relative;
     width: 100%;
     display: flex;
-    flex-direction: column; }
+    flex-direction: column;
+    padding: 10px 12px;
+    cursor: text;
+    caret-color: #1a1a1a;
+    height: 2.5rem;
+    line-height: normal;
+    outline: none; }
   .convo-details .taggable-text__input,
   .convo-details .taggable-text__tags {
     position: absolute;

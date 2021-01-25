@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import 'lodash';
-import 'react-cool-onclickoutside';
-import 'react-autocomplete-input';
-import 'react-autocomplete-input/dist/bundle.css';
 import '@yaireo/tagify/dist/react.tagify';
 import '@yaireo/tagify/src/tagify.scss';
 import 'rangy';
 import ContentEditable from 'react-contenteditable';
+import useOnclickOutside from 'react-cool-onclickoutside';
+import TextInput from 'react-autocomplete-input';
+import 'react-autocomplete-input/dist/bundle.css';
 
 function IconTrash() {
   return /*#__PURE__*/React.createElement("svg", {
@@ -378,10 +378,76 @@ const getCaretCharacterOffsetWithin = element => {
   return caretOffset;
 };
 
+function Dropdown(props) {
+  const [entities, setEntities] = useState(props.entities);
+  const [allEntities, setAllEntities] = useState(props.entities);
+  const [entitiesNames, setEntitiesNames] = useState([]);
+  const input = useRef();
+  const modalRef = useOnclickOutside(() => {
+    props.setSelection(null);
+  });
+
+  const filterEntities = term => {
+    let arr = [...allEntities];
+    let filteredArr = arr.filter(item => item.name && item.name.toLowerCase().includes(term.trim().toLowerCase()));
+    setEntities(filteredArr);
+  };
+
+  useEffect(() => {
+    let arr = entities.map(item => {
+      return item.name;
+    }).filter(item => item);
+    setEntitiesNames(arr);
+  }, [entities]);
+
+  if (entities) {
+    let dropdownStyles = {
+      position: 'absolute',
+      top: '100%',
+      transition: 'all 220ms ease-in-out',
+      visibility: props.dropdownState.active ? 'visible' : 'hidden',
+      opacity: props.dropdownState.active ? '1' : '0',
+      left: props.dropdownState.position
+    };
+    return /*#__PURE__*/React.createElement("div", {
+      class: "dropdown",
+      ref: modalRef,
+      style: dropdownStyles
+    }, /*#__PURE__*/React.createElement("header", {
+      className: "dropdown__header"
+    }, /*#__PURE__*/React.createElement(TextInput, {
+      Component: "input",
+      trigger: "",
+      options: entitiesNames,
+      spaceRemovers: [],
+      matchAny: true,
+      onChange: e => {
+        filterEntities(e);
+      },
+      ref: input,
+      className: "dropdown__search editor-input",
+      placeholder: "Filter entities"
+    }), /*#__PURE__*/React.createElement("div", {
+      class: "dropdown__selection"
+    }, "Selection: ", /*#__PURE__*/React.createElement("strong", null, props.selection))), /*#__PURE__*/React.createElement("div", {
+      class: "dropdown__items"
+    }, entities && entities.map((item, i) => {
+      return /*#__PURE__*/React.createElement("button", {
+        key: i,
+        onClick: e => {
+          props.tagSelection();
+        }
+      }, "PRESS DIS", item.name);
+    })));
+  } else {
+    return null;
+  }
+}
+
 function Utterance(props) {
   const [raw, setRaw] = useState('');
   const [state, setState] = useState(false);
-  const [modalState, setModalState] = useState({
+  const [dropdownState, setDropdownState] = useState({
     position: 0,
     active: false
   });
@@ -394,24 +460,23 @@ function Utterance(props) {
     slot_value: item.slot_value
   })));
   const input = useRef('');
-  const modalRef = useRef('');
-  const tagsRef = useRef('');
   const text = useRef('');
   const targetText = useRef('');
-
   useEffect(() => {
+    input.current.innerHTML = parseText(props.data.raw);
     text.current = props.data.raw;
   }, []);
 
   const handleChange = evt => {
-    text.current = evt.target.value;
-    tagsRef.current.innerHTML = parseText(evt.target.value);
+    if (evt.type === 'input') {
+      text.current = evt.currentTarget.textContent;
+    }
   };
 
   function parseText(string) {
     if (string) {
       let str = string.replace(/\s+/g, ' ').trim();
-      let regex = new RegExp(whitelist.map(item => item.text.replace(/\s+/g, ' ').trim()).join('|'), 'gi');
+      let regex = new RegExp(whitelist.map(item => item.text.replace(/\s+/g, ' ').trim()).join('|'), 'gi\s');
       str = str.replace(regex, function (matched) {
         return `<mark style="background:${stringToColor(matched)}">${matched}</mark>`;
       });
@@ -419,12 +484,49 @@ function Utterance(props) {
     }
   }
 
-  const tagSelection = () => {
+  const tagSelection = (type, slot_value) => {
     setTimeout(() => {
       let list = [...whitelist];
+      let selectionPosition = {
+        from: text.current.indexOf(selection),
+        to: text.current.indexOf(selection) + selection.length
+      };
+      console.log(text.current);
       list.map((item, index) => {
-        if (selection.includes(item.text) || item.text.includes(selection)) {
-          list.splice(index, 1);
+        let itemPosition = {
+          from: text.current.indexOf(item.text),
+          to: text.current.indexOf(item.text) + item.text.length
+        };
+        console.log('item: ', item.text, itemPosition, 'selection: ', selectionPosition);
+
+        switch (true) {
+          case selectionPosition.from === itemPosition.from:
+            list.splice(index, 1);
+            break;
+
+          case selectionPosition.to === itemPosition.to:
+            list.splice(index, 1);
+            break;
+
+          case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.to:
+            list.splice(index, 1);
+            break;
+
+          case selectionPosition.from >= itemPosition.from && selectionPosition.to <= itemPosition.to:
+            list.splice(index, 1);
+            break;
+
+          case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.from:
+            list.splice(index, 1);
+            break;
+
+          case selectionPosition.from >= itemPosition.from && selectionPosition.from <= itemPosition.to:
+            list.splice(index, 1);
+            break;
+
+          case item.text === selection:
+            list.splice(index, 1);
+            break;
         }
       });
       list = [...list, {
@@ -481,7 +583,7 @@ function Utterance(props) {
     }
 
     if (sel.toString().length) {
-      setSelection(sel.toString());
+      setSelection(sel.toString().trim());
     } else {
       setSelection(null);
     }
@@ -489,23 +591,18 @@ function Utterance(props) {
 
   useEffect(() => {
     let s = window.getSelection();
-    let oRange = s.getRangeAt(0);
-    let oRect = oRange.getBoundingClientRect();
-    setModalState({
-      position: oRect.x,
-      active: selection !== null
-    });
+
+    if (s && s.rangeCount > 0) {
+      let oRange = s.getRangeAt(0);
+      let oRect = oRange.getBoundingClientRect();
+      setDropdownState({
+        position: oRect.x,
+        active: selection !== null
+      });
+    }
   }, [selection]);
 
-  if (props.data) {
-    let modalStyles = {
-      position: 'absolute',
-      top: '100%',
-      transition: 'all 220ms ease-in-out',
-      visibility: modalState.active ? 'visible' : 'hidden',
-      opacity: modalState.active ? '1' : '0',
-      left: modalState.position
-    };
+  if (props.data && props.data.raw) {
     return /*#__PURE__*/React.createElement("div", {
       class: `field field--intent ${props.active === props.index ? 'field--active' : ''}`,
       onClick: () => {
@@ -519,9 +616,13 @@ function Utterance(props) {
     }, /*#__PURE__*/React.createElement("div", {
       class: "taggable-text"
     }, /*#__PURE__*/React.createElement(ContentEditable, {
+      innerRef: input,
       className: "taggable-text__input",
-      html: text.current,
-      onChange: handleChange,
+      html: parseText(text.current),
+      onChange: e => {
+        console.log(e);
+        handleChange(e);
+      },
       onKeyDown: e => {
         console.log(getCaretCharacterOffsetWithin(e.target));
       },
@@ -532,62 +633,44 @@ function Utterance(props) {
       onKeyUp: e => {
         handleSelection();
       }
-    }), /*#__PURE__*/React.createElement("div", {
-      ref: tagsRef,
-      className: "taggable-text__tags",
-      contentEditable: false
-    })))), /*#__PURE__*/React.createElement("div", null, whitelist.map(item => {
-      return /*#__PURE__*/React.createElement("div", null, item.text);
-    })), /*#__PURE__*/React.createElement("div", {
-      class: "dropdown",
-      ref: modalRef,
-      style: modalStyles
-    }, /*#__PURE__*/React.createElement("div", {
-      class: "dropdown__inner"
-    }, /*#__PURE__*/React.createElement("div", {
-      class: "dropdown__selection"
-    }, "Selection: ", /*#__PURE__*/React.createElement("strong", null, selection))), /*#__PURE__*/React.createElement("button", {
-      onClick: () => {
-        tagSelection();
-      }
-    }, "TAG!")));
+    }), "      "), /*#__PURE__*/React.createElement(Dropdown, {
+      dropdownState: dropdownState,
+      entities: props.entities,
+      selection: selection,
+      setSelection: setSelection,
+      tagSelection: tagSelection
+    }))), /*#__PURE__*/React.createElement("ul", {
+      className: "model-list"
+    }, /*#__PURE__*/React.createElement("header", {
+      className: "model-list__header"
+    }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.map(item => {
+      return /*#__PURE__*/React.createElement("li", {
+        className: "model-list__item"
+      }, /*#__PURE__*/React.createElement("div", null, item.slot_value.length ? item.slot_value : item.type), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("mark", {
+        style: {
+          background: stringToColor(item.text)
+        }
+      }, item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
+    })));
   } else {
     return null;
   }
 }
 
 const List = React.memo(function List(props) {
-  const [modal, setModal] = useState(false);
-  const [modalPosition, setModalPosition] = useState(null);
-  const [selection, setSelection] = useState(null);
-  const [update, setUpdate] = useState(false);
-  const [paramValues, setParamValues] = useState(null);
   const [active, setActive] = useState(null);
-  useEffect(() => {
-    let arr = props.utterances.map(item => item.model).flat().filter(item => item.slot_value).map(item => ({
-      type: item.type,
-      slot_value: item.slot_value
-    }));
-    let uniq = arr.filter((v, i, a) => a.findIndex(t => t.slot_value === v.slot_value) === i);
-    setParamValues(uniq);
-  }, [props.utterances]);
 
-  const makeItems = items => {
-    return items.map((item, index) => {
+  if (props.utterances) {
+    return /*#__PURE__*/React.createElement("ul", null, props.utterances.map((item, index) => {
       return /*#__PURE__*/React.createElement(Utterance, {
         key: index,
         data: item,
         index: index,
         active: active,
-        setActive: setActive
+        setActive: setActive,
+        entities: props.entities
       });
-    });
-  };
-
-  console.log(selection);
-
-  if (props.utterances) {
-    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("ul", null, makeItems(props.utterances)));
+    }));
   } else {
     return null;
   }
@@ -599,7 +682,6 @@ function IntentDetails(props) {
   const systemEntities = props.systemEntities;
   const [name, setName] = useState('');
   const [utterances, setUtterances] = useState([]);
-  const [active, setActive] = useState(null);
   const [newExpression, setNewExpression] = useState(null);
   const [valid, setValid] = useState(true);
   const newExpressionInput = useRef(null);
@@ -622,15 +704,6 @@ function IntentDetails(props) {
     setUtterances(arr);
     setActive(0);
   }
-
-  const removeFromModel = (utteranceIndex, index) => {
-    let arr = [...utterances];
-    let model = arr[utteranceIndex].model;
-    model[index] = {
-      text: model[index].text
-    };
-    setUtterances(arr);
-  };
 
   useEffect(() => {
     if (intent) {
@@ -698,11 +771,8 @@ function IntentDetails(props) {
       }
     })), /*#__PURE__*/React.createElement(List, {
       addNewValue: addNewValue,
-      active: active,
-      setActive: setActive,
       utterances: utterances,
       setUtterances: setUtterances,
-      removeFromModel: removeFromModel,
       entities: [entities, ...systemEntities],
       focusOnExpressionInput: focusOnExpressionInput
     }))))));
