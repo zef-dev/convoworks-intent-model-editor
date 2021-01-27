@@ -447,6 +447,7 @@ function Dropdown(props) {
 function Utterance(props) {
   const [raw, setRaw] = useState('');
   const [state, setState] = useState(false);
+  const [tagEditState, setTagEditState] = useState(false);
   const [dropdownState, setDropdownState] = useState({
     position: 0,
     active: false
@@ -572,12 +573,23 @@ function Utterance(props) {
 
     if (sel.toString().length) {
       setSelection(sel.toString().trim());
-    } else if (selection) {
+    } else if (sel.toString.length === 0) {
+      let mark = sel.focusNode.parentNode;
+
+      if (mark.tagName === 'MARK') {
+        setTagEditState(true);
+        setSelection(mark.dataset.text);
+      } else {
+        setTagEditState(false);
+        setSelection(null);
+      }
+    } else {
       setSelection(null);
     }
   };
 
   useEffect(() => {
+    console.log(window.getSelection());
     let s = window.getSelection();
 
     if (s && s.rangeCount > 0) {
@@ -589,7 +601,6 @@ function Utterance(props) {
       });
     }
   }, [selection]);
-  console.log(cursorPosition.current);
 
   if (props.data && props.data.raw) {
     return /*#__PURE__*/React.createElement("div", {
@@ -597,7 +608,7 @@ function Utterance(props) {
       onClick: () => {
         props.setActive(props.index);
       }
-    }, /*#__PURE__*/React.createElement("div", {
+    }, "tag edit state: ", tagEditState.toString(), /*#__PURE__*/React.createElement("div", {
       className: "field__main",
       id: "input"
     }, /*#__PURE__*/React.createElement("div", {

@@ -11,6 +11,8 @@ function Utterance(props) {
 	const [raw, setRaw] = useState('');
 	const [state, setState] = useState(false);
 
+	const [tagEditState, setTagEditState] = useState(false);
+
 	const [dropdownState, setDropdownState] = useState({
 		position: 0,
 		active: false
@@ -155,12 +157,23 @@ function Utterance(props) {
 
 		if (sel.toString().length) {
 			setSelection(sel.toString().trim())
-		} else if (selection) {
+		} else if (sel.toString.length === 0) {
+			let mark = sel.focusNode.parentNode;
+
+			if (mark.tagName === 'MARK') {
+				setTagEditState(true);
+				setSelection(mark.dataset.text)
+			} else {
+				setTagEditState(false);
+				setSelection(null);
+			}
+		} else {
 			setSelection(null);
 		}
 	}
 
 	useEffect(() => {
+		console.log(window.getSelection())
 		let s = window.getSelection();
 		if (s && s.rangeCount > 0) {
 			let oRange = s.getRangeAt(0); //get the text range
@@ -173,13 +186,12 @@ function Utterance(props) {
 		}
 	}, [selection]);
 
-	console.log(cursorPosition.current);
-
 	if (props.data && props.data.raw) {
 		return (
 			<div class={`field field--intent ${props.active === props.index ? 'field--active' : ''}`} onClick={() => {
 				props.setActive(props.index)
 			}}>
+				tag edit state: {tagEditState.toString()}
 				<div
 					className='field__main'
 					id='input'

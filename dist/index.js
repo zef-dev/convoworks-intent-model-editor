@@ -513,22 +513,26 @@ function Utterance(props) {
 
   var _useState2 = React.useState(false);
 
-  var _useState3 = React.useState({
+  var _useState3 = React.useState(false),
+      tagEditState = _useState3[0],
+      setTagEditState = _useState3[1];
+
+  var _useState4 = React.useState({
     position: 0,
     active: false
   }),
-      dropdownState = _useState3[0],
-      setDropdownState = _useState3[1];
+      dropdownState = _useState4[0],
+      setDropdownState = _useState4[1];
 
-  var _useState4 = React.useState(null);
+  var _useState5 = React.useState(null);
 
-  var _useState5 = React.useState(props.data.model);
+  var _useState6 = React.useState(props.data.model);
 
-  var _useState6 = React.useState(null),
-      selection = _useState6[0],
-      setSelection = _useState6[1];
+  var _useState7 = React.useState(null),
+      selection = _useState7[0],
+      setSelection = _useState7[1];
 
-  var _useState7 = React.useState(props.data.model.filter(function (item) {
+  var _useState8 = React.useState(props.data.model.filter(function (item) {
     return item.type;
   }).map(function (item) {
     return {
@@ -537,8 +541,8 @@ function Utterance(props) {
       slot_value: item.slot_value
     };
   })),
-      whitelist = _useState7[0],
-      setWhitelist = _useState7[1];
+      whitelist = _useState8[0],
+      setWhitelist = _useState8[1];
 
   var input = React.useRef('');
   var text = React.useRef('');
@@ -657,12 +661,23 @@ function Utterance(props) {
 
     if (sel.toString().length) {
       setSelection(sel.toString().trim());
-    } else if (selection) {
+    } else if (sel.toString.length === 0) {
+      var mark = sel.focusNode.parentNode;
+
+      if (mark.tagName === 'MARK') {
+        setTagEditState(true);
+        setSelection(mark.dataset.text);
+      } else {
+        setTagEditState(false);
+        setSelection(null);
+      }
+    } else {
       setSelection(null);
     }
   };
 
   React.useEffect(function () {
+    console.log(window.getSelection());
     var s = window.getSelection();
 
     if (s && s.rangeCount > 0) {
@@ -674,7 +689,6 @@ function Utterance(props) {
       });
     }
   }, [selection]);
-  console.log(cursorPosition.current);
 
   if (props.data && props.data.raw) {
     return /*#__PURE__*/React__default.createElement("div", {
@@ -682,7 +696,7 @@ function Utterance(props) {
       onClick: function onClick() {
         props.setActive(props.index);
       }
-    }, /*#__PURE__*/React__default.createElement("div", {
+    }, "tag edit state: ", tagEditState.toString(), /*#__PURE__*/React__default.createElement("div", {
       className: "field__main",
       id: "input"
     }, /*#__PURE__*/React__default.createElement("div", {
