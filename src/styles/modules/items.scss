@@ -353,12 +353,8 @@
     width: 100%;
 }
 
-.taggable-text__tags {
-    color: transparent;
-    z-index: -1;
-
+.taggable-text__input {
     mark {
-        color: transparent;
         animation-name: example;
         display: inline-block;
         animation-duration: 220ms;

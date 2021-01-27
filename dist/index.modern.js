@@ -461,28 +461,24 @@ function Utterance(props) {
   })));
   const input = useRef('');
   const text = useRef('');
+  const cursorPosition = useRef(text.current.length);
   const targetText = useRef('');
   useEffect(() => {
-    input.current.innerHTML = parseText(props.data.raw);
+    input.current.innerHTML = props.data.raw.parseText();
     text.current = props.data.raw;
   }, []);
 
-  const handleChange = evt => {
-    if (evt.type === 'input') {
-      text.current = evt.currentTarget.textContent;
-    }
-  };
-
-  function parseText(string) {
-    if (string) {
-      let str = string.replace(/\s+/g, ' ').trim();
+  String.prototype.parseText = function () {
+    if (this.length) {
+      let str = this.replace(/\s+/g, ' ').trim();
       let regex = new RegExp(whitelist.map(item => item.text.replace(/\s+/g, ' ').trim()).join('|'), 'gi\s');
       str = str.replace(regex, function (matched) {
-        return `<mark style="background:${stringToColor(matched)}">${matched}</mark>`;
+        let matchedObject = whitelist.find(item => item.text === matched);
+        return `<mark data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>`;
       });
       return str;
     }
-  }
+  };
 
   const tagSelection = (type, slot_value) => {
     setTimeout(() => {
@@ -491,38 +487,30 @@ function Utterance(props) {
         from: text.current.indexOf(selection),
         to: text.current.indexOf(selection) + selection.length
       };
-      console.log(text.current);
       list.map((item, index) => {
         let itemPosition = {
           from: text.current.indexOf(item.text),
           to: text.current.indexOf(item.text) + item.text.length
         };
-        console.log('item: ', item.text, itemPosition, 'selection: ', selectionPosition);
 
         switch (true) {
           case selectionPosition.from === itemPosition.from:
             list.splice(index, 1);
-            break;
 
           case selectionPosition.to === itemPosition.to:
             list.splice(index, 1);
-            break;
 
           case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.to:
             list.splice(index, 1);
-            break;
 
           case selectionPosition.from >= itemPosition.from && selectionPosition.to <= itemPosition.to:
             list.splice(index, 1);
-            break;
 
           case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.from:
             list.splice(index, 1);
-            break;
 
           case selectionPosition.from >= itemPosition.from && selectionPosition.from <= itemPosition.to:
             list.splice(index, 1);
-            break;
 
           case item.text === selection:
             list.splice(index, 1);
@@ -536,7 +524,7 @@ function Utterance(props) {
       }];
       setWhitelist(list);
       setSelection(null);
-    }, 220);
+    }, 0);
   };
 
   const handleSelection = () => {
@@ -584,7 +572,7 @@ function Utterance(props) {
 
     if (sel.toString().length) {
       setSelection(sel.toString().trim());
-    } else {
+    } else if (selection) {
       setSelection(null);
     }
   };
@@ -601,6 +589,7 @@ function Utterance(props) {
       });
     }
   }, [selection]);
+  console.log(cursorPosition.current);
 
   if (props.data && props.data.raw) {
     return /*#__PURE__*/React.createElement("div", {
@@ -618,17 +607,15 @@ function Utterance(props) {
     }, /*#__PURE__*/React.createElement(ContentEditable, {
       innerRef: input,
       className: "taggable-text__input",
-      html: parseText(text.current),
+      html: text.current.parseText(),
       onChange: e => {
-        console.log(e);
-        handleChange(e);
-      },
-      onKeyDown: e => {
-        console.log(getCaretCharacterOffsetWithin(e.target));
+        text.current = e.currentTarget.textContent;
       },
       onMouseUp: e => {
         handleSelection();
-        console.log(getCaretCharacterOffsetWithin(e.target));
+      },
+      onKeyDown: e => {
+        cursorPosition.current = getCaretCharacterOffsetWithin(e.target);
       },
       onKeyUp: e => {
         handleSelection();

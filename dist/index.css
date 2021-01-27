@@ -1055,16 +1055,12 @@
   .convo-details .taggable-text__tags {
     position: absolute;
     width: 100%; }
-  .convo-details .taggable-text__tags {
-    color: transparent;
-    z-index: -1; }
-    .convo-details .taggable-text__tags mark {
-      color: transparent;
-      -webkit-animation-name: example;
-              animation-name: example;
-      display: inline-block;
-      -webkit-animation-duration: 220ms;
-              animation-duration: 220ms; }
+  .convo-details .taggable-text__input mark {
+    -webkit-animation-name: example;
+            animation-name: example;
+    display: inline-block;
+    -webkit-animation-duration: 220ms;
+            animation-duration: 220ms; }
 
 @-webkit-keyframes example {
   from {
