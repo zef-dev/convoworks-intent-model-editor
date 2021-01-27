@@ -4,7 +4,7 @@ import '@yaireo/tagify/src/tagify.scss'
 import rangy from 'rangy'
 import _, { debounce } from 'lodash'
 import ContentEditable from 'react-contenteditable'
-import { getCaretCharacterOffsetWithin, stringToColor } from '../../../helpers/common_constants'
+import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
 
 function Utterance(props) {
@@ -34,8 +34,8 @@ function Utterance(props) {
 
 	const input = useRef('');
 	const text = useRef('');
-	const cursorPosition = useRef(text.current.length);
-	const targetText = useRef('');
+	const inputWrapper = useRef('');
+	const cursorPosition = useRef(0)
 
 	useEffect(() => {
 		input.current.innerHTML = props.data.raw.parseText();
@@ -162,7 +162,7 @@ function Utterance(props) {
 
 			if (mark.tagName === 'MARK') {
 				setTagEditState(true);
-				setSelection(mark.dataset.text)
+				setSelection(mark.dataset.text);
 			} else {
 				setTagEditState(false);
 				setSelection(null);
@@ -170,10 +170,12 @@ function Utterance(props) {
 		} else {
 			setSelection(null);
 		}
+
+		cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+		console.log(cursorPosition.current)
 	}
 
 	useEffect(() => {
-		console.log(window.getSelection())
 		let s = window.getSelection();
 		if (s && s.rangeCount > 0) {
 			let oRange = s.getRangeAt(0); //get the text range
@@ -186,6 +188,12 @@ function Utterance(props) {
 		}
 	}, [selection]);
 
+	useEffect(() => {
+		setCaretPosition(input.current, cursorPosition.current)
+	}, [whitelist, tagEditState]);
+
+	console.log(cursorPosition.current)
+
 	if (props.data && props.data.raw) {
 		return (
 			<div class={`field field--intent ${props.active === props.index ? 'field--active' : ''}`} onClick={() => {
@@ -197,7 +205,7 @@ function Utterance(props) {
 					id='input'
 				>
 					<div className='field__input'>
-						<div class='taggable-text'>
+						<div class='taggable-text' ref={inputWrapper}>
 							<ContentEditable
 								innerRef={input}
 								className='taggable-text__input'
@@ -209,7 +217,9 @@ function Utterance(props) {
 									handleSelection()
 								}}
 								onKeyDown={(e) => {
-									cursorPosition.current = getCaretCharacterOffsetWithin(e.target);
+									if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
+										e.preventDefault();
+									}
 								}}
 								onKeyUp={(e) => {
 									handleSelection();
@@ -243,4 +253,4 @@ function Utterance(props) {
 	}
 }
 
-export default Utterance;
+export default React.memo(Utterance);

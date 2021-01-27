@@ -377,6 +377,31 @@ const getCaretCharacterOffsetWithin = element => {
 
   return caretOffset;
 };
+const setCaretPosition = (el, pos) => {
+  for (var node of el.childNodes) {
+    if (node.nodeType == 3) {
+      if (node.length >= pos) {
+        var range = document.createRange(),
+            sel = window.getSelection();
+        range.setStart(node, pos);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        return -1;
+      } else {
+        pos -= node.length;
+      }
+    } else {
+      pos = setCaretPosition(node, pos);
+
+      if (pos == -1) {
+        return -1;
+      }
+    }
+  }
+
+  return pos;
+};
 
 function Dropdown(props) {
   const [entities, setEntities] = useState(props.entities);
@@ -462,8 +487,8 @@ function Utterance(props) {
   })));
   const input = useRef('');
   const text = useRef('');
-  const cursorPosition = useRef(text.current.length);
-  const targetText = useRef('');
+  const inputWrapper = useRef('');
+  const cursorPosition = useRef(0);
   useEffect(() => {
     input.current.innerHTML = props.data.raw.parseText();
     text.current = props.data.raw;
@@ -586,10 +611,12 @@ function Utterance(props) {
     } else {
       setSelection(null);
     }
+
+    cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+    console.log(cursorPosition.current);
   };
 
   useEffect(() => {
-    console.log(window.getSelection());
     let s = window.getSelection();
 
     if (s && s.rangeCount > 0) {
@@ -601,6 +628,10 @@ function Utterance(props) {
       });
     }
   }, [selection]);
+  useEffect(() => {
+    setCaretPosition(input.current, cursorPosition.current);
+  }, [whitelist, tagEditState]);
+  console.log(cursorPosition.current);
 
   if (props.data && props.data.raw) {
     return /*#__PURE__*/React.createElement("div", {
@@ -614,7 +645,8 @@ function Utterance(props) {
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__input"
     }, /*#__PURE__*/React.createElement("div", {
-      class: "taggable-text"
+      class: "taggable-text",
+      ref: inputWrapper
     }, /*#__PURE__*/React.createElement(ContentEditable, {
       innerRef: input,
       className: "taggable-text__input",
@@ -626,7 +658,9 @@ function Utterance(props) {
         handleSelection();
       },
       onKeyDown: e => {
-        cursorPosition.current = getCaretCharacterOffsetWithin(e.target);
+        if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
+          e.preventDefault();
+        }
       },
       onKeyUp: e => {
         handleSelection();
@@ -655,12 +689,14 @@ function Utterance(props) {
   }
 }
 
+var Utterance$1 = React.memo(Utterance);
+
 const List = React.memo(function List(props) {
   const [active, setActive] = useState(null);
 
   if (props.utterances) {
     return /*#__PURE__*/React.createElement("ul", null, props.utterances.map((item, index) => {
-      return /*#__PURE__*/React.createElement(Utterance, {
+      return /*#__PURE__*/React.createElement(Utterance$1, {
         key: index,
         data: item,
         index: index,

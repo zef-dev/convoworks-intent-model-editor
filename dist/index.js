@@ -382,6 +382,48 @@ function _extends() {
   return _extends.apply(this, arguments);
 }
 
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
+}
+
+function _createForOfIteratorHelperLoose(o, allowArrayLike) {
+  var it;
+
+  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
+      var i = 0;
+      return function () {
+        if (i >= o.length) return {
+          done: true
+        };
+        return {
+          done: false,
+          value: o[i++]
+        };
+      };
+    }
+
+    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
+  it = o[Symbol.iterator]();
+  return it.next.bind(it);
+}
+
 var stringToColor = function stringToColor(value) {
   return value.getHashCode().intToHSL();
 };
@@ -428,6 +470,33 @@ var getCaretCharacterOffsetWithin = function getCaretCharacterOffsetWithin(eleme
   }
 
   return caretOffset;
+};
+var setCaretPosition = function setCaretPosition(el, pos) {
+  for (var _iterator = _createForOfIteratorHelperLoose(el.childNodes), _step; !(_step = _iterator()).done;) {
+    var node = _step.value;
+
+    if (node.nodeType == 3) {
+      if (node.length >= pos) {
+        var range = document.createRange(),
+            sel = window.getSelection();
+        range.setStart(node, pos);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        return -1;
+      } else {
+        pos -= node.length;
+      }
+    } else {
+      pos = setCaretPosition(node, pos);
+
+      if (pos == -1) {
+        return -1;
+      }
+    }
+  }
+
+  return pos;
 };
 
 function Dropdown(props) {
@@ -546,8 +615,8 @@ function Utterance(props) {
 
   var input = React.useRef('');
   var text = React.useRef('');
-  var cursorPosition = React.useRef(text.current.length);
-  var targetText = React.useRef('');
+  var inputWrapper = React.useRef('');
+  var cursorPosition = React.useRef(0);
   React.useEffect(function () {
     input.current.innerHTML = props.data.raw.parseText();
     text.current = props.data.raw;
@@ -674,10 +743,12 @@ function Utterance(props) {
     } else {
       setSelection(null);
     }
+
+    cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+    console.log(cursorPosition.current);
   };
 
   React.useEffect(function () {
-    console.log(window.getSelection());
     var s = window.getSelection();
 
     if (s && s.rangeCount > 0) {
@@ -689,6 +760,10 @@ function Utterance(props) {
       });
     }
   }, [selection]);
+  React.useEffect(function () {
+    setCaretPosition(input.current, cursorPosition.current);
+  }, [whitelist, tagEditState]);
+  console.log(cursorPosition.current);
 
   if (props.data && props.data.raw) {
     return /*#__PURE__*/React__default.createElement("div", {
@@ -702,7 +777,8 @@ function Utterance(props) {
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "field__input"
     }, /*#__PURE__*/React__default.createElement("div", {
-      "class": "taggable-text"
+      "class": "taggable-text",
+      ref: inputWrapper
     }, /*#__PURE__*/React__default.createElement(ContentEditable, {
       innerRef: input,
       className: "taggable-text__input",
@@ -714,7 +790,9 @@ function Utterance(props) {
         handleSelection();
       },
       onKeyDown: function onKeyDown(e) {
-        cursorPosition.current = getCaretCharacterOffsetWithin(e.target);
+        if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
+          e.preventDefault();
+        }
       },
       onKeyUp: function onKeyUp(e) {
         handleSelection();
@@ -743,6 +821,8 @@ function Utterance(props) {
   }
 }
 
+var Utterance$1 = React__default.memo(Utterance);
+
 var List = React__default.memo(function List(props) {
   var _useState = React.useState(null),
       active = _useState[0],
@@ -750,7 +830,7 @@ var List = React__default.memo(function List(props) {
 
   if (props.utterances) {
     return /*#__PURE__*/React__default.createElement("ul", null, props.utterances.map(function (item, index) {
-      return /*#__PURE__*/React__default.createElement(Utterance, {
+      return /*#__PURE__*/React__default.createElement(Utterance$1, {
         key: index,
         data: item,
         index: index,
