@@ -456,13 +456,13 @@ function Dropdown(props) {
       class: "dropdown__selection"
     }, "Selection: ", /*#__PURE__*/React.createElement("strong", null, props.selection))), /*#__PURE__*/React.createElement("div", {
       class: "dropdown__items"
-    }, entities && entities.map((item, i) => {
+    }, entities[0] && entities[0].map((item, i) => {
       return /*#__PURE__*/React.createElement("button", {
         key: i,
-        onClick: e => {
-          props.tagSelection();
+        onClick: () => {
+          props.tagSelection(item.name, item.name);
         }
-      }, "PRESS DIS", item.name);
+      }, "@", item.name);
     })));
   } else {
     return null;
@@ -500,7 +500,7 @@ function Utterance(props) {
       let regex = new RegExp(whitelist.map(item => item.text.replace(/\s+/g, ' ').trim()).join('|'), 'gi\s');
       str = str.replace(regex, function (matched) {
         let matchedObject = whitelist.find(item => item.text === matched);
-        return `<mark data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>`;
+        return `<mark data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matchedObject.type)}">${matched}</mark>`;
       });
       return str;
     }
@@ -545,8 +545,8 @@ function Utterance(props) {
       });
       list = [...list, {
         text: selection,
-        type: '',
-        slot_value: ''
+        type: type,
+        slot_value: slot_value
       }];
       setWhitelist(list);
       setSelection(null);
@@ -613,7 +613,6 @@ function Utterance(props) {
     }
 
     cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
-    console.log(cursorPosition.current);
   };
 
   useEffect(() => {
@@ -631,7 +630,6 @@ function Utterance(props) {
   useEffect(() => {
     setCaretPosition(input.current, cursorPosition.current);
   }, [whitelist, tagEditState]);
-  console.log(cursorPosition.current);
 
   if (props.data && props.data.raw) {
     return /*#__PURE__*/React.createElement("div", {
@@ -658,6 +656,10 @@ function Utterance(props) {
         handleSelection();
       },
       onKeyDown: e => {
+        if (tagEditState) {
+          console.log(e);
+        }
+
         if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
           e.preventDefault();
         }

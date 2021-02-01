@@ -564,13 +564,13 @@ function Dropdown(props) {
       "class": "dropdown__selection"
     }, "Selection: ", /*#__PURE__*/React__default.createElement("strong", null, props.selection))), /*#__PURE__*/React__default.createElement("div", {
       "class": "dropdown__items"
-    }, entities && entities.map(function (item, i) {
+    }, entities[0] && entities[0].map(function (item, i) {
       return /*#__PURE__*/React__default.createElement("button", {
         key: i,
-        onClick: function onClick(e) {
-          props.tagSelection();
+        onClick: function onClick() {
+          props.tagSelection(item.name, item.name);
         }
-      }, "PRESS DIS", item.name);
+      }, "@", item.name);
     })));
   } else {
     return null;
@@ -632,7 +632,7 @@ function Utterance(props) {
         var matchedObject = whitelist.find(function (item) {
           return item.text === matched;
         });
-        return "<mark data-type=\"" + matchedObject.type + "\" data-slot-value=\"" + matchedObject.slot_value + "\" data-text=\"" + matched + "\" style=\"background:" + stringToColor(matched) + "\">" + matched + "</mark>";
+        return "<mark data-type=\"" + matchedObject.type + "\" data-slot-value=\"" + matchedObject.slot_value + "\" data-text=\"" + matched + "\" style=\"background:" + stringToColor(matchedObject.type) + "\">" + matched + "</mark>";
       });
       return str;
     }
@@ -677,8 +677,8 @@ function Utterance(props) {
       });
       list = [].concat(list, [{
         text: selection,
-        type: '',
-        slot_value: ''
+        type: type,
+        slot_value: slot_value
       }]);
       setWhitelist(list);
       setSelection(null);
@@ -745,7 +745,6 @@ function Utterance(props) {
     }
 
     cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
-    console.log(cursorPosition.current);
   };
 
   React.useEffect(function () {
@@ -763,7 +762,6 @@ function Utterance(props) {
   React.useEffect(function () {
     setCaretPosition(input.current, cursorPosition.current);
   }, [whitelist, tagEditState]);
-  console.log(cursorPosition.current);
 
   if (props.data && props.data.raw) {
     return /*#__PURE__*/React__default.createElement("div", {
@@ -790,6 +788,10 @@ function Utterance(props) {
         handleSelection();
       },
       onKeyDown: function onKeyDown(e) {
+        if (tagEditState) {
+          console.log(e);
+        }
+
         if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
           e.preventDefault();
         }

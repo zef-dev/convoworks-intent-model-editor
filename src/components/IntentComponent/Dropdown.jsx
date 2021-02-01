@@ -66,15 +66,15 @@ function Dropdown(props) {
 					<div class="dropdown__selection">Selection: <strong>{props.selection}</strong></div>
 				</header>
 				<div class="dropdown__items">
-					{entities && entities.map((item, i) => {
+					{entities[0] && entities[0].map((item, i) => {
 						return (
 							<button
 								key={i}
-								onClick={(e) => {
-									props.tagSelection()
+								onClick={() => {
+									props.tagSelection(item.name, item.name)
 								}}
 							>
-								PRESS DIS
+								@
 								{item.name}
 							</button>
 						);
