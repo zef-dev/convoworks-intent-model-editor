@@ -584,7 +584,9 @@ function Dropdown(props) {
 var Utterance = React__default.memo(function (props) {
   var _useState = React.useState('');
 
-  var _useState2 = React.useState(false);
+  var _useState2 = React.useState(false),
+      state = _useState2[0],
+      setState = _useState2[1];
 
   var _useState3 = React.useState(false),
       tagEditState = _useState3[0],
@@ -628,20 +630,24 @@ var Utterance = React__default.memo(function (props) {
 
   String.prototype.parseText = function () {
     if (this.length) {
-      var str = this.replace(/\s+/g, ' ').trim();
+      var str = this;
       var regex = new RegExp(whitelist.map(function (item) {
         return item.text.replace(/\s+/g, ' ').trim();
       }).join('|'), 'gi\s');
+      var i = 0;
       str = str.replace(regex, function (matched) {
+        i++;
         var isLastWord = str.lastIndexOf(matched) + matched.length === str.length;
         var matchedObject = whitelist.find(function (item) {
           return item.text === matched;
         });
-        return "<mark data-type=\"" + matchedObject.type + "\" data-slot-value=\"" + matchedObject.slot_value + "\" data-text=\"" + matched + "\" style=\"background:" + stringToColor(matched) + "\">" + matched + "</mark>" + (isLastWord ? ' ' : '');
+        return "<mark data-i=\"" + i + "\" data-type=\"" + matchedObject.type + "\" data-slot-value=\"" + matchedObject.slot_value + "\" data-text=\"" + matched + "\" style=\"background:" + stringToColor(matched) + "\">" + matched + "</mark>" + (isLastWord ? ' ' : '');
       });
       return str;
     }
   };
+
+  console.log('render!!');
 
   var tagSelection = function tagSelection(type, slot_value) {
     setTimeout(function () {
@@ -738,7 +744,7 @@ var Utterance = React__default.memo(function (props) {
     } else if (sel.toString.length === 0) {
       var mark = sel.focusNode.parentNode;
 
-      if (mark.tagName === 'BUTTON') {
+      if (mark.tagName === 'MARK') {
         setTagEditState(true);
       } else {
         setTagEditState(false);
@@ -748,13 +754,7 @@ var Utterance = React__default.memo(function (props) {
       setSelection(null);
     }
 
-    document.querySelectorAll('mark.active').forEach(function (mark) {
-      mark.classList.remove('active');
-    });
-
-    if (sel.anchorNode.parentNode.tagName === 'MARK') {
-      sel.anchorNode.parentNode.classList.add('active');
-    }
+    document.querySelectorAll('mark.active').forEach(function (mark) {});
 
     cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
   };
@@ -762,7 +762,9 @@ var Utterance = React__default.memo(function (props) {
   React.useEffect(function () {
     var s = window.getSelection();
 
-    if (s && s.rangeCount > 0) {
+    if (s && s.rangeCount > 0 && !whitelist.find(function (item) {
+      return item.text === selection;
+    })) {
       var oRange = s.getRangeAt(0);
       var oRect = oRange.getBoundingClientRect();
       setDropdownState({
@@ -795,6 +797,7 @@ var Utterance = React__default.memo(function (props) {
       html: text.current.parseText(),
       onChange: function onChange(e) {
         text.current = e.currentTarget.textContent;
+        setState(!state);
       },
       onMouseUp: function onMouseUp(e) {
         handleSelection();

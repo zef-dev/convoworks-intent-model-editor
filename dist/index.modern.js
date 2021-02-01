@@ -500,16 +500,20 @@ const Utterance = React.memo(props => {
 
   String.prototype.parseText = function () {
     if (this.length) {
-      let str = this.replace(/\s+/g, ' ').trim();
+      let str = this;
       let regex = new RegExp(whitelist.map(item => item.text.replace(/\s+/g, ' ').trim()).join('|'), 'gi\s');
+      var i = 0;
       str = str.replace(regex, function (matched) {
+        i++;
         let isLastWord = str.lastIndexOf(matched) + matched.length === str.length;
         let matchedObject = whitelist.find(item => item.text === matched);
-        return `<mark data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>${isLastWord ? ' ' : ''}`;
+        return `<mark data-i="${i}" data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>${isLastWord ? ' ' : ''}`;
       });
       return str;
     }
   };
+
+  console.log('render!!');
 
   const tagSelection = (type, slot_value) => {
     setTimeout(() => {
@@ -606,7 +610,7 @@ const Utterance = React.memo(props => {
     } else if (sel.toString.length === 0) {
       let mark = sel.focusNode.parentNode;
 
-      if (mark.tagName === 'BUTTON') {
+      if (mark.tagName === 'MARK') {
         setTagEditState(true);
       } else {
         setTagEditState(false);
@@ -616,13 +620,7 @@ const Utterance = React.memo(props => {
       setSelection(null);
     }
 
-    document.querySelectorAll('mark.active').forEach(mark => {
-      mark.classList.remove('active');
-    });
-
-    if (sel.anchorNode.parentNode.tagName === 'MARK') {
-      sel.anchorNode.parentNode.classList.add('active');
-    }
+    document.querySelectorAll('mark.active').forEach(mark => {});
 
     cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
   };
@@ -630,7 +628,7 @@ const Utterance = React.memo(props => {
   useEffect(() => {
     let s = window.getSelection();
 
-    if (s && s.rangeCount > 0) {
+    if (s && s.rangeCount > 0 && !whitelist.find(item => item.text === selection)) {
       let oRange = s.getRangeAt(0);
       let oRect = oRange.getBoundingClientRect();
       setDropdownState({
@@ -663,6 +661,7 @@ const Utterance = React.memo(props => {
       html: text.current.parseText(),
       onChange: e => {
         text.current = e.currentTarget.textContent;
+        setState(!state);
       },
       onMouseUp: e => {
         handleSelection();

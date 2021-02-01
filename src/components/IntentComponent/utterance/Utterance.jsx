@@ -7,7 +7,7 @@ import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
 
-export const Utterance = React.memo((props) => {
+export const Utterance = React.memo(props => {
 	const [raw, setRaw] = useState('');
 	const [state, setState] = useState(false);
 
@@ -44,7 +44,7 @@ export const Utterance = React.memo((props) => {
 
 	String.prototype.parseText = function () {
 		if (this.length) {
-			let str = this.replace(/\s+/g, ' ').trim();
+			let str = this;
 
 			let regex = new RegExp(
 				whitelist
@@ -54,16 +54,21 @@ export const Utterance = React.memo((props) => {
 			)
 
 
+			var i = 0;
 			str = str.replace(regex, function (matched) {
+				i++;
+
 				let isLastWord = str.lastIndexOf(matched) + matched.length === str.length;
 				let matchedObject = whitelist.find(item => item.text === matched);
-				return `<mark data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>${isLastWord ? ' ' : ''}`
+
+				return `<mark data-i="${i}" data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>${isLastWord ? ' ' : ''}`
 			});
 
 			return str
 		}
 	};
 
+	console.log('render!!')
 
 	const tagSelection = (type, slot_value) => {
 		setTimeout(() => {
@@ -162,7 +167,7 @@ export const Utterance = React.memo((props) => {
 		} else if (sel.toString.length === 0) {
 			let mark = sel.focusNode.parentNode;
 
-			if (mark.tagName === 'BUTTON') {
+			if (mark.tagName === 'MARK') {
 				setTagEditState(true);
 			} else {
 				setTagEditState(false);
@@ -173,11 +178,11 @@ export const Utterance = React.memo((props) => {
 		}
 
 		document.querySelectorAll('mark.active').forEach(mark => {
-			mark.classList.remove('active');
+			//mark.classList.remove('active');
 		})
 
 		if (sel.anchorNode.parentNode.tagName === 'MARK') {
-			sel.anchorNode.parentNode.classList.add('active');
+			// sel.anchorNode.parentNode.classList.add('active');
 		}
 
 		cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
@@ -186,7 +191,7 @@ export const Utterance = React.memo((props) => {
 	useEffect(() => {
 		let s = window.getSelection();
 
-		if (s && s.rangeCount > 0) {
+		if (s && s.rangeCount > 0 && !whitelist.find(item => item.text === selection)) {
 			let oRange = s.getRangeAt(0); //get the text range
 			let oRect = oRange.getBoundingClientRect();
 
@@ -221,7 +226,9 @@ export const Utterance = React.memo((props) => {
 									html={text.current.parseText()}
 									onChange={(e) => {
 										text.current = e.currentTarget.textContent;
+										setState(!state)
 									}}
+						
 									onMouseUp={(e) => {
 										handleSelection()
 									}}
