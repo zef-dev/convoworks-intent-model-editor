@@ -7,7 +7,7 @@ import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
 
-function Utterance(props) {
+export const Utterance = React.memo((props) => {
 	const [raw, setRaw] = useState('');
 	const [state, setState] = useState(false);
 
@@ -162,9 +162,8 @@ function Utterance(props) {
 		} else if (sel.toString.length === 0) {
 			let mark = sel.focusNode.parentNode;
 
-			if (mark.tagName === 'MARK') {
+			if (mark.tagName === 'BUTTON') {
 				setTagEditState(true);
-				setSelection(mark.dataset.text);
 			} else {
 				setTagEditState(false);
 				setSelection(null);
@@ -173,11 +172,20 @@ function Utterance(props) {
 			setSelection(null);
 		}
 
+		document.querySelectorAll('mark.active').forEach(mark => {
+			mark.classList.remove('active');
+		})
+
+		if (sel.anchorNode.parentNode.tagName === 'MARK') {
+			sel.anchorNode.parentNode.classList.add('active');
+		}
+
 		cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
 	}
 
 	useEffect(() => {
 		let s = window.getSelection();
+
 		if (s && s.rangeCount > 0) {
 			let oRange = s.getRangeAt(0); //get the text range
 			let oRect = oRange.getBoundingClientRect();
@@ -192,6 +200,7 @@ function Utterance(props) {
 	useEffect(() => {
 		setCaretPosition(input.current, cursorPosition.current)
 	}, [whitelist, tagEditState]);
+
 
 	if (props.data && props.data.raw) {
 		return (
@@ -220,7 +229,7 @@ function Utterance(props) {
 										if (tagEditState) {
 											console.log(e)
 										}
-	
+
 										if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
 											e.preventDefault();
 										}
@@ -256,6 +265,4 @@ function Utterance(props) {
 	} else {
 		return null
 	}
-}
-
-export default React.memo(Utterance);
+})

@@ -781,7 +781,7 @@
       pointer-events: all;
       visibility: visible;
       opacity: 1; }
-  .convo-details .dropdown__inner {
+  .convo-details .dropdown__items {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -790,7 +790,7 @@
     padding: 1rem 0.5rem;
     padding-top: 0.5rem;
     margin-bottom: 1rem; }
-    .convo-details .dropdown__inner button {
+    .convo-details .dropdown__items button {
       background: transparent;
       border: none;
       outline: none;
@@ -801,7 +801,7 @@
       transition: 0.22s;
       width: 100%;
       display: block; }
-      .convo-details .dropdown__inner button:hover {
+      .convo-details .dropdown__items button:hover {
         color: #2f74ea; }
   .convo-details .dropdown__search-wrap {
     padding: 1rem 0.5rem;
@@ -1069,23 +1069,27 @@
   .convo-details .taggable-text__tags {
     position: absolute;
     width: 100%; }
-  .convo-details .taggable-text__input mark {
-    display: inline-block;
-    -webkit-animation-duration: 220ms;
-            animation-duration: 220ms;
-    margin: 0 1px; }
-
-@-webkit-keyframes example {
-  from {
-    transform: scale(0); }
-  to {
-    transform: scale(1); } }
-
-@keyframes example {
-  from {
-    transform: scale(0); }
-  to {
-    transform: scale(1); } }
+  .convo-details .taggable-text__input {
+    outline: none;
+    line-height: 1.25; }
+    .convo-details .taggable-text__input:focus {
+      outline: none; }
+    .convo-details .taggable-text__input mark {
+      -webkit-animation-name: example;
+              animation-name: example;
+      display: inline-block;
+      -webkit-animation-duration: 220ms;
+              animation-duration: 220ms;
+      padding: 0 2px;
+      margin: 0 1px;
+      font-size: inherit;
+      line-height: inherit;
+      border: none;
+      outline: 3px solid transparent;
+      transition: 0.22s; }
+      .convo-details .taggable-text__input mark.active {
+        box-shadow: 0px 0px 0px 2px rgba(47, 116, 234, 0.85);
+        background: transparent !important; }
 
 @-webkit-keyframes fadeInOnShow {
   from {

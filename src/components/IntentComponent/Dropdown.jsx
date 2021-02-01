@@ -48,7 +48,7 @@ function Dropdown(props) {
 		}
 
 		return (
-			<div class="dropdown" ref={modalRef} style={dropdownStyles}>
+			<div class="dropdown" ref={modalRef} style={dropdownStyles} onMouseDown={e => {console.log(e); e.preventDefault()}}>
 				<header className="dropdown__header">
 					<TextInput
 						Component="input"

@@ -437,7 +437,11 @@ function Dropdown(props) {
     return /*#__PURE__*/React.createElement("div", {
       class: "dropdown",
       ref: modalRef,
-      style: dropdownStyles
+      style: dropdownStyles,
+      onMouseDown: e => {
+        console.log(e);
+        e.preventDefault();
+      }
     }, /*#__PURE__*/React.createElement("header", {
       className: "dropdown__header"
     }, /*#__PURE__*/React.createElement(TextInput, {
@@ -469,7 +473,7 @@ function Dropdown(props) {
   }
 }
 
-function Utterance(props) {
+const Utterance = React.memo(props => {
   const [raw, setRaw] = useState('');
   const [state, setState] = useState(false);
   const [tagEditState, setTagEditState] = useState(false);
@@ -602,15 +606,22 @@ function Utterance(props) {
     } else if (sel.toString.length === 0) {
       let mark = sel.focusNode.parentNode;
 
-      if (mark.tagName === 'MARK') {
+      if (mark.tagName === 'BUTTON') {
         setTagEditState(true);
-        setSelection(mark.dataset.text);
       } else {
         setTagEditState(false);
         setSelection(null);
       }
     } else {
       setSelection(null);
+    }
+
+    document.querySelectorAll('mark.active').forEach(mark => {
+      mark.classList.remove('active');
+    });
+
+    if (sel.anchorNode.parentNode.tagName === 'MARK') {
+      sel.anchorNode.parentNode.classList.add('active');
     }
 
     cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
@@ -690,16 +701,14 @@ function Utterance(props) {
   } else {
     return null;
   }
-}
-
-var Utterance$1 = React.memo(Utterance);
+});
 
 const List = React.memo(function List(props) {
   const [active, setActive] = useState(null);
 
   if (props.utterances) {
     return /*#__PURE__*/React.createElement("ul", null, props.utterances.map((item, index) => {
-      return /*#__PURE__*/React.createElement(Utterance$1, {
+      return /*#__PURE__*/React.createElement(Utterance, {
         key: index,
         data: item,
         index: index,

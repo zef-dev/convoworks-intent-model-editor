@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Utterance from './utterance/Utterance.jsx'
+import {Utterance} from './utterance/Utterance.jsx'
 
 const List = React.memo(function List(props) {
 	const [active, setActive] = useState(null)

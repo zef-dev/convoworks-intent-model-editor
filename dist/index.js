@@ -545,7 +545,11 @@ function Dropdown(props) {
     return /*#__PURE__*/React__default.createElement("div", {
       "class": "dropdown",
       ref: modalRef,
-      style: dropdownStyles
+      style: dropdownStyles,
+      onMouseDown: function onMouseDown(e) {
+        console.log(e);
+        e.preventDefault();
+      }
     }, /*#__PURE__*/React__default.createElement("header", {
       className: "dropdown__header"
     }, /*#__PURE__*/React__default.createElement(TextInput, {
@@ -577,7 +581,7 @@ function Dropdown(props) {
   }
 }
 
-function Utterance(props) {
+var Utterance = React__default.memo(function (props) {
   var _useState = React.useState('');
 
   var _useState2 = React.useState(false);
@@ -734,15 +738,22 @@ function Utterance(props) {
     } else if (sel.toString.length === 0) {
       var mark = sel.focusNode.parentNode;
 
-      if (mark.tagName === 'MARK') {
+      if (mark.tagName === 'BUTTON') {
         setTagEditState(true);
-        setSelection(mark.dataset.text);
       } else {
         setTagEditState(false);
         setSelection(null);
       }
     } else {
       setSelection(null);
+    }
+
+    document.querySelectorAll('mark.active').forEach(function (mark) {
+      mark.classList.remove('active');
+    });
+
+    if (sel.anchorNode.parentNode.tagName === 'MARK') {
+      sel.anchorNode.parentNode.classList.add('active');
     }
 
     cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
@@ -822,9 +833,7 @@ function Utterance(props) {
   } else {
     return null;
   }
-}
-
-var Utterance$1 = React__default.memo(Utterance);
+});
 
 var List = React__default.memo(function List(props) {
   var _useState = React.useState(null),
@@ -833,7 +842,7 @@ var List = React__default.memo(function List(props) {
 
   if (props.utterances) {
     return /*#__PURE__*/React__default.createElement("ul", null, props.utterances.map(function (item, index) {
-      return /*#__PURE__*/React__default.createElement(Utterance$1, {
+      return /*#__PURE__*/React__default.createElement(Utterance, {
         key: index,
         data: item,
         index: index,
