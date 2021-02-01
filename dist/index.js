@@ -441,8 +441,8 @@ String.prototype.getHashCode = function () {
 };
 
 Number.prototype.intToHSL = function () {
-  var shortened = this % 360;
-  return "hsl(" + shortened + ",100%,70%)";
+  var shortened = this % 220;
+  return "hsl(" + shortened + ",100%, 75%)";
 };
 
 var getCaretCharacterOffsetWithin = function getCaretCharacterOffsetWithin(element) {
@@ -629,10 +629,11 @@ function Utterance(props) {
         return item.text.replace(/\s+/g, ' ').trim();
       }).join('|'), 'gi\s');
       str = str.replace(regex, function (matched) {
+        var isLastWord = str.lastIndexOf(matched) + matched.length === str.length;
         var matchedObject = whitelist.find(function (item) {
           return item.text === matched;
         });
-        return "<mark data-type=\"" + matchedObject.type + "\" data-slot-value=\"" + matchedObject.slot_value + "\" data-text=\"" + matched + "\" style=\"background:" + stringToColor(matchedObject.type) + "\">" + matched + "</mark>";
+        return "<mark data-type=\"" + matchedObject.type + "\" data-slot-value=\"" + matchedObject.slot_value + "\" data-text=\"" + matched + "\" style=\"background:" + stringToColor(matched) + "\">" + matched + "</mark>" + (isLastWord ? ' ' : '');
       });
       return str;
     }
@@ -764,12 +765,12 @@ function Utterance(props) {
   }, [whitelist, tagEditState]);
 
   if (props.data && props.data.raw) {
-    return /*#__PURE__*/React__default.createElement("div", {
+    return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, "tag edit state: ", tagEditState.toString(), /*#__PURE__*/React__default.createElement("div", {
       "class": "field field--intent " + (props.active === props.index ? 'field--active' : ''),
       onClick: function onClick() {
         props.setActive(props.index);
       }
-    }, "tag edit state: ", tagEditState.toString(), /*#__PURE__*/React__default.createElement("div", {
+    }, /*#__PURE__*/React__default.createElement("div", {
       className: "field__main",
       id: "input"
     }, /*#__PURE__*/React__default.createElement("div", {
@@ -817,7 +818,7 @@ function Utterance(props) {
           background: stringToColor(item.text)
         }
       }, item.type)), /*#__PURE__*/React__default.createElement("div", null, item.text));
-    })));
+    }))));
   } else {
     return null;
   }

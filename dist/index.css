@@ -907,7 +907,8 @@
       height: 100%; }
   .convo-details .model-list {
     width: 100%;
-    font-size: 12px; }
+    font-size: 12px;
+    overflow: hidden; }
     .convo-details .model-list .btn--remove {
       transform: scale(0.85); }
   .convo-details .model-list__header {
@@ -932,10 +933,13 @@
     grid-template-columns: repeat(3, 33.3%);
     align-items: center;
     width: 100%;
-    padding-left: 12px;
-    padding-right: 12px;
     line-height: 1.5;
-    padding: 12px; }
+    padding: 12px;
+    -webkit-animation: fadeInOnShow;
+            animation: fadeInOnShow;
+    -webkit-animation-duration: 0.22s;
+            animation-duration: 0.22s;
+    transition: 0.22s; }
     .convo-details .model-list__item input {
       border: none;
       padding-right: 24px;
@@ -1050,7 +1054,17 @@
     caret-color: #1a1a1a;
     height: 2.5rem;
     line-height: normal;
-    outline: none; }
+    outline: none;
+    white-space: pre-wrap;
+    /* css-3 */
+    white-space: -moz-pre-wrap;
+    /* Mozilla, since 1999 */
+    white-space: -pre-wrap;
+    /* Opera 4-6 */
+    white-space: -o-pre-wrap;
+    /* Opera 7 */
+    word-wrap: break-word;
+    /* Internet Explorer 5.5+ */ }
   .convo-details .taggable-text__input,
   .convo-details .taggable-text__tags {
     position: absolute;
@@ -1058,7 +1072,8 @@
   .convo-details .taggable-text__input mark {
     display: inline-block;
     -webkit-animation-duration: 220ms;
-            animation-duration: 220ms; }
+            animation-duration: 220ms;
+    margin: 0 1px; }
 
 @-webkit-keyframes example {
   from {
@@ -1071,3 +1086,23 @@
     transform: scale(0); }
   to {
     transform: scale(1); } }
+
+@-webkit-keyframes fadeInOnShow {
+  from {
+    height: 0;
+    opacity: 0;
+    padding: 0; }
+  to {
+    opacity: 1;
+    height: auto;
+    padding: 12px; } }
+
+@keyframes fadeInOnShow {
+  from {
+    height: 0;
+    opacity: 0;
+    padding: 0; }
+  to {
+    opacity: 1;
+    height: auto;
+    padding: 12px; } }

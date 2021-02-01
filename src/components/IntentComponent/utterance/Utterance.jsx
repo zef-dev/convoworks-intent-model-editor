@@ -53,9 +53,11 @@ function Utterance(props) {
 				'gi\s'
 			)
 
+
 			str = str.replace(regex, function (matched) {
+				let isLastWord = str.lastIndexOf(matched) + matched.length === str.length;
 				let matchedObject = whitelist.find(item => item.text === matched);
-				return `<mark data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matchedObject.type)}">${matched}</mark>`
+				return `<mark data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>${isLastWord ? ' ' : ''}`
 			});
 
 			return str
@@ -193,61 +195,63 @@ function Utterance(props) {
 
 	if (props.data && props.data.raw) {
 		return (
-			<div class={`field field--intent ${props.active === props.index ? 'field--active' : ''}`} onClick={() => {
-				props.setActive(props.index)
-			}}>
+			<React.Fragment>
 				tag edit state: {tagEditState.toString()}
-				<div
-					className='field__main'
-					id='input'
-				>
-					<div className='field__input'>
-						<div class='taggable-text' ref={inputWrapper}>
-							<ContentEditable
-								innerRef={input}
-								className='taggable-text__input'
-								html={text.current.parseText()}
-								onChange={(e) => {
-									text.current = e.currentTarget.textContent;
-								}}
-								onMouseUp={(e) => {
-									handleSelection()
-								}}
-								onKeyDown={(e) => {
-									if (tagEditState) {
-										console.log(e)
-									}
-
-									if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
-										e.preventDefault();
-									}
-								}}
-								onKeyUp={(e) => {
-									handleSelection();
-								}}
-							/>
-							{/* 							<div ref={tagsRef} className="taggable-text__tags" contentEditable={false} />
- */}						</div>
-						<Dropdown dropdownState={dropdownState} entities={props.entities} selection={selection} setSelection={setSelection} tagSelection={tagSelection} />
+				<div class={`field field--intent ${props.active === props.index ? 'field--active' : ''}`} onClick={() => {
+					props.setActive(props.index)
+				}}>
+					<div
+						className='field__main'
+						id='input'
+					>
+						<div className='field__input'>
+							<div class='taggable-text' ref={inputWrapper}>
+								<ContentEditable
+									innerRef={input}
+									className='taggable-text__input'
+									html={text.current.parseText()}
+									onChange={(e) => {
+										text.current = e.currentTarget.textContent;
+									}}
+									onMouseUp={(e) => {
+										handleSelection()
+									}}
+									onKeyDown={(e) => {
+										if (tagEditState) {
+											console.log(e)
+										}
+	
+										if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
+											e.preventDefault();
+										}
+									}}
+									onKeyUp={(e) => {
+										handleSelection();
+									}}
+								/>
+								{/* 							<div ref={tagsRef} className="taggable-text__tags" contentEditable={false} />
+	 */}						</div>
+							<Dropdown dropdownState={dropdownState} entities={props.entities} selection={selection} setSelection={setSelection} tagSelection={tagSelection} />
+						</div>
 					</div>
+					<ul className="model-list">
+						<header className="model-list__header">
+							<strong>Parameter name</strong>
+							<strong>Entity</strong>
+							<strong>Resolved value</strong>
+						</header>
+						{whitelist.map(item => {
+							return (
+								<li className="model-list__item">
+									<div>{item.slot_value.length ? item.slot_value : item.type}</div>
+									<div><mark style={{ background: stringToColor(item.text) }}>{item.type}</mark></div>
+									<div>{item.text}</div>
+								</li>
+							)
+						})}
+					</ul>
 				</div>
-				<ul className="model-list">
-					<header className="model-list__header">
-						<strong>Parameter name</strong>
-						<strong>Entity</strong>
-						<strong>Resolved value</strong>
-					</header>
-					{whitelist.map(item => {
-						return (
-							<li className="model-list__item">
-								<div>{item.slot_value.length ? item.slot_value : item.type}</div>
-								<div><mark style={{ background: stringToColor(item.text) }}>{item.type}</mark></div>
-								<div>{item.text}</div>
-							</li>
-						)
-					})}
-				</ul>
-			</div>
+			</React.Fragment>
 		)
 	} else {
 		return null

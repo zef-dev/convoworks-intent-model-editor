@@ -149,6 +149,7 @@
 .model-list {
     width: 100%;
     font-size: 12px;
+    overflow: hidden;
 
     .btn--remove {
         transform: scale(0.85);
@@ -181,10 +182,11 @@
     grid-template-columns: repeat(3, 33.3%);
     align-items: center;
     width: 100%;
-    padding-left: 12px;
-    padding-right: 12px;
     line-height: 1.5;
     padding: 12px;
+    animation: fadeInOnShow;
+    animation-duration: $transition-time;
+    transition: $transition-time;
 
     input {
         border: none;
@@ -345,6 +347,11 @@
     height: $input-height;
     line-height: normal;
     outline: none;
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
 .taggable-text__input,
@@ -358,6 +365,7 @@
         //animation-name: example;
         display: inline-block;
         animation-duration: 220ms;
+        margin: 0 1px;
     }
 }
 
@@ -367,5 +375,18 @@
     }
     to {
         transform: scale(1);
+    }
+}
+
+@keyframes fadeInOnShow {
+    from {
+        height: 0;
+        opacity: 0;
+        padding: 0;
+    }
+    to {
+        opacity: 1;
+        height: auto;
+        padding: 12px;
     }
 }

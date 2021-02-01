@@ -347,8 +347,8 @@ String.prototype.getHashCode = function () {
 };
 
 Number.prototype.intToHSL = function () {
-  var shortened = this % 360;
-  return "hsl(" + shortened + ",100%,70%)";
+  var shortened = this % 220;
+  return "hsl(" + shortened + ",100%, 75%)";
 };
 
 const getCaretCharacterOffsetWithin = element => {
@@ -499,8 +499,9 @@ function Utterance(props) {
       let str = this.replace(/\s+/g, ' ').trim();
       let regex = new RegExp(whitelist.map(item => item.text.replace(/\s+/g, ' ').trim()).join('|'), 'gi\s');
       str = str.replace(regex, function (matched) {
+        let isLastWord = str.lastIndexOf(matched) + matched.length === str.length;
         let matchedObject = whitelist.find(item => item.text === matched);
-        return `<mark data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matchedObject.type)}">${matched}</mark>`;
+        return `<mark data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>${isLastWord ? ' ' : ''}`;
       });
       return str;
     }
@@ -632,12 +633,12 @@ function Utterance(props) {
   }, [whitelist, tagEditState]);
 
   if (props.data && props.data.raw) {
-    return /*#__PURE__*/React.createElement("div", {
+    return /*#__PURE__*/React.createElement(React.Fragment, null, "tag edit state: ", tagEditState.toString(), /*#__PURE__*/React.createElement("div", {
       class: `field field--intent ${props.active === props.index ? 'field--active' : ''}`,
       onClick: () => {
         props.setActive(props.index);
       }
-    }, "tag edit state: ", tagEditState.toString(), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "field__main",
       id: "input"
     }, /*#__PURE__*/React.createElement("div", {
@@ -685,7 +686,7 @@ function Utterance(props) {
           background: stringToColor(item.text)
         }
       }, item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
-    })));
+    }))));
   } else {
     return null;
   }
