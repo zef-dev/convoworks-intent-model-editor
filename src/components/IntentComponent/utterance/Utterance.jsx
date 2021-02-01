@@ -7,7 +7,7 @@ import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
 
-export const Utterance = React.memo(props => {
+export const Utterance = props => {
 	const [raw, setRaw] = useState('');
 	const [state, setState] = useState(false);
 
@@ -53,7 +53,6 @@ export const Utterance = React.memo(props => {
 				'gi\s'
 			)
 
-
 			var i = 0;
 			str = str.replace(regex, function (matched) {
 				i++;
@@ -71,49 +70,44 @@ export const Utterance = React.memo(props => {
 	console.log('render!!')
 
 	const tagSelection = (type, slot_value) => {
-		setTimeout(() => {
+		let list = [...whitelist];
 
+		let selectionPosition = {
+			from: text.current.indexOf(selection),
+			to: text.current.indexOf(selection) + selection.length
+		}
 
-			let list = [...whitelist];
+		list.map((item, index) => {
 
-			let selectionPosition = {
-				from: text.current.indexOf(selection),
-				to: text.current.indexOf(selection) + selection.length
+			let itemPosition = {
+				from: text.current.indexOf(item.text),
+				to: text.current.indexOf(item.text) + item.text.length
 			}
 
-			list.map((item, index) => {
+			switch (true) {
+				case (selectionPosition.from === itemPosition.from):
+					list.splice(index, 1);
+				case (selectionPosition.to === itemPosition.to):
+					list.splice(index, 1);
+				case (selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.to):
+					list.splice(index, 1);
+				case (selectionPosition.from >= itemPosition.from && selectionPosition.to <= itemPosition.to):
+					list.splice(index, 1);
+				case (selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.from):
+					list.splice(index, 1);
+				case (selectionPosition.from >= itemPosition.from && selectionPosition.from <= itemPosition.to):
+					list.splice(index, 1);
+				case (item.text === selection):
+					list.splice(index, 1);
+					break;
+				default:
+					break;
+			}
+		})
 
-				let itemPosition = {
-					from: text.current.indexOf(item.text),
-					to: text.current.indexOf(item.text) + item.text.length
-				}
-
-				switch (true) {
-					case (selectionPosition.from === itemPosition.from):
-						list.splice(index, 1);
-					case (selectionPosition.to === itemPosition.to):
-						list.splice(index, 1);
-					case (selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.to):
-						list.splice(index, 1);
-					case (selectionPosition.from >= itemPosition.from && selectionPosition.to <= itemPosition.to):
-						list.splice(index, 1);
-					case (selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.from):
-						list.splice(index, 1);
-					case (selectionPosition.from >= itemPosition.from && selectionPosition.from <= itemPosition.to):
-						list.splice(index, 1);
-					case (item.text === selection):
-						list.splice(index, 1);
-						break;
-					default:
-						break;
-				}
-			})
-
-			list = [...list, { text: selection, type: type, slot_value: slot_value }]
-
-			setWhitelist(list);
-			setSelection(null);
-		}, 0)
+		list = [...list, { text: selection, type: type, slot_value: slot_value }]
+		setWhitelist(list);
+		setSelection(null);
 	}
 
 	const handleSelection = () => {
@@ -177,14 +171,6 @@ export const Utterance = React.memo(props => {
 			setSelection(null);
 		}
 
-		document.querySelectorAll('mark.active').forEach(mark => {
-			//mark.classList.remove('active');
-		})
-
-		if (sel.anchorNode.parentNode.tagName === 'MARK') {
-			// sel.anchorNode.parentNode.classList.add('active');
-		}
-
 		cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
 	}
 
@@ -203,8 +189,21 @@ export const Utterance = React.memo(props => {
 	}, [selection]);
 
 	useEffect(() => {
-		setCaretPosition(input.current, cursorPosition.current)
+		setCaretPosition(input.current, cursorPosition.current);
 	}, [whitelist, tagEditState]);
+
+	useEffect(() => {
+		let sel = window.getSelection();
+
+		document.querySelectorAll('mark.active').forEach(mark => {
+			mark.classList.remove('active');
+		})
+
+		if (sel.anchorNode.parentNode.tagName === 'MARK') {
+			sel.anchorNode.parentNode.classList.add('active');
+		}
+
+	}, [tagEditState])
 
 
 	if (props.data && props.data.raw) {
@@ -226,9 +225,9 @@ export const Utterance = React.memo(props => {
 									html={text.current.parseText()}
 									onChange={(e) => {
 										text.current = e.currentTarget.textContent;
-										setState(!state)
+										!tagEditState && setState(!state);
 									}}
-						
+
 									onMouseUp={(e) => {
 										handleSelection()
 									}}
@@ -272,4 +271,4 @@ export const Utterance = React.memo(props => {
 	} else {
 		return null
 	}
-})
+}

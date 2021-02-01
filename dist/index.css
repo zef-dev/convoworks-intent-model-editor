@@ -1075,8 +1075,6 @@
     .convo-details .taggable-text__input:focus {
       outline: none; }
     .convo-details .taggable-text__input mark {
-      -webkit-animation-name: example;
-              animation-name: example;
       display: inline-block;
       -webkit-animation-duration: 220ms;
               animation-duration: 220ms;

@@ -581,7 +581,7 @@ function Dropdown(props) {
   }
 }
 
-var Utterance = React__default.memo(function (props) {
+var Utterance = function Utterance(props) {
   var _useState = React.useState('');
 
   var _useState2 = React.useState(false),
@@ -650,50 +650,48 @@ var Utterance = React__default.memo(function (props) {
   console.log('render!!');
 
   var tagSelection = function tagSelection(type, slot_value) {
-    setTimeout(function () {
-      var list = [].concat(whitelist);
-      var selectionPosition = {
-        from: text.current.indexOf(selection),
-        to: text.current.indexOf(selection) + selection.length
+    var list = [].concat(whitelist);
+    var selectionPosition = {
+      from: text.current.indexOf(selection),
+      to: text.current.indexOf(selection) + selection.length
+    };
+    list.map(function (item, index) {
+      var itemPosition = {
+        from: text.current.indexOf(item.text),
+        to: text.current.indexOf(item.text) + item.text.length
       };
-      list.map(function (item, index) {
-        var itemPosition = {
-          from: text.current.indexOf(item.text),
-          to: text.current.indexOf(item.text) + item.text.length
-        };
 
-        switch (true) {
-          case selectionPosition.from === itemPosition.from:
-            list.splice(index, 1);
+      switch (true) {
+        case selectionPosition.from === itemPosition.from:
+          list.splice(index, 1);
 
-          case selectionPosition.to === itemPosition.to:
-            list.splice(index, 1);
+        case selectionPosition.to === itemPosition.to:
+          list.splice(index, 1);
 
-          case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.to:
-            list.splice(index, 1);
+        case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.to:
+          list.splice(index, 1);
 
-          case selectionPosition.from >= itemPosition.from && selectionPosition.to <= itemPosition.to:
-            list.splice(index, 1);
+        case selectionPosition.from >= itemPosition.from && selectionPosition.to <= itemPosition.to:
+          list.splice(index, 1);
 
-          case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.from:
-            list.splice(index, 1);
+        case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.from:
+          list.splice(index, 1);
 
-          case selectionPosition.from >= itemPosition.from && selectionPosition.from <= itemPosition.to:
-            list.splice(index, 1);
+        case selectionPosition.from >= itemPosition.from && selectionPosition.from <= itemPosition.to:
+          list.splice(index, 1);
 
-          case item.text === selection:
-            list.splice(index, 1);
-            break;
-        }
-      });
-      list = [].concat(list, [{
-        text: selection,
-        type: type,
-        slot_value: slot_value
-      }]);
-      setWhitelist(list);
-      setSelection(null);
-    }, 0);
+        case item.text === selection:
+          list.splice(index, 1);
+          break;
+      }
+    });
+    list = [].concat(list, [{
+      text: selection,
+      type: type,
+      slot_value: slot_value
+    }]);
+    setWhitelist(list);
+    setSelection(null);
   };
 
   var handleSelection = function handleSelection() {
@@ -754,8 +752,6 @@ var Utterance = React__default.memo(function (props) {
       setSelection(null);
     }
 
-    document.querySelectorAll('mark.active').forEach(function (mark) {});
-
     cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
   };
 
@@ -776,6 +772,16 @@ var Utterance = React__default.memo(function (props) {
   React.useEffect(function () {
     setCaretPosition(input.current, cursorPosition.current);
   }, [whitelist, tagEditState]);
+  React.useEffect(function () {
+    var sel = window.getSelection();
+    document.querySelectorAll('mark.active').forEach(function (mark) {
+      mark.classList.remove('active');
+    });
+
+    if (sel.anchorNode.parentNode.tagName === 'MARK') {
+      sel.anchorNode.parentNode.classList.add('active');
+    }
+  }, [tagEditState]);
 
   if (props.data && props.data.raw) {
     return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, "tag edit state: ", tagEditState.toString(), /*#__PURE__*/React__default.createElement("div", {
@@ -797,7 +803,7 @@ var Utterance = React__default.memo(function (props) {
       html: text.current.parseText(),
       onChange: function onChange(e) {
         text.current = e.currentTarget.textContent;
-        setState(!state);
+        !tagEditState && setState(!state);
       },
       onMouseUp: function onMouseUp(e) {
         handleSelection();
@@ -836,7 +842,7 @@ var Utterance = React__default.memo(function (props) {
   } else {
     return null;
   }
-});
+};
 
 var List = React__default.memo(function List(props) {
   var _useState = React.useState(null),

@@ -473,7 +473,7 @@ function Dropdown(props) {
   }
 }
 
-const Utterance = React.memo(props => {
+const Utterance = props => {
   const [raw, setRaw] = useState('');
   const [state, setState] = useState(false);
   const [tagEditState, setTagEditState] = useState(false);
@@ -516,50 +516,48 @@ const Utterance = React.memo(props => {
   console.log('render!!');
 
   const tagSelection = (type, slot_value) => {
-    setTimeout(() => {
-      let list = [...whitelist];
-      let selectionPosition = {
-        from: text.current.indexOf(selection),
-        to: text.current.indexOf(selection) + selection.length
+    let list = [...whitelist];
+    let selectionPosition = {
+      from: text.current.indexOf(selection),
+      to: text.current.indexOf(selection) + selection.length
+    };
+    list.map((item, index) => {
+      let itemPosition = {
+        from: text.current.indexOf(item.text),
+        to: text.current.indexOf(item.text) + item.text.length
       };
-      list.map((item, index) => {
-        let itemPosition = {
-          from: text.current.indexOf(item.text),
-          to: text.current.indexOf(item.text) + item.text.length
-        };
 
-        switch (true) {
-          case selectionPosition.from === itemPosition.from:
-            list.splice(index, 1);
+      switch (true) {
+        case selectionPosition.from === itemPosition.from:
+          list.splice(index, 1);
 
-          case selectionPosition.to === itemPosition.to:
-            list.splice(index, 1);
+        case selectionPosition.to === itemPosition.to:
+          list.splice(index, 1);
 
-          case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.to:
-            list.splice(index, 1);
+        case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.to:
+          list.splice(index, 1);
 
-          case selectionPosition.from >= itemPosition.from && selectionPosition.to <= itemPosition.to:
-            list.splice(index, 1);
+        case selectionPosition.from >= itemPosition.from && selectionPosition.to <= itemPosition.to:
+          list.splice(index, 1);
 
-          case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.from:
-            list.splice(index, 1);
+        case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.from:
+          list.splice(index, 1);
 
-          case selectionPosition.from >= itemPosition.from && selectionPosition.from <= itemPosition.to:
-            list.splice(index, 1);
+        case selectionPosition.from >= itemPosition.from && selectionPosition.from <= itemPosition.to:
+          list.splice(index, 1);
 
-          case item.text === selection:
-            list.splice(index, 1);
-            break;
-        }
-      });
-      list = [...list, {
-        text: selection,
-        type: type,
-        slot_value: slot_value
-      }];
-      setWhitelist(list);
-      setSelection(null);
-    }, 0);
+        case item.text === selection:
+          list.splice(index, 1);
+          break;
+      }
+    });
+    list = [...list, {
+      text: selection,
+      type: type,
+      slot_value: slot_value
+    }];
+    setWhitelist(list);
+    setSelection(null);
   };
 
   const handleSelection = () => {
@@ -620,8 +618,6 @@ const Utterance = React.memo(props => {
       setSelection(null);
     }
 
-    document.querySelectorAll('mark.active').forEach(mark => {});
-
     cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
   };
 
@@ -640,6 +636,16 @@ const Utterance = React.memo(props => {
   useEffect(() => {
     setCaretPosition(input.current, cursorPosition.current);
   }, [whitelist, tagEditState]);
+  useEffect(() => {
+    let sel = window.getSelection();
+    document.querySelectorAll('mark.active').forEach(mark => {
+      mark.classList.remove('active');
+    });
+
+    if (sel.anchorNode.parentNode.tagName === 'MARK') {
+      sel.anchorNode.parentNode.classList.add('active');
+    }
+  }, [tagEditState]);
 
   if (props.data && props.data.raw) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, "tag edit state: ", tagEditState.toString(), /*#__PURE__*/React.createElement("div", {
@@ -661,7 +667,7 @@ const Utterance = React.memo(props => {
       html: text.current.parseText(),
       onChange: e => {
         text.current = e.currentTarget.textContent;
-        setState(!state);
+        !tagEditState && setState(!state);
       },
       onMouseUp: e => {
         handleSelection();
@@ -700,7 +706,7 @@ const Utterance = React.memo(props => {
   } else {
     return null;
   }
-});
+};
 
 const List = React.memo(function List(props) {
   const [active, setActive] = useState(null);
