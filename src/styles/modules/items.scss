@@ -159,6 +159,7 @@
 .model-list__header {
     display: grid;
     grid-template-columns: repeat(3, 33.3%);
+    grid-gap: 24px;
     align-items: center;
     width: 100%;
     padding-left: 12px;
@@ -180,9 +181,10 @@
 .model-list__item {
     display: grid;
     grid-template-columns: repeat(3, 33.3%);
+    grid-gap: 24px;
     align-items: center;
     width: 100%;
-    line-height: 1.5;
+    line-height: 1.75;
     padding: 12px;
     animation: fadeInOnShow;
     animation-duration: $transition-time;
@@ -193,9 +195,12 @@
         padding-right: 24px;
         height: 100%;
         font-size: inherit;
+        border-bottom: 1px solid transparent;
+        font-family: inherit;
 
         &:focus {
             outline: none;
+            border-bottom-color: $color-primary;
         }
     }
 }

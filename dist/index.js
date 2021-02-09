@@ -581,33 +581,27 @@ function Dropdown(props) {
   }
 }
 
-var Utterance = function Utterance(props) {
+var Utterance = React__default.memo(function (props) {
   var _useState = React.useState('');
 
-  var _useState2 = React.useState(false),
-      state = _useState2[0],
-      setState = _useState2[1];
+  var _useState2 = React.useState(false);
 
-  var _useState3 = React.useState(false),
-      tagEditState = _useState3[0],
-      setTagEditState = _useState3[1];
-
-  var _useState4 = React.useState({
+  var _useState3 = React.useState({
     position: 0,
     active: false
   }),
-      dropdownState = _useState4[0],
-      setDropdownState = _useState4[1];
+      dropdownState = _useState3[0],
+      setDropdownState = _useState3[1];
 
-  var _useState5 = React.useState(null);
+  var _useState4 = React.useState(null);
 
-  var _useState6 = React.useState(props.data.model);
+  var _useState5 = React.useState(props.data.model);
 
-  var _useState7 = React.useState(null),
-      selection = _useState7[0],
-      setSelection = _useState7[1];
+  var _useState6 = React.useState(null),
+      selection = _useState6[0],
+      setSelection = _useState6[1];
 
-  var _useState8 = React.useState(props.data.model.filter(function (item) {
+  var _useState7 = React.useState(props.data.model.filter(function (item) {
     return item.type;
   }).map(function (item) {
     return {
@@ -616,13 +610,14 @@ var Utterance = function Utterance(props) {
       slot_value: item.slot_value
     };
   })),
-      whitelist = _useState8[0],
-      setWhitelist = _useState8[1];
+      whitelist = _useState7[0],
+      setWhitelist = _useState7[1];
 
   var input = React.useRef('');
   var text = React.useRef('');
   var inputWrapper = React.useRef('');
   var cursorPosition = React.useRef(0);
+  var editState = React.useRef(false);
   React.useEffect(function () {
     input.current.innerHTML = props.data.raw.parseText();
     text.current = props.data.raw;
@@ -739,28 +734,18 @@ var Utterance = function Utterance(props) {
 
     if (sel.toString().length) {
       setSelection(sel.toString().trim());
-    } else if (sel.toString.length === 0) {
-      var mark = sel.focusNode.parentNode;
-
-      if (mark.tagName === 'MARK') {
-        setTagEditState(true);
-      } else {
-        setTagEditState(false);
-        setSelection(null);
-      }
+    } else if (sel.focusNode.parentNode.tagName === 'MARK') {
+      editState.current = true;
     } else {
       setSelection(null);
+      editState.current = false;
     }
-
-    cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
   };
 
   React.useEffect(function () {
     var s = window.getSelection();
 
-    if (s && s.rangeCount > 0 && !whitelist.find(function (item) {
-      return item.text === selection;
-    })) {
+    if (s && s.rangeCount > 0) {
       var oRange = s.getRangeAt(0);
       var oRect = oRange.getBoundingClientRect();
       setDropdownState({
@@ -771,20 +756,10 @@ var Utterance = function Utterance(props) {
   }, [selection]);
   React.useEffect(function () {
     setCaretPosition(input.current, cursorPosition.current);
-  }, [whitelist, tagEditState]);
-  React.useEffect(function () {
-    var sel = window.getSelection();
-    document.querySelectorAll('mark.active').forEach(function (mark) {
-      mark.classList.remove('active');
-    });
-
-    if (sel.anchorNode.parentNode.tagName === 'MARK') {
-      sel.anchorNode.parentNode.classList.add('active');
-    }
-  }, [tagEditState]);
+  }, [whitelist]);
 
   if (props.data && props.data.raw) {
-    return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, "tag edit state: ", tagEditState.toString(), /*#__PURE__*/React__default.createElement("div", {
+    return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, "tag edit state: ", editState.current.toString(), /*#__PURE__*/React__default.createElement("div", {
       "class": "field field--intent " + (props.active === props.index ? 'field--active' : ''),
       onClick: function onClick() {
         props.setActive(props.index);
@@ -803,21 +778,34 @@ var Utterance = function Utterance(props) {
       html: text.current.parseText(),
       onChange: function onChange(e) {
         text.current = e.currentTarget.textContent;
-        !tagEditState && setState(!state);
+        var sel = window.getSelection().anchorNode.parentElement;
+
+        if (sel.tagName === 'MARK') {
+          var arr = [].concat(whitelist);
+          var item = arr.find(function (item) {
+            return item.text === sel.dataset.text;
+          });
+          var index = arr.indexOf(item);
+          arr[index] = _extends({}, item, {
+            text: sel.textContent
+          });
+          setWhitelist(arr);
+          console.log(arr[index]);
+        }
+
+        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
       },
       onMouseUp: function onMouseUp(e) {
         handleSelection();
+        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
       },
       onKeyDown: function onKeyDown(e) {
-        if (tagEditState) {
-          console.log(e);
-        }
-
         if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
           e.preventDefault();
         }
       },
       onKeyUp: function onKeyUp(e) {
+        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
         handleSelection();
       }
     }), "      "), /*#__PURE__*/React__default.createElement(Dropdown, {
@@ -833,7 +821,9 @@ var Utterance = function Utterance(props) {
     }, /*#__PURE__*/React__default.createElement("strong", null, "Parameter name"), /*#__PURE__*/React__default.createElement("strong", null, "Entity"), /*#__PURE__*/React__default.createElement("strong", null, "Resolved value")), whitelist.map(function (item) {
       return /*#__PURE__*/React__default.createElement("li", {
         className: "model-list__item"
-      }, /*#__PURE__*/React__default.createElement("div", null, item.slot_value.length ? item.slot_value : item.type), /*#__PURE__*/React__default.createElement("div", null, /*#__PURE__*/React__default.createElement("mark", {
+      }, /*#__PURE__*/React__default.createElement("input", {
+        defaultValue: item.slot_value.length ? item.slot_value : item.type
+      }), /*#__PURE__*/React__default.createElement("div", null, /*#__PURE__*/React__default.createElement("mark", {
         style: {
           background: stringToColor(item.text)
         }
@@ -842,7 +832,7 @@ var Utterance = function Utterance(props) {
   } else {
     return null;
   }
-};
+});
 
 var List = React__default.memo(function List(props) {
   var _useState = React.useState(null),

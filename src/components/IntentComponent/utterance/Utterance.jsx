@@ -7,12 +7,9 @@ import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
 
-export const Utterance = props => {
+export const Utterance = React.memo(props => {
 	const [raw, setRaw] = useState('');
 	const [state, setState] = useState(false);
-
-	const [tagEditState, setTagEditState] = useState(false);
-
 	const [dropdownState, setDropdownState] = useState({
 		position: 0,
 		active: false
@@ -35,7 +32,8 @@ export const Utterance = props => {
 	const input = useRef('');
 	const text = useRef('');
 	const inputWrapper = useRef('');
-	const cursorPosition = useRef(0)
+	const cursorPosition = useRef(0);
+	const editState = useRef(false);
 
 	useEffect(() => {
 		input.current.innerHTML = props.data.raw.parseText();
@@ -156,28 +154,23 @@ export const Utterance = props => {
 			}
 		}
 
+		/* TODO: improve  */
 		if (sel.toString().length) {
 			setSelection(sel.toString().trim())
-		} else if (sel.toString.length === 0) {
-			let mark = sel.focusNode.parentNode;
-
-			if (mark.tagName === 'MARK') {
-				setTagEditState(true);
-			} else {
-				setTagEditState(false);
-				setSelection(null);
-			}
+		} else if (sel.focusNode.parentNode.tagName === 'MARK') {
+			editState.current = true;
+			//setCurrentTag(sel.textContent);
 		} else {
 			setSelection(null);
+			editState.current = false;
+			//setCurrentTag(null);
 		}
-
-		cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
 	}
 
 	useEffect(() => {
 		let s = window.getSelection();
 
-		if (s && s.rangeCount > 0 && !whitelist.find(item => item.text === selection)) {
+		if (s && s.rangeCount > 0) {
 			let oRange = s.getRangeAt(0); //get the text range
 			let oRect = oRange.getBoundingClientRect();
 
@@ -186,30 +179,20 @@ export const Utterance = props => {
 				active: selection !== null
 			})
 		}
+
+//		cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+
+
 	}, [selection]);
 
 	useEffect(() => {
 		setCaretPosition(input.current, cursorPosition.current);
-	}, [whitelist, tagEditState]);
-
-	useEffect(() => {
-		let sel = window.getSelection();
-
-		document.querySelectorAll('mark.active').forEach(mark => {
-			mark.classList.remove('active');
-		})
-
-		if (sel.anchorNode.parentNode.tagName === 'MARK') {
-			sel.anchorNode.parentNode.classList.add('active');
-		}
-
-	}, [tagEditState])
-
+	}, [whitelist]);
 
 	if (props.data && props.data.raw) {
 		return (
 			<React.Fragment>
-				tag edit state: {tagEditState.toString()}
+				tag edit state: {editState.current.toString()}
 				<div class={`field field--intent ${props.active === props.index ? 'field--active' : ''}`} onClick={() => {
 					props.setActive(props.index)
 				}}>
@@ -225,22 +208,33 @@ export const Utterance = props => {
 									html={text.current.parseText()}
 									onChange={(e) => {
 										text.current = e.currentTarget.textContent;
-										!tagEditState && setState(!state);
-									}}
-
-									onMouseUp={(e) => {
-										handleSelection()
-									}}
-									onKeyDown={(e) => {
-										if (tagEditState) {
-											console.log(e)
+										let sel = window.getSelection().anchorNode.parentElement;
+										
+										if (sel.tagName === 'MARK') {
+											let arr = [...whitelist];
+											let item = arr.find(item => item.text === sel.dataset.text);
+											let index = arr.indexOf(item);
+											arr[index] = {...item, text: sel.textContent};
+											setWhitelist(arr);
+											console.log(arr[index]);
 										}
 
+										cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+									}}
+									onMouseUp={(e) => {
+										handleSelection()
+										cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+									}}
+
+									onKeyDown={(e) => {
 										if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
 											e.preventDefault();
 										}
 									}}
+
 									onKeyUp={(e) => {
+										cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+
 										handleSelection();
 									}}
 								/>
@@ -258,7 +252,7 @@ export const Utterance = props => {
 						{whitelist.map(item => {
 							return (
 								<li className="model-list__item">
-									<div>{item.slot_value.length ? item.slot_value : item.type}</div>
+									<input defaultValue={item.slot_value.length ? item.slot_value : item.type} />
 									<div><mark style={{ background: stringToColor(item.text) }}>{item.type}</mark></div>
 									<div>{item.text}</div>
 								</li>
@@ -271,4 +265,4 @@ export const Utterance = props => {
 	} else {
 		return null
 	}
-}
+})

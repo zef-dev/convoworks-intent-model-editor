@@ -765,18 +765,18 @@
     left: 0;
     display: flex;
     flex-direction: column;
-    width: 18rem;
-    height: 18.75rem;
+    width: 288px;
+    height: 300px;
     background: #ffffff;
     box-shadow: 0 0.125rem 0.375rem 0 rgba(0, 0, 0, 0.2);
     z-index: 99;
     transition: 0.22s;
     opacity: 0;
     visibility: hidden;
-    font-size: 0.875rem;
-    border-radius: 0.75rem;
+    font-size: 14px;
+    border-radius: 12px;
     overflow: hidden;
-    padding: 0 0.5rem; }
+    padding: 0 8px; }
     .convo-details .dropdown--active {
       pointer-events: all;
       visibility: visible;
@@ -787,30 +787,40 @@
     overflow-y: auto;
     width: 100%;
     height: 100%;
-    padding: 1rem 0.5rem;
-    padding-top: 0.5rem;
-    margin-bottom: 1rem; }
+    padding: 16px 8px;
+    padding-top: 8px;
+    margin-bottom: 16px; }
     .convo-details .dropdown__items button {
       background: transparent;
       border: none;
       outline: none;
       text-align: left;
-      padding: 0.25rem 0;
-      font-size: 0.875rem;
+      padding: 4px 0;
+      font-size: 14px;
       cursor: pointer;
       transition: 0.22s;
       width: 100%;
       display: block; }
       .convo-details .dropdown__items button:hover {
         color: #2f74ea; }
-  .convo-details .dropdown__search-wrap {
+      .convo-details .dropdown__items button:focus, .convo-details .dropdown__items button:active {
+        outline: 1px solid #2f74ea; }
+  .convo-details .dropdown__header {
     padding: 1rem 0.5rem;
     padding-bottom: 0.5rem; }
+  .convo-details .dropdown__selection {
+    font-size: 10px;
+    color: rgba(0, 0, 0, 0.65); }
+    .convo-details .dropdown__selection strong {
+      color: #2f74ea;
+      font-weight: 500; }
   .convo-details .editor-input.dropdown__search {
     width: 100%;
+    border: none;
+    margin-bottom: 4px;
     border-bottom: 1px solid rgba(26, 26, 26, 0.3);
     font-size: 0.875rem;
-    padding: 0.5rem 0; }
+    padding: 8px 0; }
   .convo-details .field {
     margin-bottom: 10px;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -914,6 +924,7 @@
   .convo-details .model-list__header {
     display: grid;
     grid-template-columns: repeat(3, 33.3%);
+    grid-gap: 24px;
     align-items: center;
     width: 100%;
     padding-left: 12px;
@@ -931,9 +942,10 @@
   .convo-details .model-list__item {
     display: grid;
     grid-template-columns: repeat(3, 33.3%);
+    grid-gap: 24px;
     align-items: center;
     width: 100%;
-    line-height: 1.5;
+    line-height: 1.75;
     padding: 12px;
     -webkit-animation: fadeInOnShow;
             animation: fadeInOnShow;
@@ -944,9 +956,12 @@
       border: none;
       padding-right: 24px;
       height: 100%;
-      font-size: inherit; }
+      font-size: inherit;
+      border-bottom: 1px solid transparent;
+      font-family: inherit; }
       .convo-details .model-list__item input:focus {
-        outline: none; }
+        outline: none;
+        border-bottom-color: #2f74ea; }
   .convo-details .field--active {
     border: 1px solid #2f74ea;
     cursor: default;
