@@ -821,6 +821,9 @@
     border-bottom: 1px solid rgba(26, 26, 26, 0.3);
     font-size: 0.875rem;
     padding: 8px 0; }
+    .convo-details .editor-input.dropdown__search:focus {
+      outline: none;
+      border-bottom-color: #2f74ea; }
   .convo-details .field {
     margin-bottom: 10px;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -1067,7 +1070,6 @@
     padding: 10px 12px;
     cursor: text;
     caret-color: #1a1a1a;
-    height: 2.5rem;
     line-height: normal;
     outline: none;
     white-space: pre-wrap;
@@ -1082,7 +1084,6 @@
     /* Internet Explorer 5.5+ */ }
   .convo-details .taggable-text__input,
   .convo-details .taggable-text__tags {
-    position: absolute;
     width: 100%; }
   .convo-details .taggable-text__input {
     outline: none;

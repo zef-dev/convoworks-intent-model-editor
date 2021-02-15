@@ -29,11 +29,13 @@ export const Utterance = React.memo(props => {
 			}))
 	)
 
+	const [selectedNodes, setSelectedNodes] = useState([]);
+
 	const input = useRef('');
 	const text = useRef('');
 	const inputWrapper = useRef('');
 	const cursorPosition = useRef(0);
-	const editState = useRef(false);
+	
 
 	useEffect(() => {
 		input.current.innerHTML = props.data.raw.parseText();
@@ -56,57 +58,14 @@ export const Utterance = React.memo(props => {
 				i++;
 
 				let isLastWord = str.lastIndexOf(matched) + matched.length === str.length;
-				let matchedObject = whitelist.find(item => item.text === matched);
+				//let matchedObject = whitelist.find(item => item.text === matched);
 
-				return `<mark data-i="${i}" data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>${isLastWord ? ' ' : ''}`
+				return `<mark data-i="${i}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>${isLastWord ? ' ' : ''}`
 			});
 
 			return str
 		}
 	};
-
-	console.log('render!!')
-
-	const tagSelection = (type, slot_value) => {
-		let list = [...whitelist];
-
-		let selectionPosition = {
-			from: text.current.indexOf(selection),
-			to: text.current.indexOf(selection) + selection.length
-		}
-
-		list.map((item, index) => {
-
-			let itemPosition = {
-				from: text.current.indexOf(item.text),
-				to: text.current.indexOf(item.text) + item.text.length
-			}
-
-			switch (true) {
-				case (selectionPosition.from === itemPosition.from):
-					list.splice(index, 1);
-				case (selectionPosition.to === itemPosition.to):
-					list.splice(index, 1);
-				case (selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.to):
-					list.splice(index, 1);
-				case (selectionPosition.from >= itemPosition.from && selectionPosition.to <= itemPosition.to):
-					list.splice(index, 1);
-				case (selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.from):
-					list.splice(index, 1);
-				case (selectionPosition.from >= itemPosition.from && selectionPosition.from <= itemPosition.to):
-					list.splice(index, 1);
-				case (item.text === selection):
-					list.splice(index, 1);
-					break;
-				default:
-					break;
-			}
-		})
-
-		list = [...list, { text: selection, type: type, slot_value: slot_value }]
-		setWhitelist(list);
-		setSelection(null);
-	}
 
 	const handleSelection = () => {
 		var sel
@@ -154,17 +113,40 @@ export const Utterance = React.memo(props => {
 			}
 		}
 
-		/* TODO: improve  */
+		/* 
+		GET ALL SELECTED NODES
+		Get all nodes contained in user selection. 
+		Filter nodes of type MARK. These nodes will be removed from the whitelist. 
+		*/
+		let nodes = rangy.getSelection().getRangeAt(0).getNodes();
+		if (nodes) {
+			nodes = nodes.filter(item => item.tagName === "MARK").map(item => item.textContent);
+			setSelectedNodes(nodes);
+		}
+
+		/* 
+		SET CURRENT SELECTION
+		*/
 		if (sel.toString().length) {
 			setSelection(sel.toString().trim())
 		} else if (sel.focusNode.parentNode.tagName === 'MARK') {
-			editState.current = true;
-			//setCurrentTag(sel.textContent);
+			setSelection(sel.focusNode.parentNode.textContent)
 		} else {
 			setSelection(null);
-			editState.current = false;
-			//setCurrentTag(null);
 		}
+	}
+
+	const tagSelection = (type, slot_value) => {
+		/* 
+		REMOVE OVERLAPPING NODES FROM THE WHITELIST
+		Check if any of whitelist items exist in selected nodes array.
+		If they do exist in selected nodes, they will be filtered out.
+		*/
+		let list = whitelist.filter(item => !selectedNodes.includes(item.text));
+		list = [...list, { text: selection, type: type, slot_value: slot_value }]
+		setSelectedNodes([]);
+		setWhitelist(list);
+		setSelection(null);
 	}
 
 	useEffect(() => {
@@ -180,19 +162,17 @@ export const Utterance = React.memo(props => {
 			})
 		}
 
-//		cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
-
-
+		// cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
 	}, [selection]);
 
 	useEffect(() => {
+		/* position caret after the whitelist is updated */
 		setCaretPosition(input.current, cursorPosition.current);
 	}, [whitelist]);
 
 	if (props.data && props.data.raw) {
 		return (
 			<React.Fragment>
-				tag edit state: {editState.current.toString()}
 				<div class={`field field--intent ${props.active === props.index ? 'field--active' : ''}`} onClick={() => {
 					props.setActive(props.index)
 				}}>
@@ -214,9 +194,9 @@ export const Utterance = React.memo(props => {
 											let arr = [...whitelist];
 											let item = arr.find(item => item.text === sel.dataset.text);
 											let index = arr.indexOf(item);
+
 											arr[index] = {...item, text: sel.textContent};
-											setWhitelist(arr);
-											console.log(arr[index]);
+											setWhitelist(arr.filter(obj => obj.text.length));
 										}
 
 										cursorPosition.current = getCaretCharacterOffsetWithin(input.current);

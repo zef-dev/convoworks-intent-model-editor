@@ -60,6 +60,7 @@
 .dropdown__header {
 	padding: 1rem 0.5rem;
 	padding-bottom: 0.5rem;
+
 }
 
 .dropdown__selection {
@@ -79,4 +80,9 @@
 	border-bottom: 1px solid rgba($black, 0.3);
 	font-size: 0.875rem;
 	padding: 8px 0;
+
+	&:focus {
+		outline: none;
+		border-bottom-color: $color-primary;
+	}
 }

@@ -349,7 +349,7 @@
     padding: 10px 12px;
     cursor: text;
     caret-color: $black;
-    height: $input-height;
+    //height: $input-height;
     line-height: normal;
     outline: none;
     white-space: pre-wrap;       /* css-3 */
@@ -361,7 +361,6 @@
 
 .taggable-text__input,
 .taggable-text__tags {
-    position: absolute;
     width: 100%;
 }
 

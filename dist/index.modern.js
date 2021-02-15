@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import 'lodash';
 import '@yaireo/tagify/dist/react.tagify';
 import '@yaireo/tagify/src/tagify.scss';
-import 'rangy';
+import rangy from 'rangy';
 import ContentEditable from 'react-contenteditable';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import TextInput from 'react-autocomplete-input';
@@ -437,11 +437,7 @@ function Dropdown(props) {
     return /*#__PURE__*/React.createElement("div", {
       class: "dropdown",
       ref: modalRef,
-      style: dropdownStyles,
-      onMouseDown: e => {
-        console.log(e);
-        e.preventDefault();
-      }
+      style: dropdownStyles
     }, /*#__PURE__*/React.createElement("header", {
       className: "dropdown__header"
     }, /*#__PURE__*/React.createElement(TextInput, {
@@ -488,11 +484,11 @@ const Utterance = React.memo(props => {
     type: item.type,
     slot_value: item.slot_value
   })));
+  const [selectedNodes, setSelectedNodes] = useState([]);
   const input = useRef('');
   const text = useRef('');
   const inputWrapper = useRef('');
   const cursorPosition = useRef(0);
-  const editState = useRef(false);
   useEffect(() => {
     input.current.innerHTML = props.data.raw.parseText();
     text.current = props.data.raw;
@@ -506,58 +502,10 @@ const Utterance = React.memo(props => {
       str = str.replace(regex, function (matched) {
         i++;
         let isLastWord = str.lastIndexOf(matched) + matched.length === str.length;
-        let matchedObject = whitelist.find(item => item.text === matched);
-        return `<mark data-i="${i}" data-type="${matchedObject.type}" data-slot-value="${matchedObject.slot_value}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>${isLastWord ? ' ' : ''}`;
+        return `<mark data-i="${i}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>${isLastWord ? ' ' : ''}`;
       });
       return str;
     }
-  };
-
-  console.log('render!!');
-
-  const tagSelection = (type, slot_value) => {
-    let list = [...whitelist];
-    let selectionPosition = {
-      from: text.current.indexOf(selection),
-      to: text.current.indexOf(selection) + selection.length
-    };
-    list.map((item, index) => {
-      let itemPosition = {
-        from: text.current.indexOf(item.text),
-        to: text.current.indexOf(item.text) + item.text.length
-      };
-
-      switch (true) {
-        case selectionPosition.from === itemPosition.from:
-          list.splice(index, 1);
-
-        case selectionPosition.to === itemPosition.to:
-          list.splice(index, 1);
-
-        case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.to:
-          list.splice(index, 1);
-
-        case selectionPosition.from >= itemPosition.from && selectionPosition.to <= itemPosition.to:
-          list.splice(index, 1);
-
-        case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.from:
-          list.splice(index, 1);
-
-        case selectionPosition.from >= itemPosition.from && selectionPosition.from <= itemPosition.to:
-          list.splice(index, 1);
-
-        case item.text === selection:
-          list.splice(index, 1);
-          break;
-      }
-    });
-    list = [...list, {
-      text: selection,
-      type: type,
-      slot_value: slot_value
-    }];
-    setWhitelist(list);
-    setSelection(null);
   };
 
   const handleSelection = () => {
@@ -603,14 +551,32 @@ const Utterance = React.memo(props => {
       }
     }
 
+    let nodes = rangy.getSelection().getRangeAt(0).getNodes();
+
+    if (nodes) {
+      nodes = nodes.filter(item => item.tagName === "MARK").map(item => item.textContent);
+      setSelectedNodes(nodes);
+    }
+
     if (sel.toString().length) {
       setSelection(sel.toString().trim());
     } else if (sel.focusNode.parentNode.tagName === 'MARK') {
-      editState.current = true;
+      setSelection(sel.focusNode.parentNode.textContent);
     } else {
       setSelection(null);
-      editState.current = false;
     }
+  };
+
+  const tagSelection = (type, slot_value) => {
+    let list = whitelist.filter(item => !selectedNodes.includes(item.text));
+    list = [...list, {
+      text: selection,
+      type: type,
+      slot_value: slot_value
+    }];
+    setSelectedNodes([]);
+    setWhitelist(list);
+    setSelection(null);
   };
 
   useEffect(() => {
@@ -630,7 +596,7 @@ const Utterance = React.memo(props => {
   }, [whitelist]);
 
   if (props.data && props.data.raw) {
-    return /*#__PURE__*/React.createElement(React.Fragment, null, "tag edit state: ", editState.current.toString(), /*#__PURE__*/React.createElement("div", {
+    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       class: `field field--intent ${props.active === props.index ? 'field--active' : ''}`,
       onClick: () => {
         props.setActive(props.index);
@@ -658,8 +624,7 @@ const Utterance = React.memo(props => {
           arr[index] = { ...item,
             text: sel.textContent
           };
-          setWhitelist(arr);
-          console.log(arr[index]);
+          setWhitelist(arr.filter(obj => obj.text.length));
         }
 
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);

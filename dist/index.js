@@ -5,7 +5,7 @@ var React__default = _interopDefault(React);
 require('lodash');
 require('@yaireo/tagify/dist/react.tagify');
 require('@yaireo/tagify/src/tagify.scss');
-require('rangy');
+var rangy = _interopDefault(require('rangy'));
 var ContentEditable = _interopDefault(require('react-contenteditable'));
 var useOnclickOutside = _interopDefault(require('react-cool-onclickoutside'));
 var TextInput = _interopDefault(require('react-autocomplete-input'));
@@ -545,11 +545,7 @@ function Dropdown(props) {
     return /*#__PURE__*/React__default.createElement("div", {
       "class": "dropdown",
       ref: modalRef,
-      style: dropdownStyles,
-      onMouseDown: function onMouseDown(e) {
-        console.log(e);
-        e.preventDefault();
-      }
+      style: dropdownStyles
     }, /*#__PURE__*/React__default.createElement("header", {
       className: "dropdown__header"
     }, /*#__PURE__*/React__default.createElement(TextInput, {
@@ -613,11 +609,14 @@ var Utterance = React__default.memo(function (props) {
       whitelist = _useState7[0],
       setWhitelist = _useState7[1];
 
+  var _useState8 = React.useState([]),
+      selectedNodes = _useState8[0],
+      setSelectedNodes = _useState8[1];
+
   var input = React.useRef('');
   var text = React.useRef('');
   var inputWrapper = React.useRef('');
   var cursorPosition = React.useRef(0);
-  var editState = React.useRef(false);
   React.useEffect(function () {
     input.current.innerHTML = props.data.raw.parseText();
     text.current = props.data.raw;
@@ -633,60 +632,10 @@ var Utterance = React__default.memo(function (props) {
       str = str.replace(regex, function (matched) {
         i++;
         var isLastWord = str.lastIndexOf(matched) + matched.length === str.length;
-        var matchedObject = whitelist.find(function (item) {
-          return item.text === matched;
-        });
-        return "<mark data-i=\"" + i + "\" data-type=\"" + matchedObject.type + "\" data-slot-value=\"" + matchedObject.slot_value + "\" data-text=\"" + matched + "\" style=\"background:" + stringToColor(matched) + "\">" + matched + "</mark>" + (isLastWord ? ' ' : '');
+        return "<mark data-i=\"" + i + "\" data-text=\"" + matched + "\" style=\"background:" + stringToColor(matched) + "\">" + matched + "</mark>" + (isLastWord ? ' ' : '');
       });
       return str;
     }
-  };
-
-  console.log('render!!');
-
-  var tagSelection = function tagSelection(type, slot_value) {
-    var list = [].concat(whitelist);
-    var selectionPosition = {
-      from: text.current.indexOf(selection),
-      to: text.current.indexOf(selection) + selection.length
-    };
-    list.map(function (item, index) {
-      var itemPosition = {
-        from: text.current.indexOf(item.text),
-        to: text.current.indexOf(item.text) + item.text.length
-      };
-
-      switch (true) {
-        case selectionPosition.from === itemPosition.from:
-          list.splice(index, 1);
-
-        case selectionPosition.to === itemPosition.to:
-          list.splice(index, 1);
-
-        case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.to:
-          list.splice(index, 1);
-
-        case selectionPosition.from >= itemPosition.from && selectionPosition.to <= itemPosition.to:
-          list.splice(index, 1);
-
-        case selectionPosition.from <= itemPosition.from && selectionPosition.to >= itemPosition.from:
-          list.splice(index, 1);
-
-        case selectionPosition.from >= itemPosition.from && selectionPosition.from <= itemPosition.to:
-          list.splice(index, 1);
-
-        case item.text === selection:
-          list.splice(index, 1);
-          break;
-      }
-    });
-    list = [].concat(list, [{
-      text: selection,
-      type: type,
-      slot_value: slot_value
-    }]);
-    setWhitelist(list);
-    setSelection(null);
   };
 
   var handleSelection = function handleSelection() {
@@ -732,14 +681,38 @@ var Utterance = React__default.memo(function (props) {
       }
     }
 
+    var nodes = rangy.getSelection().getRangeAt(0).getNodes();
+
+    if (nodes) {
+      nodes = nodes.filter(function (item) {
+        return item.tagName === "MARK";
+      }).map(function (item) {
+        return item.textContent;
+      });
+      setSelectedNodes(nodes);
+    }
+
     if (sel.toString().length) {
       setSelection(sel.toString().trim());
     } else if (sel.focusNode.parentNode.tagName === 'MARK') {
-      editState.current = true;
+      setSelection(sel.focusNode.parentNode.textContent);
     } else {
       setSelection(null);
-      editState.current = false;
     }
+  };
+
+  var tagSelection = function tagSelection(type, slot_value) {
+    var list = whitelist.filter(function (item) {
+      return !selectedNodes.includes(item.text);
+    });
+    list = [].concat(list, [{
+      text: selection,
+      type: type,
+      slot_value: slot_value
+    }]);
+    setSelectedNodes([]);
+    setWhitelist(list);
+    setSelection(null);
   };
 
   React.useEffect(function () {
@@ -759,7 +732,7 @@ var Utterance = React__default.memo(function (props) {
   }, [whitelist]);
 
   if (props.data && props.data.raw) {
-    return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, "tag edit state: ", editState.current.toString(), /*#__PURE__*/React__default.createElement("div", {
+    return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
       "class": "field field--intent " + (props.active === props.index ? 'field--active' : ''),
       onClick: function onClick() {
         props.setActive(props.index);
@@ -789,8 +762,9 @@ var Utterance = React__default.memo(function (props) {
           arr[index] = _extends({}, item, {
             text: sel.textContent
           });
-          setWhitelist(arr);
-          console.log(arr[index]);
+          setWhitelist(arr.filter(function (obj) {
+            return obj.text.length;
+          }));
         }
 
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
