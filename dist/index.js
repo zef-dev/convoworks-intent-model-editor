@@ -2,7 +2,8 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var React = require('react');
 var React__default = _interopDefault(React);
-require('lodash');
+var lodash = require('lodash');
+var lodash__default = _interopDefault(lodash);
 require('@yaireo/tagify/dist/react.tagify');
 require('@yaireo/tagify/src/tagify.scss');
 var rangy = _interopDefault(require('rangy'));
@@ -623,19 +624,19 @@ var Utterance = React__default.memo(function (props) {
   }, []);
 
   String.prototype.parseText = function () {
-    if (this.length) {
-      var str = this;
+    var str = this;
+
+    if (whitelist.length) {
       var regex = new RegExp(whitelist.map(function (item) {
         return item.text.replace(/\s+/g, ' ').trim();
       }).join('|'), 'gi\s');
-      var i = 0;
+      console.log(regex);
       str = str.replace(regex, function (matched) {
-        i++;
-        var isLastWord = str.lastIndexOf(matched) + matched.length === str.length;
-        return "<mark data-i=\"" + i + "\" data-text=\"" + matched + "\" style=\"background:" + stringToColor(matched) + "\">" + matched + "</mark>" + (isLastWord ? ' ' : '');
+        return "<mark data-text=\"" + matched + "\" style=\"background:" + stringToColor(matched) + "\">" + matched + "</mark>";
       });
-      return str;
     }
+
+    return str;
   };
 
   var handleSelection = function handleSelection() {
@@ -851,6 +852,7 @@ function IntentDetails(props) {
   var _useState5 = React.useState(true);
 
   var newExpressionInput = React.useRef(null);
+  var searchInput = React.useRef(null);
 
   var focusOnExpressionInput = function focusOnExpressionInput() {
     newExpressionInput.current.focus();
@@ -886,6 +888,22 @@ function IntentDetails(props) {
     }
   }, [name, utterances]);
 
+  var handleSearch = function handleSearch() {
+    if (searchInput.current) {
+      var arr = intent.utterances;
+      arr = arr.filter(function (item) {
+        return item.raw.toLowerCase().includes(searchInput.current.value.toLowerCase().trim());
+      });
+      setUtterances(arr);
+    }
+  };
+
+  var handler = React.useCallback(lodash.debounce(handleSearch, 500), []);
+
+  var _onChange = function onChange(event) {
+    handler();
+  };
+
   if (intent) {
     return /*#__PURE__*/React__default.createElement("div", {
       className: "convo-details"
@@ -916,7 +934,15 @@ function IntentDetails(props) {
       className: "margin--10--large"
     }, "Utterances"), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--24--large"
-    }, /*#__PURE__*/React__default.createElement("form", {
+    }, /*#__PURE__*/React__default.createElement("input", {
+      ref: searchInput,
+      className: "editor-input input--search",
+      type: "text",
+      placeholder: "Search utterances",
+      onChange: function onChange(e) {
+        _onChange();
+      }
+    }), /*#__PURE__*/React__default.createElement("form", {
       onSubmit: function onSubmit(e) {
         e.preventDefault();
 

@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import 'lodash';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { debounce } from 'lodash';
 import '@yaireo/tagify/dist/react.tagify';
 import '@yaireo/tagify/src/tagify.scss';
 import rangy from 'rangy';
@@ -495,17 +495,17 @@ const Utterance = React.memo(props => {
   }, []);
 
   String.prototype.parseText = function () {
-    if (this.length) {
-      let str = this;
+    let str = this;
+
+    if (whitelist.length) {
       let regex = new RegExp(whitelist.map(item => item.text.replace(/\s+/g, ' ').trim()).join('|'), 'gi\s');
-      var i = 0;
+      console.log(regex);
       str = str.replace(regex, function (matched) {
-        i++;
-        let isLastWord = str.lastIndexOf(matched) + matched.length === str.length;
-        return `<mark data-i="${i}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>${isLastWord ? ' ' : ''}`;
+        return `<mark data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>`;
       });
-      return str;
     }
+
+    return str;
   };
 
   const handleSelection = () => {
@@ -696,6 +696,7 @@ function IntentDetails(props) {
   const [newExpression, setNewExpression] = useState(null);
   const [valid, setValid] = useState(true);
   const newExpressionInput = useRef(null);
+  const searchInput = useRef(null);
 
   const focusOnExpressionInput = () => {
     newExpressionInput.current.focus();
@@ -731,6 +732,20 @@ function IntentDetails(props) {
     }
   }, [name, utterances]);
 
+  const handleSearch = () => {
+    if (searchInput.current) {
+      let arr = intent.utterances;
+      arr = arr.filter(item => item.raw.toLowerCase().includes(searchInput.current.value.toLowerCase().trim()));
+      setUtterances(arr);
+    }
+  };
+
+  const handler = useCallback(debounce(handleSearch, 500), []);
+
+  const onChange = event => {
+    handler();
+  };
+
   if (intent) {
     return /*#__PURE__*/React.createElement("div", {
       className: "convo-details"
@@ -761,7 +776,15 @@ function IntentDetails(props) {
       className: "margin--10--large"
     }, "Utterances"), /*#__PURE__*/React.createElement("div", {
       className: "margin--24--large"
-    }, /*#__PURE__*/React.createElement("form", {
+    }, /*#__PURE__*/React.createElement("input", {
+      ref: searchInput,
+      className: "editor-input input--search",
+      type: "text",
+      placeholder: "Search utterances",
+      onChange: e => {
+        onChange();
+      }
+    }), /*#__PURE__*/React.createElement("form", {
       onSubmit: e => {
         e.preventDefault();
 

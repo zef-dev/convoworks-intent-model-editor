@@ -35,7 +35,7 @@ export const Utterance = React.memo(props => {
 	const text = useRef('');
 	const inputWrapper = useRef('');
 	const cursorPosition = useRef(0);
-	
+
 
 	useEffect(() => {
 		input.current.innerHTML = props.data.raw.parseText();
@@ -43,9 +43,11 @@ export const Utterance = React.memo(props => {
 	}, []);
 
 	String.prototype.parseText = function () {
-		if (this.length) {
-			let str = this;
 
+		let str = this;
+
+
+		if (whitelist.length) {
 			let regex = new RegExp(
 				whitelist
 					.map((item) => item.text.replace(/\s+/g, ' ').trim())
@@ -53,18 +55,14 @@ export const Utterance = React.memo(props => {
 				'gi\s'
 			)
 
-			var i = 0;
+			console.log(regex)
+
 			str = str.replace(regex, function (matched) {
-				i++;
-
-				let isLastWord = str.lastIndexOf(matched) + matched.length === str.length;
-				//let matchedObject = whitelist.find(item => item.text === matched);
-
-				return `<mark data-i="${i}" data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>${isLastWord ? ' ' : ''}`
+				return `<mark data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>`
 			});
 
-			return str
 		}
+		return str
 	};
 
 	const handleSelection = () => {
@@ -189,13 +187,13 @@ export const Utterance = React.memo(props => {
 									onChange={(e) => {
 										text.current = e.currentTarget.textContent;
 										let sel = window.getSelection().anchorNode.parentElement;
-										
+
 										if (sel.tagName === 'MARK') {
 											let arr = [...whitelist];
 											let item = arr.find(item => item.text === sel.dataset.text);
 											let index = arr.indexOf(item);
 
-											arr[index] = {...item, text: sel.textContent};
+											arr[index] = { ...item, text: sel.textContent };
 											setWhitelist(arr.filter(obj => obj.text.length));
 										}
 

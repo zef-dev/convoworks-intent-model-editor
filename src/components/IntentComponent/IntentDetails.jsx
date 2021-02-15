@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { List as Utterances } from './IntentUtterances.jsx';
-import _ from 'lodash';
+import _, { debounce } from 'lodash';
 import { useRef } from 'react';
 import { validateInput } from '../../helpers/validations.jsx';
 
@@ -16,6 +16,8 @@ function IntentDetails(props) {
   const [valid, setValid] = useState(true);
 
   const newExpressionInput = useRef(null);
+
+  const searchInput = useRef(null);
 
   const focusOnExpressionInput = () => {
     newExpressionInput.current.focus();
@@ -52,6 +54,22 @@ function IntentDetails(props) {
       });
     }
   }, [name, utterances]);
+
+  const handleSearch = () => {
+    if (searchInput.current) {
+      let arr = intent.utterances;
+      arr = arr.filter(item => item.raw.toLowerCase().includes(searchInput.current.value.toLowerCase().trim()));
+      setUtterances(arr)
+    }
+  }
+
+  const handler = useCallback(debounce(handleSearch, 500), []);
+
+  const onChange = (event) => {
+    // perform any event related action here
+
+    handler();
+ };
 
   if (intent) {
     return (
@@ -90,6 +108,9 @@ function IntentDetails(props) {
             <div className="margin--50--large">
               <h3 className="margin--10--large">Utterances</h3>
               <div className="margin--24--large">
+                <input ref={searchInput} className="editor-input input--search" type="text" placeholder="Search utterances" onChange={(e) => {
+                  onChange()
+                }} />
                 <form
                   onSubmit={e => {
                     e.preventDefault();

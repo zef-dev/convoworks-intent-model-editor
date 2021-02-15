@@ -658,23 +658,23 @@
       padding-top: 1.5rem; }
     .convo-details .editor-wrapper > section {
       width: 100%; }
-  .convo-details form input.editor-input {
+  .convo-details input {
     border: none;
     outline: none;
     background: transparent;
     font-size: 0.875rem; }
-    .convo-details form input.editor-input::-moz-placeholder {
+    .convo-details input::-moz-placeholder {
       opacity: 1;
       color: rgba(0, 0, 0, 0.36); }
-    .convo-details form input.editor-input:-ms-input-placeholder {
+    .convo-details input:-ms-input-placeholder {
       opacity: 1;
       color: rgba(0, 0, 0, 0.36); }
-    .convo-details form input.editor-input::placeholder {
+    .convo-details input::placeholder {
       opacity: 1;
       color: rgba(0, 0, 0, 0.36); }
-  .convo-details form input--alert {
+  .convo-details input--alert {
     border-color: #d9543e; }
-  .convo-details form input.input--item-name {
+  .convo-details input.input--item-name {
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 0.5rem;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -682,9 +682,9 @@
     font-size: 0.875rem;
     height: 2.5rem;
     width: 100%; }
-  .convo-details form input[hidden] {
+  .convo-details input[hidden] {
     display: none; }
-  .convo-details form input.input--add-field {
+  .convo-details input.input--add-field {
     height: 2.5rem;
     margin-bottom: 1.25rem;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -695,9 +695,18 @@
     background: transparent;
     width: 100%;
     padding: 0.5rem 0.75rem; }
-    .convo-details form input.input--add-field:hover, .convo-details form input.input--add-field:focus, .convo-details form input.input--add-field:active {
+    .convo-details input.input--add-field:hover, .convo-details input.input--add-field:focus, .convo-details input.input--add-field:active {
       border-color: #2f74ea; }
-  .convo-details form input[data-valid="false"] {
+  .convo-details .input--search {
+    width: 50%;
+    font-size: 16px;
+    padding: 12px 0;
+    display: flex;
+    margin-left: auto;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.36);
+    text-align: right;
+    margin-bottom: 24px; }
+  .convo-details input[data-valid="false"] {
     border-color: #d9543e; }
   .convo-details .select {
     position: relative;
