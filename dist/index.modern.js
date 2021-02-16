@@ -498,10 +498,10 @@ const Utterance = React.memo(props => {
     let str = this;
 
     if (whitelist.length) {
-      let regex = new RegExp(whitelist.map(item => item.text.replace(/\s+/g, ' ').trim()).join('|'), 'gi\s');
+      let regex = new RegExp(whitelist.map(item => item.text.trim()).join('|'), 'g\s');
       console.log(regex);
-      str = str.replace(regex, function (matched) {
-        return `<mark data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>`;
+      str = str.replace(regex, function (match, index, originalString) {
+        return `<mark data-text="${match}" style="background:${stringToColor(match)}">${match}</mark>`;
       });
     }
 
@@ -552,10 +552,16 @@ const Utterance = React.memo(props => {
     }
 
     let nodes = rangy.getSelection().getRangeAt(0).getNodes();
+    let targetNode = sel.focusNode.parentNode;
 
     if (nodes) {
       nodes = nodes.filter(item => item.tagName === "MARK").map(item => item.textContent);
-      setSelectedNodes(nodes);
+
+      if (targetNode.tagName === "MARK") {
+        setSelectedNodes([...nodes, targetNode.textContent]);
+      } else {
+        setSelectedNodes(nodes);
+      }
     }
 
     if (sel.toString().length) {
@@ -625,6 +631,9 @@ const Utterance = React.memo(props => {
             text: sel.textContent
           };
           setWhitelist(arr.filter(obj => obj.text.length));
+        } else {
+          let arr = whitelist.filter(item => text.current.includes(item.text));
+          setWhitelist(arr);
         }
 
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
@@ -648,11 +657,11 @@ const Utterance = React.memo(props => {
       selection: selection,
       setSelection: setSelection,
       tagSelection: tagSelection
-    }))), /*#__PURE__*/React.createElement("ul", {
+    }))), props.active === props.index && /*#__PURE__*/React.createElement("ul", {
       className: "model-list"
     }, /*#__PURE__*/React.createElement("header", {
       className: "model-list__header"
-    }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.map(item => {
+    }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.map((item, index) => {
       return /*#__PURE__*/React.createElement("li", {
         className: "model-list__item"
       }, /*#__PURE__*/React.createElement("input", {
@@ -740,9 +749,9 @@ function IntentDetails(props) {
     }
   };
 
-  const handler = useCallback(debounce(handleSearch, 500), []);
+  const handler = useCallback(debounce(handleSearch, 300), []);
 
-  const onChange = event => {
+  const onChange = () => {
     handler();
   };
 
@@ -772,11 +781,9 @@ function IntentDetails(props) {
       required: true
     }))), /*#__PURE__*/React.createElement("div", {
       className: "margin--50--large"
-    }, /*#__PURE__*/React.createElement("h3", {
-      className: "margin--10--large"
-    }, "Utterances"), /*#__PURE__*/React.createElement("div", {
-      className: "margin--24--large"
-    }, /*#__PURE__*/React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "search-wrapper"
+    }, /*#__PURE__*/React.createElement("h3", null, "Utterances"), /*#__PURE__*/React.createElement("input", {
       ref: searchInput,
       className: "editor-input input--search",
       type: "text",
@@ -784,7 +791,9 @@ function IntentDetails(props) {
       onChange: e => {
         onChange();
       }
-    }), /*#__PURE__*/React.createElement("form", {
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "margin--24--large"
+    }, /*#__PURE__*/React.createElement("form", {
       onSubmit: e => {
         e.preventDefault();
 

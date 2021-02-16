@@ -50,15 +50,15 @@ export const Utterance = React.memo(props => {
 		if (whitelist.length) {
 			let regex = new RegExp(
 				whitelist
-					.map((item) => item.text.replace(/\s+/g, ' ').trim())
+					.map((item) => item.text.trim())
 					.join('|'),
-				'gi\s'
+				'g\s'
 			)
 
 			console.log(regex)
 
-			str = str.replace(regex, function (matched) {
-				return `<mark data-text="${matched}" style="background:${stringToColor(matched)}">${matched}</mark>`
+			str = str.replace(regex, function (match, index, originalString) {
+				return `<mark data-text="${match}" style="background:${stringToColor(match)}">${match}</mark>`
 			});
 
 		}
@@ -117,9 +117,15 @@ export const Utterance = React.memo(props => {
 		Filter nodes of type MARK. These nodes will be removed from the whitelist. 
 		*/
 		let nodes = rangy.getSelection().getRangeAt(0).getNodes();
+		let targetNode = sel.focusNode.parentNode;
 		if (nodes) {
 			nodes = nodes.filter(item => item.tagName === "MARK").map(item => item.textContent);
-			setSelectedNodes(nodes);
+
+			if (targetNode.tagName === "MARK") {
+				setSelectedNodes([...nodes, targetNode.textContent]);
+			} else {
+				setSelectedNodes(nodes);
+			}
 		}
 
 		/* 
@@ -195,6 +201,12 @@ export const Utterance = React.memo(props => {
 
 											arr[index] = { ...item, text: sel.textContent };
 											setWhitelist(arr.filter(obj => obj.text.length));
+										} else {
+											let arr = whitelist.filter(item =>
+												text.current.includes(item.text)
+											);
+	
+											setWhitelist(arr)
 										}
 
 										cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
@@ -221,22 +233,24 @@ export const Utterance = React.memo(props => {
 							<Dropdown dropdownState={dropdownState} entities={props.entities} selection={selection} setSelection={setSelection} tagSelection={tagSelection} />
 						</div>
 					</div>
-					<ul className="model-list">
-						<header className="model-list__header">
-							<strong>Parameter name</strong>
-							<strong>Entity</strong>
-							<strong>Resolved value</strong>
-						</header>
-						{whitelist.map(item => {
-							return (
-								<li className="model-list__item">
-									<input defaultValue={item.slot_value.length ? item.slot_value : item.type} />
-									<div><mark style={{ background: stringToColor(item.text) }}>{item.type}</mark></div>
-									<div>{item.text}</div>
-								</li>
-							)
-						})}
-					</ul>
+					{props.active === props.index &&
+						<ul className="model-list">
+							<header className="model-list__header">
+								<strong>Parameter name</strong>
+								<strong>Entity</strong>
+								<strong>Resolved value</strong>
+							</header>
+							{whitelist.map((item, index) => {
+								return (
+									<li className="model-list__item">
+										<input defaultValue={item.slot_value.length ? item.slot_value : item.type} />
+										<div><mark style={{ background: stringToColor(item.text) }}>{item.type}</mark></div>
+										<div>{item.text}</div>
+									</li>
+								)
+							})}
+						</ul>
+					}
 				</div>
 			</React.Fragment>
 		)

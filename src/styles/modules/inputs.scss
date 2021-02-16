@@ -50,6 +50,17 @@ input.input--add-field {
     }
 }
 
+.search-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+
+    * {
+        margin: 0;
+    }
+}
+
 .input--search {
     width: 50%;
     font-size: 16px;
@@ -58,7 +69,6 @@ input.input--add-field {
     margin-left: auto;
     border-bottom: 1px solid $color-gray--light;
     text-align: right;
-    margin-bottom: 24px;
 }
 
 input {

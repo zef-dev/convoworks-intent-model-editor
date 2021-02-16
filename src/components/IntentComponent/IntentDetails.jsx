@@ -63,13 +63,11 @@ function IntentDetails(props) {
     }
   }
 
-  const handler = useCallback(debounce(handleSearch, 500), []);
+  const handler = useCallback(debounce(handleSearch, 300), []);
 
-  const onChange = (event) => {
-    // perform any event related action here
-
+  const onChange = () => {
     handler();
- };
+  };
 
   if (intent) {
     return (
@@ -106,11 +104,14 @@ function IntentDetails(props) {
             </div>
             {/* Entity words */}
             <div className="margin--50--large">
-              <h3 className="margin--10--large">Utterances</h3>
-              <div className="margin--24--large">
+              <div className="search-wrapper">
+                <h3>Utterances</h3>
                 <input ref={searchInput} className="editor-input input--search" type="text" placeholder="Search utterances" onChange={(e) => {
                   onChange()
                 }} />
+              </div>
+              <div className="margin--24--large">
+
                 <form
                   onSubmit={e => {
                     e.preventDefault();

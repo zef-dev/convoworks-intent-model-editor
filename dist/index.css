@@ -1,4 +1,5 @@
 .convo-details {
+  height: 100%;
   position: relative;
   box-sizing: border-box;
   /* Config */
@@ -697,6 +698,13 @@
     padding: 0.5rem 0.75rem; }
     .convo-details input.input--add-field:hover, .convo-details input.input--add-field:focus, .convo-details input.input--add-field:active {
       border-color: #2f74ea; }
+  .convo-details .search-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px; }
+    .convo-details .search-wrapper * {
+      margin: 0; }
   .convo-details .input--search {
     width: 50%;
     font-size: 16px;
@@ -704,8 +712,7 @@
     display: flex;
     margin-left: auto;
     border-bottom: 1px solid rgba(0, 0, 0, 0.36);
-    text-align: right;
-    margin-bottom: 24px; }
+    text-align: right; }
   .convo-details input[data-valid="false"] {
     border-color: #d9543e; }
   .convo-details .select {
@@ -1103,8 +1110,6 @@
       display: inline-block;
       -webkit-animation-duration: 220ms;
               animation-duration: 220ms;
-      padding: 0 2px;
-      margin: 0 1px;
       font-size: inherit;
       line-height: inherit;
       border: none;
