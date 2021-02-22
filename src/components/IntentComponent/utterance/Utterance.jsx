@@ -7,7 +7,7 @@ import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
 
-export const Utterance = React.memo(props => {
+export const Utterance = (props) => {
 	const [raw, setRaw] = useState('');
 	const [state, setState] = useState(false);
 	const [dropdownState, setDropdownState] = useState({
@@ -19,15 +19,7 @@ export const Utterance = React.memo(props => {
 
 	const [model, setModel] = useState(props.data.model)
 	const [selection, setSelection] = useState(null)
-	const [whitelist, setWhitelist] = useState(
-		props.data.model
-			.filter((item) => item.type)
-			.map((item) => ({
-				text: item.text,
-				type: item.type,
-				slot_value: item.slot_value
-			}))
-	)
+	const [whitelist, setWhitelist] = useState([]);
 
 	const [selectedNodes, setSelectedNodes] = useState([]);
 
@@ -40,6 +32,8 @@ export const Utterance = React.memo(props => {
 	useEffect(() => {
 		input.current.innerHTML = props.data.raw.parseText();
 		text.current = props.data.raw;
+
+		console.log(props.data.model)
 	}, []);
 
 	String.prototype.parseText = function () {
@@ -62,6 +56,37 @@ export const Utterance = React.memo(props => {
 		}
 		return str
 	};
+
+	function createNode(type, slot_value, text) {
+		let mark = document.createElement('mark');
+		let newTextNode = document.createTextNode(text);
+
+		mark.appendChild(newTextNode);
+		mark.textContent = mark.textContent.trim();
+		mark.setAttribute('data-type', type);
+		mark.setAttribute('data-slot-value', slot_value);
+		mark.setAttribute('data-text', mark.textContent.trim());
+		mark.setAttribute('data-color', stringToColor(mark.textContent.trim()));
+		mark.style.background = stringToColor(text);
+
+		return mark;
+	}
+
+	const mapToWhitelist = () => {
+		let arr = Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
+			return ({
+				type: item.dataset.type,
+				slot_value: item.dataset.slotValue,
+				text: item.textContent,
+				color: item.dataset.color
+			})
+		}).filter(item => item.text.trim().length);
+
+		setTimeout(() => {
+			setWhitelist(arr);	
+			setSelection(null);
+		}, 220)
+	}
 
 	const handleSelection = () => {
 		var sel
@@ -134,17 +159,51 @@ export const Utterance = React.memo(props => {
 		}
 	}
 
+
 	const tagSelection = (type, slot_value) => {
-		let newTextNode = document.createTextNode(selection.toString());
-		let selectedNodes = selection.getRangeAt(0).extractContents();
-		
-		let mark = document.createElement('mark');
+		let mark = createNode(type, slot_value, selection.toString());
 
-		mark.appendChild(newTextNode);
-		mark.textContent = mark.textContent.trim();
+		if (mark) {
+			selection.getRangeAt(0).extractContents();
+			selection.getRangeAt(0).insertNode(mark);
 
-		selection.getRangeAt(0).insertNode(mark);
+			if (mark.parentElement.tagName === "MARK") {
+				mark.parentElement.replaceWith(...mark.parentElement.childNodes);
+				mark.innerHTML = mark.textContent.trim();
+			}
 
+			input.current.childNodes.forEach((item, index) => {
+				if (item.tagName === "MARK") {
+					if (item.innerHTML.slice(-1).includes(' ')) {
+						item.innerHTML = item.innerHTML.trim();
+					}
+				}
+			})
+
+			text.current = input.current.innerHTML;
+
+			mapToWhitelist();
+		}
+
+
+		/* let arr = Array.from(input.current.childNodes).map(item => {
+			let obj;
+			if (item.dataset) {
+				obj = {
+					text: item.dataset.text,
+					type: item.dataset.type,
+					slot_value: item.dataset.slotValue
+				}
+			} else {
+				obj = {
+					text: item.textContent.trim()
+				}
+			}
+
+			return obj;
+		}) */
+
+		// setModel(arr);
 
 		/* 
 		REMOVE OVERLAPPING NODES FROM THE WHITELIST
@@ -194,10 +253,11 @@ export const Utterance = React.memo(props => {
 								<ContentEditable
 									innerRef={input}
 									className='taggable-text__input'
-									html={text.current.parseText()}
+									html={text.current}	
 									onChange={(e) => {
-										text.current = e.currentTarget.textContent;
-										let sel = window.getSelection().anchorNode.parentElement;
+										text.current = e.target.value;
+
+										/* let sel = window.getSelection().anchorNode.parentElement;
 
 										if (sel.tagName === 'MARK') {
 											let arr = [...whitelist];
@@ -210,10 +270,12 @@ export const Utterance = React.memo(props => {
 											let arr = whitelist.filter(item =>
 												text.current.includes(item.text)
 											);
-	
-											setWhitelist(arr)
+
 										}
 
+										 */
+
+										mapToWhitelist();
 										cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
 									}}
 									onMouseUp={(e) => {
@@ -229,7 +291,6 @@ export const Utterance = React.memo(props => {
 
 									onKeyUp={(e) => {
 										cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
-
 										handleSelection();
 									}}
 								/>
@@ -249,7 +310,7 @@ export const Utterance = React.memo(props => {
 								return (
 									<li className="model-list__item">
 										<input defaultValue={item.slot_value.length ? item.slot_value : item.type} />
-										<div><mark style={{ background: stringToColor(item.text) }}>{item.type}</mark></div>
+										<div><mark style={{ background: item.color }}>{item.type}</mark></div>
 										<div>{item.text}</div>
 									</li>
 								)
@@ -262,4 +323,4 @@ export const Utterance = React.memo(props => {
 	} else {
 		return null
 	}
-})
+}

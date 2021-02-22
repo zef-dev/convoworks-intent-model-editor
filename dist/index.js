@@ -578,7 +578,7 @@ function Dropdown(props) {
   }
 }
 
-var Utterance = React__default.memo(function (props) {
+var Utterance = function Utterance(props) {
   var _useState = React.useState('');
 
   var _useState2 = React.useState(false);
@@ -598,15 +598,7 @@ var Utterance = React__default.memo(function (props) {
       selection = _useState6[0],
       setSelection = _useState6[1];
 
-  var _useState7 = React.useState(props.data.model.filter(function (item) {
-    return item.type;
-  }).map(function (item) {
-    return {
-      text: item.text,
-      type: item.type,
-      slot_value: item.slot_value
-    };
-  })),
+  var _useState7 = React.useState([]),
       whitelist = _useState7[0],
       setWhitelist = _useState7[1];
 
@@ -620,6 +612,7 @@ var Utterance = React__default.memo(function (props) {
   React.useEffect(function () {
     input.current.innerHTML = props.data.raw.parseText();
     text.current = props.data.raw;
+    console.log(props.data.model);
   }, []);
 
   String.prototype.parseText = function () {
@@ -635,6 +628,38 @@ var Utterance = React__default.memo(function (props) {
     }
 
     return str;
+  };
+
+  function createNode(type, slot_value, text) {
+    var mark = document.createElement('mark');
+    var newTextNode = document.createTextNode(text);
+    mark.appendChild(newTextNode);
+    mark.textContent = mark.textContent.trim();
+    mark.setAttribute('data-type', type);
+    mark.setAttribute('data-slot-value', slot_value);
+    mark.setAttribute('data-text', mark.textContent.trim());
+    mark.setAttribute('data-color', stringToColor(mark.textContent.trim()));
+    mark.style.background = stringToColor(text);
+    return mark;
+  }
+
+  var mapToWhitelist = function mapToWhitelist() {
+    var arr = Array.from(input.current.childNodes).filter(function (item) {
+      return item.dataset;
+    }).map(function (item) {
+      return {
+        type: item.dataset.type,
+        slot_value: item.dataset.slotValue,
+        text: item.textContent,
+        color: item.dataset.color
+      };
+    }).filter(function (item) {
+      return item.text.trim().length;
+    });
+    setTimeout(function () {
+      setWhitelist(arr);
+      setSelection(null);
+    }, 220);
   };
 
   var handleSelection = function handleSelection() {
@@ -703,12 +728,30 @@ var Utterance = React__default.memo(function (props) {
   };
 
   var tagSelection = function tagSelection(type, slot_value) {
-    var newTextNode = document.createTextNode(selection.toString());
-    var selectedNodes = selection.getRangeAt(0).extractContents();
-    var mark = document.createElement('mark');
-    mark.appendChild(newTextNode);
-    mark.textContent = mark.textContent.trim();
-    selection.getRangeAt(0).insertNode(mark);
+    var mark = createNode(type, slot_value, selection.toString());
+
+    if (mark) {
+      selection.getRangeAt(0).extractContents();
+      selection.getRangeAt(0).insertNode(mark);
+
+      if (mark.parentElement.tagName === "MARK") {
+        var _mark$parentElement;
+
+        (_mark$parentElement = mark.parentElement).replaceWith.apply(_mark$parentElement, mark.parentElement.childNodes);
+
+        mark.innerHTML = mark.textContent.trim();
+      }
+
+      input.current.childNodes.forEach(function (item, index) {
+        if (item.tagName === "MARK") {
+          if (item.innerHTML.slice(-1).includes(' ')) {
+            item.innerHTML = item.innerHTML.trim();
+          }
+        }
+      });
+      text.current = input.current.innerHTML;
+      mapToWhitelist();
+    }
   };
 
   React.useEffect(function () {
@@ -744,31 +787,10 @@ var Utterance = React__default.memo(function (props) {
     }, /*#__PURE__*/React__default.createElement(ContentEditable, {
       innerRef: input,
       className: "taggable-text__input",
-      html: text.current.parseText(),
+      html: text.current,
       onChange: function onChange(e) {
-        text.current = e.currentTarget.textContent;
-        var sel = window.getSelection().anchorNode.parentElement;
-
-        if (sel.tagName === 'MARK') {
-          var arr = [].concat(whitelist);
-          var item = arr.find(function (item) {
-            return item.text === sel.dataset.text;
-          });
-          var index = arr.indexOf(item);
-          arr[index] = _extends({}, item, {
-            text: sel.textContent
-          });
-          setWhitelist(arr.filter(function (obj) {
-            return obj.text.length;
-          }));
-        } else {
-          var _arr = whitelist.filter(function (item) {
-            return text.current.includes(item.text);
-          });
-
-          setWhitelist(_arr);
-        }
-
+        text.current = e.target.value;
+        mapToWhitelist();
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
       },
       onMouseUp: function onMouseUp(e) {
@@ -801,14 +823,14 @@ var Utterance = React__default.memo(function (props) {
         defaultValue: item.slot_value.length ? item.slot_value : item.type
       }), /*#__PURE__*/React__default.createElement("div", null, /*#__PURE__*/React__default.createElement("mark", {
         style: {
-          background: stringToColor(item.text)
+          background: item.color
         }
       }, item.type)), /*#__PURE__*/React__default.createElement("div", null, item.text));
     }))));
   } else {
     return null;
   }
-});
+};
 
 var List = React__default.memo(function List(props) {
   var _useState = React.useState(null),

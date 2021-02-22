@@ -469,7 +469,7 @@ function Dropdown(props) {
   }
 }
 
-const Utterance = React.memo(props => {
+const Utterance = props => {
   const [raw, setRaw] = useState('');
   const [state, setState] = useState(false);
   const [dropdownState, setDropdownState] = useState({
@@ -479,11 +479,7 @@ const Utterance = React.memo(props => {
   const [inputText, setInputText] = useState(null);
   const [model, setModel] = useState(props.data.model);
   const [selection, setSelection] = useState(null);
-  const [whitelist, setWhitelist] = useState(props.data.model.filter(item => item.type).map(item => ({
-    text: item.text,
-    type: item.type,
-    slot_value: item.slot_value
-  })));
+  const [whitelist, setWhitelist] = useState([]);
   const [selectedNodes, setSelectedNodes] = useState([]);
   const input = useRef('');
   const text = useRef('');
@@ -492,6 +488,7 @@ const Utterance = React.memo(props => {
   useEffect(() => {
     input.current.innerHTML = props.data.raw.parseText();
     text.current = props.data.raw;
+    console.log(props.data.model);
   }, []);
 
   String.prototype.parseText = function () {
@@ -505,6 +502,34 @@ const Utterance = React.memo(props => {
     }
 
     return str;
+  };
+
+  function createNode(type, slot_value, text) {
+    let mark = document.createElement('mark');
+    let newTextNode = document.createTextNode(text);
+    mark.appendChild(newTextNode);
+    mark.textContent = mark.textContent.trim();
+    mark.setAttribute('data-type', type);
+    mark.setAttribute('data-slot-value', slot_value);
+    mark.setAttribute('data-text', mark.textContent.trim());
+    mark.setAttribute('data-color', stringToColor(mark.textContent.trim()));
+    mark.style.background = stringToColor(text);
+    return mark;
+  }
+
+  const mapToWhitelist = () => {
+    let arr = Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
+      return {
+        type: item.dataset.type,
+        slot_value: item.dataset.slotValue,
+        text: item.textContent,
+        color: item.dataset.color
+      };
+    }).filter(item => item.text.trim().length);
+    setTimeout(() => {
+      setWhitelist(arr);
+      setSelection(null);
+    }, 220);
   };
 
   const handleSelection = () => {
@@ -569,12 +594,27 @@ const Utterance = React.memo(props => {
   };
 
   const tagSelection = (type, slot_value) => {
-    let newTextNode = document.createTextNode(selection.toString());
-    let selectedNodes = selection.getRangeAt(0).extractContents();
-    let mark = document.createElement('mark');
-    mark.appendChild(newTextNode);
-    mark.textContent = mark.textContent.trim();
-    selection.getRangeAt(0).insertNode(mark);
+    let mark = createNode(type, slot_value, selection.toString());
+
+    if (mark) {
+      selection.getRangeAt(0).extractContents();
+      selection.getRangeAt(0).insertNode(mark);
+
+      if (mark.parentElement.tagName === "MARK") {
+        mark.parentElement.replaceWith(...mark.parentElement.childNodes);
+        mark.innerHTML = mark.textContent.trim();
+      }
+
+      input.current.childNodes.forEach((item, index) => {
+        if (item.tagName === "MARK") {
+          if (item.innerHTML.slice(-1).includes(' ')) {
+            item.innerHTML = item.innerHTML.trim();
+          }
+        }
+      });
+      text.current = input.current.innerHTML;
+      mapToWhitelist();
+    }
   };
 
   useEffect(() => {
@@ -610,24 +650,10 @@ const Utterance = React.memo(props => {
     }, /*#__PURE__*/React.createElement(ContentEditable, {
       innerRef: input,
       className: "taggable-text__input",
-      html: text.current.parseText(),
+      html: text.current,
       onChange: e => {
-        text.current = e.currentTarget.textContent;
-        let sel = window.getSelection().anchorNode.parentElement;
-
-        if (sel.tagName === 'MARK') {
-          let arr = [...whitelist];
-          let item = arr.find(item => item.text === sel.dataset.text);
-          let index = arr.indexOf(item);
-          arr[index] = { ...item,
-            text: sel.textContent
-          };
-          setWhitelist(arr.filter(obj => obj.text.length));
-        } else {
-          let arr = whitelist.filter(item => text.current.includes(item.text));
-          setWhitelist(arr);
-        }
-
+        text.current = e.target.value;
+        mapToWhitelist();
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
       },
       onMouseUp: e => {
@@ -660,14 +686,14 @@ const Utterance = React.memo(props => {
         defaultValue: item.slot_value.length ? item.slot_value : item.type
       }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("mark", {
         style: {
-          background: stringToColor(item.text)
+          background: item.color
         }
       }, item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
     }))));
   } else {
     return null;
   }
-});
+};
 
 const List = React.memo(function List(props) {
   const [active, setActive] = useState(null);
