@@ -454,7 +454,7 @@ function Dropdown(props) {
       placeholder: "Filter entities"
     }), /*#__PURE__*/React.createElement("div", {
       class: "dropdown__selection"
-    }, "Selection: ", /*#__PURE__*/React.createElement("strong", null, props.selection))), /*#__PURE__*/React.createElement("div", {
+    }, "Selection: ", /*#__PURE__*/React.createElement("strong", null, props.selection && props.selection.toString()))), /*#__PURE__*/React.createElement("div", {
       class: "dropdown__items"
     }, entities[0] && entities[0].map((item, i) => {
       return /*#__PURE__*/React.createElement("button", {
@@ -498,8 +498,7 @@ const Utterance = React.memo(props => {
     let str = this;
 
     if (whitelist.length) {
-      let regex = new RegExp(whitelist.map(item => item.text.trim()).join('|'), 'g\s');
-      console.log(regex);
+      let regex = new RegExp(whitelist.map(item => item.text.trim()).join('|'), 'gi\s');
       str = str.replace(regex, function (match, index, originalString) {
         return `<mark data-text="${match}" style="background:${stringToColor(match)}">${match}</mark>`;
       });
@@ -555,34 +554,27 @@ const Utterance = React.memo(props => {
     let targetNode = sel.focusNode.parentNode;
 
     if (nodes) {
-      nodes = nodes.filter(item => item.tagName === "MARK").map(item => item.textContent);
+      nodes = nodes.filter(item => item.tagName === "MARK").map(item => item.textContent.trim());
 
       if (targetNode.tagName === "MARK") {
-        setSelectedNodes([...nodes, targetNode.textContent]);
+        setSelectedNodes([...nodes, targetNode.textContent.trim()]);
       } else {
         setSelectedNodes(nodes);
       }
     }
 
     if (sel.toString().length) {
-      setSelection(sel.toString().trim());
-    } else if (sel.focusNode.parentNode.tagName === 'MARK') {
-      setSelection(sel.focusNode.parentNode.textContent);
-    } else {
-      setSelection(null);
+      setSelection(sel);
     }
   };
 
   const tagSelection = (type, slot_value) => {
-    let list = whitelist.filter(item => !selectedNodes.includes(item.text));
-    list = [...list, {
-      text: selection,
-      type: type,
-      slot_value: slot_value
-    }];
-    setSelectedNodes([]);
-    setWhitelist(list);
-    setSelection(null);
+    let newTextNode = document.createTextNode(selection.toString());
+    let selectedNodes = selection.getRangeAt(0).extractContents();
+    let mark = document.createElement('mark');
+    mark.appendChild(newTextNode);
+    mark.textContent = mark.textContent.trim();
+    selection.getRangeAt(0).insertNode(mark);
   };
 
   useEffect(() => {

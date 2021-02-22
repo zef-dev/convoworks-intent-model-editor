@@ -563,7 +563,7 @@ function Dropdown(props) {
       placeholder: "Filter entities"
     }), /*#__PURE__*/React__default.createElement("div", {
       "class": "dropdown__selection"
-    }, "Selection: ", /*#__PURE__*/React__default.createElement("strong", null, props.selection))), /*#__PURE__*/React__default.createElement("div", {
+    }, "Selection: ", /*#__PURE__*/React__default.createElement("strong", null, props.selection && props.selection.toString()))), /*#__PURE__*/React__default.createElement("div", {
       "class": "dropdown__items"
     }, entities[0] && entities[0].map(function (item, i) {
       return /*#__PURE__*/React__default.createElement("button", {
@@ -611,7 +611,6 @@ var Utterance = React__default.memo(function (props) {
       setWhitelist = _useState7[1];
 
   var _useState8 = React.useState([]),
-      selectedNodes = _useState8[0],
       setSelectedNodes = _useState8[1];
 
   var input = React.useRef('');
@@ -629,8 +628,7 @@ var Utterance = React__default.memo(function (props) {
     if (whitelist.length) {
       var regex = new RegExp(whitelist.map(function (item) {
         return item.text.trim();
-      }).join('|'), 'g\s');
-      console.log(regex);
+      }).join('|'), 'gi\s');
       str = str.replace(regex, function (match, index, originalString) {
         return "<mark data-text=\"" + match + "\" style=\"background:" + stringToColor(match) + "\">" + match + "</mark>";
       });
@@ -689,37 +687,28 @@ var Utterance = React__default.memo(function (props) {
       nodes = nodes.filter(function (item) {
         return item.tagName === "MARK";
       }).map(function (item) {
-        return item.textContent;
+        return item.textContent.trim();
       });
 
       if (targetNode.tagName === "MARK") {
-        setSelectedNodes([].concat(nodes, [targetNode.textContent]));
+        setSelectedNodes([].concat(nodes, [targetNode.textContent.trim()]));
       } else {
         setSelectedNodes(nodes);
       }
     }
 
     if (sel.toString().length) {
-      setSelection(sel.toString().trim());
-    } else if (sel.focusNode.parentNode.tagName === 'MARK') {
-      setSelection(sel.focusNode.parentNode.textContent);
-    } else {
-      setSelection(null);
+      setSelection(sel);
     }
   };
 
   var tagSelection = function tagSelection(type, slot_value) {
-    var list = whitelist.filter(function (item) {
-      return !selectedNodes.includes(item.text);
-    });
-    list = [].concat(list, [{
-      text: selection,
-      type: type,
-      slot_value: slot_value
-    }]);
-    setSelectedNodes([]);
-    setWhitelist(list);
-    setSelection(null);
+    var newTextNode = document.createTextNode(selection.toString());
+    var selectedNodes = selection.getRangeAt(0).extractContents();
+    var mark = document.createElement('mark');
+    mark.appendChild(newTextNode);
+    mark.textContent = mark.textContent.trim();
+    selection.getRangeAt(0).insertNode(mark);
   };
 
   React.useEffect(function () {

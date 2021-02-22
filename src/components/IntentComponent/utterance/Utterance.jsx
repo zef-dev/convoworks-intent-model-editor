@@ -52,10 +52,8 @@ export const Utterance = React.memo(props => {
 				whitelist
 					.map((item) => item.text.trim())
 					.join('|'),
-				'g\s'
+				'gi\s'
 			)
-
-			console.log(regex)
 
 			str = str.replace(regex, function (match, index, originalString) {
 				return `<mark data-text="${match}" style="background:${stringToColor(match)}">${match}</mark>`
@@ -119,10 +117,10 @@ export const Utterance = React.memo(props => {
 		let nodes = rangy.getSelection().getRangeAt(0).getNodes();
 		let targetNode = sel.focusNode.parentNode;
 		if (nodes) {
-			nodes = nodes.filter(item => item.tagName === "MARK").map(item => item.textContent);
+			nodes = nodes.filter(item => item.tagName === "MARK").map(item => item.textContent.trim());
 
 			if (targetNode.tagName === "MARK") {
-				setSelectedNodes([...nodes, targetNode.textContent]);
+				setSelectedNodes([...nodes, targetNode.textContent.trim()]);
 			} else {
 				setSelectedNodes(nodes);
 			}
@@ -132,25 +130,32 @@ export const Utterance = React.memo(props => {
 		SET CURRENT SELECTION
 		*/
 		if (sel.toString().length) {
-			setSelection(sel.toString().trim())
-		} else if (sel.focusNode.parentNode.tagName === 'MARK') {
-			setSelection(sel.focusNode.parentNode.textContent)
-		} else {
-			setSelection(null);
+			setSelection(sel)
 		}
 	}
 
 	const tagSelection = (type, slot_value) => {
+		let newTextNode = document.createTextNode(selection.toString());
+		let selectedNodes = selection.getRangeAt(0).extractContents();
+		
+		let mark = document.createElement('mark');
+
+		mark.appendChild(newTextNode);
+		mark.textContent = mark.textContent.trim();
+
+		selection.getRangeAt(0).insertNode(mark);
+
+
 		/* 
 		REMOVE OVERLAPPING NODES FROM THE WHITELIST
 		Check if any of whitelist items exist in selected nodes array.
 		If they do exist in selected nodes, they will be filtered out.
 		*/
-		let list = whitelist.filter(item => !selectedNodes.includes(item.text));
+		/* let list = whitelist.filter(item => !selectedNodes.includes(item.text));
 		list = [...list, { text: selection, type: type, slot_value: slot_value }]
 		setSelectedNodes([]);
 		setWhitelist(list);
-		setSelection(null);
+		setSelection(null); */
 	}
 
 	useEffect(() => {
