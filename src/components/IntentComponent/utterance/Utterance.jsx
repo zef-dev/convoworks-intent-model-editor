@@ -30,10 +30,25 @@ export const Utterance = (props) => {
 
 
 	useEffect(() => {
-		input.current.innerHTML = props.data.raw.parseText();
-		text.current = props.data.raw;
 
-		console.log(props.data.model)
+		/* 
+		MAP MODEL TO STRING
+		Object with type param are mapped to MARK tags while those without are mapped to text NODES.
+		This is done only on initial component render.
+		*/
+
+		if (props.data.model) {
+			let str = props.data.model.map(item => {
+				if (item.type) {
+					return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text}</mark>`
+				} else {
+					return item.text
+				}
+			}).join(' ');
+
+			input.current.innerHTML = str;
+			text.current = props.data.raw;
+		}
 	}, []);
 
 	String.prototype.parseText = function () {
@@ -156,6 +171,9 @@ export const Utterance = (props) => {
 		*/
 		if (sel.toString().length) {
 			setSelection(sel)
+		} else if (targetNode.tagName === "MARK") {
+		} else {
+			setSelection(null);
 		}
 	}
 
@@ -181,7 +199,6 @@ export const Utterance = (props) => {
 			})
 
 			text.current = input.current.innerHTML;
-
 			mapToWhitelist();
 		}
 

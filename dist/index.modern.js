@@ -486,9 +486,17 @@ const Utterance = props => {
   const inputWrapper = useRef('');
   const cursorPosition = useRef(0);
   useEffect(() => {
-    input.current.innerHTML = props.data.raw.parseText();
-    text.current = props.data.raw;
-    console.log(props.data.model);
+    if (props.data.model) {
+      let str = props.data.model.map(item => {
+        if (item.type) {
+          return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text}</mark>`;
+        } else {
+          return item.text;
+        }
+      }).join(' ');
+      input.current.innerHTML = str;
+      text.current = props.data.raw;
+    }
   }, []);
 
   String.prototype.parseText = function () {
@@ -590,6 +598,8 @@ const Utterance = props => {
 
     if (sel.toString().length) {
       setSelection(sel);
+    } else if (targetNode.tagName === "MARK") ; else {
+      setSelection(null);
     }
   };
 

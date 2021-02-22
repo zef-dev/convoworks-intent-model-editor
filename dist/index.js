@@ -610,9 +610,17 @@ var Utterance = function Utterance(props) {
   var inputWrapper = React.useRef('');
   var cursorPosition = React.useRef(0);
   React.useEffect(function () {
-    input.current.innerHTML = props.data.raw.parseText();
-    text.current = props.data.raw;
-    console.log(props.data.model);
+    if (props.data.model) {
+      var str = props.data.model.map(function (item) {
+        if (item.type) {
+          return "<mark data-type=\"" + item.type + "\" data-slot-value=\"" + item.slot_value + "\" data-text=\"" + item.text + "\" data-color=\"" + stringToColor(item.text) + "\" style=\"background:" + stringToColor(item.text) + "\">" + item.text + "</mark>";
+        } else {
+          return item.text;
+        }
+      }).join(' ');
+      input.current.innerHTML = str;
+      text.current = props.data.raw;
+    }
   }, []);
 
   String.prototype.parseText = function () {
@@ -724,6 +732,8 @@ var Utterance = function Utterance(props) {
 
     if (sel.toString().length) {
       setSelection(sel);
+    } else if (targetNode.tagName === "MARK") ; else {
+      setSelection(null);
     }
   };
 
