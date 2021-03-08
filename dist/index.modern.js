@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { debounce } from 'lodash';
-import '@yaireo/tagify/dist/react.tagify';
 import '@yaireo/tagify/src/tagify.scss';
 import rangy from 'rangy';
 import ContentEditable from 'react-contenteditable';
@@ -476,19 +475,25 @@ const Utterance = props => {
   });
   const [selection, setSelection] = useState(null);
   const [whitelist, setWhitelist] = useState([]);
-  const input = useRef('');
-  const text = useRef('');
+  const active = props.active === props.index;
+  const input = useRef(null);
+  const text = useRef(null);
   const inputWrapper = useRef('');
-  const cursorPosition = useRef(0);
+  const cursorPosition = useRef(null);
   useEffect(() => {
     if (props.data.model) {
-      let str = props.data.model.map(item => {
-        if (item.type) {
-          return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text}</mark>`;
-        } else {
-          return item.text;
-        }
-      }).join(' ');
+      let str = '';
+
+      if (props.data.model.length) {
+        str = props.data.model.map(item => {
+          if (item.type) {
+            return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text}</mark>`;
+          } else {
+            return item.text;
+          }
+        }).join(' ');
+      }
+
       input.current.innerHTML = str;
       text.current = str;
       mapToWhitelist();
@@ -562,8 +567,6 @@ const Utterance = props => {
     }
   };
 
-  console.log(selection && selection.toString());
-
   const tagSelection = (type, slot_value) => {
     if (selection) {
       let mark = createNode(type, slot_value, selection.toString());
@@ -587,7 +590,7 @@ const Utterance = props => {
         text.current = input.current.innerHTML;
         mapToWhitelist();
         setSelection(null);
-        setCaretPosition(input.current, cursorPosition.current);
+        cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
       }
     }
   };
@@ -602,10 +605,38 @@ const Utterance = props => {
         position: oRect.x,
         active: selection !== null
       });
+    } else {
+      setDropdownState({ ...dropdownState,
+        active: false
+      });
     }
-  }, [selection]);
+  }, [selection, active]);
+  useEffect(() => {
+    if (input.current.childNodes.length) {
+      let model = Array.from(input.current.childNodes).map(item => {
+        if (item.dataset) {
+          return {
+            type: item.dataset.type,
+            text: item.textContent.trim(),
+            slot_value: item.dataset.slotValue
+          };
+        } else {
+          return {
+            text: item.textContent.trim()
+          };
+        }
+      }).filter(item => item.text.length);
+      let raw = model.map(item => item.text).join(' ');
+      let utterances = [...props.utterances];
+      utterances[props.index] = {
+        raw: raw,
+        model: model
+      };
+      props.setUtterances(utterances);
+    }
+  }, [whitelist]);
 
-  if (props.data && props.data.raw) {
+  if (props.data) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       class: `field field--intent ${props.active === props.index ? 'field--active' : ''}`,
       onFocus: () => {
@@ -641,13 +672,19 @@ const Utterance = props => {
         handleSelection();
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
       }
-    }), "      "), /*#__PURE__*/React.createElement(Dropdown, {
+    })), /*#__PURE__*/React.createElement(Dropdown, {
       dropdownState: dropdownState,
       entities: props.entities,
       selection: selection,
       setSelection: setSelection,
       tagSelection: tagSelection
-    }))), props.active === props.index && /*#__PURE__*/React.createElement("ul", {
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "field__actions"
+    }, !props.data.new && /*#__PURE__*/React.createElement("button", {
+      onClick: () => {
+        props.removeFromUtterances(props.data);
+      }
+    }, /*#__PURE__*/React.createElement(IconTrash, null))))), props.active === props.index && /*#__PURE__*/React.createElement("ul", {
       className: "model-list"
     }, /*#__PURE__*/React.createElement("header", {
       className: "model-list__header"
@@ -670,6 +707,12 @@ const Utterance = props => {
 const List = props => {
   const [active, setActive] = useState(null);
 
+  const removeFromUtterances = object => {
+    let arr = props.utterances.filter(item => item !== object);
+    props.setUtterances(arr);
+    setActive(null);
+  };
+
   if (props.utterances) {
     return /*#__PURE__*/React.createElement("ul", null, props.utterances.map((item, index) => {
       return /*#__PURE__*/React.createElement(Utterance, {
@@ -678,7 +721,10 @@ const List = props => {
         index: index,
         active: active,
         setActive: setActive,
-        entities: props.entities
+        entities: props.entities,
+        removeFromUtterances: removeFromUtterances,
+        utterances: props.utterances,
+        setUtterances: props.setUtterances
       });
     }));
   } else {
@@ -690,6 +736,7 @@ function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
   const entities = props.entities;
   const systemEntities = props.systemEntities;
+  const [stateChange, setStateChange] = useState(false);
   const [name, setName] = useState('');
   const [utterances, setUtterances] = useState([]);
   const [newExpression, setNewExpression] = useState(null);
@@ -719,14 +766,18 @@ function IntentDetails(props) {
   useEffect(() => {
     if (intent) {
       setName(intent.name);
-      setUtterances(intent.utterances);
+      setUtterances([{
+        raw: '',
+        model: [],
+        new: true
+      }, ...intent.utterances]);
     }
   }, [intent]);
   useEffect(() => {
     if (name && utterances) {
       props.onUpdate({ ...intent,
         name: name,
-        utterances: utterances
+        utterances: utterances.filter(item => item.new)
       });
     }
   }, [name, utterances]);
@@ -783,31 +834,14 @@ function IntentDetails(props) {
       }
     })), /*#__PURE__*/React.createElement("div", {
       className: "margin--24--large"
-    }, /*#__PURE__*/React.createElement("form", {
-      onSubmit: e => {
-        e.preventDefault();
-
-        if (newExpression) {
-          addNewValue();
-          setNewExpression(null);
-          newExpressionInput.current.value = '';
-        }
-      }
-    }, /*#__PURE__*/React.createElement("input", {
-      type: "text",
-      className: "editor-input input--add-field",
-      placeholder: "Enter reference value",
-      onChange: e => setNewExpression(e.target.value),
-      ref: newExpressionInput,
-      onFocus: () => {
-        setActive(null);
-      }
-    })), /*#__PURE__*/React.createElement(List, {
+    }, /*#__PURE__*/React.createElement(List, {
       addNewValue: addNewValue,
       utterances: utterances,
       setUtterances: setUtterances,
       entities: [entities, ...systemEntities],
-      focusOnExpressionInput: focusOnExpressionInput
+      focusOnExpressionInput: focusOnExpressionInput,
+      stateChange: stateChange,
+      setStateChange: setStateChange
     }))))));
   } else {
     return null;

@@ -4,7 +4,6 @@ var React = require('react');
 var React__default = _interopDefault(React);
 var lodash = require('lodash');
 var lodash__default = _interopDefault(lodash);
-require('@yaireo/tagify/dist/react.tagify');
 require('@yaireo/tagify/src/tagify.scss');
 var rangy = _interopDefault(require('rangy'));
 var ContentEditable = _interopDefault(require('react-contenteditable'));
@@ -593,19 +592,26 @@ var Utterance = function Utterance(props) {
   var _useState3 = React.useState([]),
       whitelist = _useState3[0],
       setWhitelist = _useState3[1];
-  var input = React.useRef('');
-  var text = React.useRef('');
+
+  var active = props.active === props.index;
+  var input = React.useRef(null);
+  var text = React.useRef(null);
   var inputWrapper = React.useRef('');
-  var cursorPosition = React.useRef(0);
+  var cursorPosition = React.useRef(null);
   React.useEffect(function () {
     if (props.data.model) {
-      var str = props.data.model.map(function (item) {
-        if (item.type) {
-          return "<mark data-type=\"" + item.type + "\" data-slot-value=\"" + item.slot_value + "\" data-text=\"" + item.text + "\" data-color=\"" + stringToColor(item.text) + "\" style=\"background:" + stringToColor(item.text) + "\">" + item.text + "</mark>";
-        } else {
-          return item.text;
-        }
-      }).join(' ');
+      var str = '';
+
+      if (props.data.model.length) {
+        str = props.data.model.map(function (item) {
+          if (item.type) {
+            return "<mark data-type=\"" + item.type + "\" data-slot-value=\"" + item.slot_value + "\" data-text=\"" + item.text + "\" data-color=\"" + stringToColor(item.text) + "\" style=\"background:" + stringToColor(item.text) + "\">" + item.text + "</mark>";
+          } else {
+            return item.text;
+          }
+        }).join(' ');
+      }
+
       input.current.innerHTML = str;
       text.current = str;
       mapToWhitelist();
@@ -683,8 +689,6 @@ var Utterance = function Utterance(props) {
     }
   };
 
-  console.log(selection && selection.toString());
-
   var tagSelection = function tagSelection(type, slot_value) {
     if (selection) {
       var mark = createNode(type, slot_value, selection.toString());
@@ -711,7 +715,7 @@ var Utterance = function Utterance(props) {
         text.current = input.current.innerHTML;
         mapToWhitelist();
         setSelection(null);
-        setCaretPosition(input.current, cursorPosition.current);
+        cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
       }
     }
   };
@@ -726,10 +730,42 @@ var Utterance = function Utterance(props) {
         position: oRect.x,
         active: selection !== null
       });
+    } else {
+      setDropdownState(_extends({}, dropdownState, {
+        active: false
+      }));
     }
-  }, [selection]);
+  }, [selection, active]);
+  React.useEffect(function () {
+    if (input.current.childNodes.length) {
+      var model = Array.from(input.current.childNodes).map(function (item) {
+        if (item.dataset) {
+          return {
+            type: item.dataset.type,
+            text: item.textContent.trim(),
+            slot_value: item.dataset.slotValue
+          };
+        } else {
+          return {
+            text: item.textContent.trim()
+          };
+        }
+      }).filter(function (item) {
+        return item.text.length;
+      });
+      var raw = model.map(function (item) {
+        return item.text;
+      }).join(' ');
+      var utterances = [].concat(props.utterances);
+      utterances[props.index] = {
+        raw: raw,
+        model: model
+      };
+      props.setUtterances(utterances);
+    }
+  }, [whitelist]);
 
-  if (props.data && props.data.raw) {
+  if (props.data) {
     return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
       "class": "field field--intent " + (props.active === props.index ? 'field--active' : ''),
       onFocus: function onFocus() {
@@ -765,13 +801,19 @@ var Utterance = function Utterance(props) {
         handleSelection();
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
       }
-    }), "      "), /*#__PURE__*/React__default.createElement(Dropdown, {
+    })), /*#__PURE__*/React__default.createElement(Dropdown, {
       dropdownState: dropdownState,
       entities: props.entities,
       selection: selection,
       setSelection: setSelection,
       tagSelection: tagSelection
-    }))), props.active === props.index && /*#__PURE__*/React__default.createElement("ul", {
+    }), /*#__PURE__*/React__default.createElement("div", {
+      className: "field__actions"
+    }, !props.data["new"] && /*#__PURE__*/React__default.createElement("button", {
+      onClick: function onClick() {
+        props.removeFromUtterances(props.data);
+      }
+    }, /*#__PURE__*/React__default.createElement(IconTrash, null))))), props.active === props.index && /*#__PURE__*/React__default.createElement("ul", {
       className: "model-list"
     }, /*#__PURE__*/React__default.createElement("header", {
       className: "model-list__header"
@@ -796,6 +838,14 @@ var List = function List(props) {
       active = _useState[0],
       setActive = _useState[1];
 
+  var removeFromUtterances = function removeFromUtterances(object) {
+    var arr = props.utterances.filter(function (item) {
+      return item !== object;
+    });
+    props.setUtterances(arr);
+    setActive(null);
+  };
+
   if (props.utterances) {
     return /*#__PURE__*/React__default.createElement("ul", null, props.utterances.map(function (item, index) {
       return /*#__PURE__*/React__default.createElement(Utterance, {
@@ -804,7 +854,10 @@ var List = function List(props) {
         index: index,
         active: active,
         setActive: setActive,
-        entities: props.entities
+        entities: props.entities,
+        removeFromUtterances: removeFromUtterances,
+        utterances: props.utterances,
+        setUtterances: props.setUtterances
       });
     }));
   } else {
@@ -819,19 +872,22 @@ function IntentDetails(props) {
   var entities = props.entities;
   var systemEntities = props.systemEntities;
 
-  var _useState2 = React.useState(''),
-      name = _useState2[0],
-      setName = _useState2[1];
+  var _useState2 = React.useState(false),
+      stateChange = _useState2[0],
+      setStateChange = _useState2[1];
 
-  var _useState3 = React.useState([]),
-      utterances = _useState3[0],
-      setUtterances = _useState3[1];
+  var _useState3 = React.useState(''),
+      name = _useState3[0],
+      setName = _useState3[1];
 
-  var _useState4 = React.useState(null),
-      newExpression = _useState4[0],
-      setNewExpression = _useState4[1];
+  var _useState4 = React.useState([]),
+      utterances = _useState4[0],
+      setUtterances = _useState4[1];
 
-  var _useState5 = React.useState(true);
+  var _useState5 = React.useState(null),
+      newExpression = _useState5[0];
+
+  var _useState6 = React.useState(true);
 
   var newExpressionInput = React.useRef(null);
   var searchInput = React.useRef(null);
@@ -858,14 +914,20 @@ function IntentDetails(props) {
   React.useEffect(function () {
     if (intent) {
       setName(intent.name);
-      setUtterances(intent.utterances);
+      setUtterances([{
+        raw: '',
+        model: [],
+        "new": true
+      }].concat(intent.utterances));
     }
   }, [intent]);
   React.useEffect(function () {
     if (name && utterances) {
       props.onUpdate(_extends({}, intent, {
         name: name,
-        utterances: utterances
+        utterances: utterances.filter(function (item) {
+          return item["new"];
+        })
       }));
     }
   }, [name, utterances]);
@@ -924,33 +986,14 @@ function IntentDetails(props) {
       }
     })), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--24--large"
-    }, /*#__PURE__*/React__default.createElement("form", {
-      onSubmit: function onSubmit(e) {
-        e.preventDefault();
-
-        if (newExpression) {
-          addNewValue();
-          setNewExpression(null);
-          newExpressionInput.current.value = '';
-        }
-      }
-    }, /*#__PURE__*/React__default.createElement("input", {
-      type: "text",
-      className: "editor-input input--add-field",
-      placeholder: "Enter reference value",
-      onChange: function onChange(e) {
-        return setNewExpression(e.target.value);
-      },
-      ref: newExpressionInput,
-      onFocus: function onFocus() {
-        setActive(null);
-      }
-    })), /*#__PURE__*/React__default.createElement(List, {
+    }, /*#__PURE__*/React__default.createElement(List, {
       addNewValue: addNewValue,
       utterances: utterances,
       setUtterances: setUtterances,
       entities: [entities].concat(systemEntities),
-      focusOnExpressionInput: focusOnExpressionInput
+      focusOnExpressionInput: focusOnExpressionInput,
+      stateChange: stateChange,
+      setStateChange: setStateChange
     }))))));
   } else {
     return null;

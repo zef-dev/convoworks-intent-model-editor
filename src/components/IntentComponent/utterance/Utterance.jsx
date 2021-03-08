@@ -1,11 +1,11 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react'
-import Tags from '@yaireo/tagify/dist/react.tagify' // React-wrapper file
 import '@yaireo/tagify/src/tagify.scss'
 import rangy from 'rangy'
 import _, { debounce } from 'lodash'
 import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
+import { IconTrash } from '../../../assets/icon_trash'
 
 export const Utterance = (props) => {
 	const [dropdownState, setDropdownState] = useState({
@@ -18,10 +18,10 @@ export const Utterance = (props) => {
 
 	const active = props.active === props.index;
 
-	const input = useRef('');
-	const text = useRef('');
+	const input = useRef(null);
+	const text = useRef(null);
 	const inputWrapper = useRef('');
-	const cursorPosition = useRef(0);
+	const cursorPosition = useRef(null);
 
 	useEffect(() => {
 		/* 
@@ -31,13 +31,16 @@ export const Utterance = (props) => {
 		*/
 
 		if (props.data.model) {
-			let str = props.data.model.map(item => {
-				if (item.type) {
-					return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text}</mark>`
-				} else {
-					return item.text
-				}
-			}).join(' ');
+			let str = '';
+			if (props.data.model.length) {
+				str = props.data.model.map(item => {
+					if (item.type) {
+						return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text}</mark>`
+					} else {
+						return item.text
+					}
+				}).join(' ');
+			}
 
 			input.current.innerHTML = str;
 			text.current = str;
@@ -118,12 +121,7 @@ export const Utterance = (props) => {
 		} else {
 			setSelection(null);
 		}
-
-		//cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
-
 	}
-
-	console.log(selection && selection.toString())
 
 	const tagSelection = (type, slot_value) => {
 		if (selection) {
@@ -149,7 +147,7 @@ export const Utterance = (props) => {
 				text.current = input.current.innerHTML;
 				mapToWhitelist();
 				setSelection(null);
-				setCaretPosition(input.current, cursorPosition.current);
+				cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
 			}
 		}
 	}
@@ -165,10 +163,35 @@ export const Utterance = (props) => {
 				position: oRect.x,
 				active: selection !== null
 			})
+		} else {
+			setDropdownState({ ...dropdownState, active: false });
 		}
-	}, [selection]);
+	}, [selection, active]);
 
-	if (props.data && props.data.raw) {
+	useEffect(() => {
+		if (input.current.childNodes.length) {
+			let model = Array.from(input.current.childNodes).map(item => {
+				if (item.dataset) {
+					return ({
+						type: item.dataset.type,
+						text: item.textContent.trim(),
+						slot_value: item.dataset.slotValue
+					})
+				} else {
+					return ({ text: item.textContent.trim() }
+					)
+				}
+			}).filter(item => item.text.length)
+
+			let raw = model.map(item => item.text).join(' ');
+			let utterances = [...props.utterances];
+			utterances[props.index] = {raw: raw, model: model}
+			props.setUtterances(utterances)
+		}
+
+	}, [whitelist])
+
+	if (props.data) {
 		return (
 			<React.Fragment>
 				<div class={`field field--intent ${props.active === props.index ? 'field--active' : ''}`} onFocus={() => {
@@ -205,9 +228,11 @@ export const Utterance = (props) => {
 										cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
 									}}
 								/>
-								{/* 							<div ref={tagsRef} className="taggable-text__tags" contentEditable={false} />
-	 */}						</div>
+							</div>
 							<Dropdown dropdownState={dropdownState} entities={props.entities} selection={selection} setSelection={setSelection} tagSelection={tagSelection} />
+							<div className="field__actions">
+								{!props.data.new && <button onClick={() => { props.removeFromUtterances(props.data) }}><IconTrash /></button>}
+							</div>
 						</div>
 					</div>
 					{props.active === props.index &&

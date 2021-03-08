@@ -942,7 +942,7 @@
       transform: scale(0.85); }
   .convo-details .model-list__header {
     display: grid;
-    grid-template-columns: repeat(3, 33.3%);
+    grid-template-columns: repeat(3, 1fr);
     grid-gap: 24px;
     align-items: center;
     width: 100%;
@@ -960,7 +960,7 @@
       font-weight: 500; }
   .convo-details .model-list__item {
     display: grid;
-    grid-template-columns: repeat(3, 33.3%);
+    grid-template-columns: repeat(3, 1fr);
     grid-gap: 24px;
     align-items: center;
     width: 100%;
@@ -1071,7 +1071,7 @@
     font-size: 14px; }
   .convo-details .field__columns {
     display: grid;
-    grid-template-columns: repeat(3, 33.33%);
+    grid-template-columns: repeat(3, 1fr);
     width: 100%; }
   .convo-details .taggable-text {
     position: relative;

@@ -8,6 +8,7 @@ function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
   const entities = props.entities;
   const systemEntities = props.systemEntities;
+  const [stateChange, setStateChange] = useState(false);
 
   const [name, setName] = useState('');
   const [utterances, setUtterances] = useState([]);
@@ -41,7 +42,7 @@ function IntentDetails(props) {
   useEffect(() => {
     if (intent) {
       setName(intent.name);
-      setUtterances(intent.utterances);
+      setUtterances([{raw: '', model: [], new: true}, ...intent.utterances]);
     }
   }, [intent]);
 
@@ -50,7 +51,7 @@ function IntentDetails(props) {
       props.onUpdate({
         ...intent,
         name: name,
-        utterances: utterances,
+        utterances: utterances.filter(item => item.new),
       });
     }
   }, [name, utterances]);
@@ -111,34 +112,14 @@ function IntentDetails(props) {
                 }} />
               </div>
               <div className="margin--24--large">
-
-                <form
-                  onSubmit={e => {
-                    e.preventDefault();
-                    if (newExpression) {
-                      addNewValue();
-                      setNewExpression(null);
-                      newExpressionInput.current.value = '';
-                    }
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="editor-input input--add-field"
-                    placeholder="Enter reference value"
-                    onChange={e => setNewExpression(e.target.value)}
-                    ref={newExpressionInput}
-                    onFocus={() => {
-                      setActive(null);
-                    }}
-                  />
-                </form>
                 <Utterances
                   addNewValue={addNewValue}
                   utterances={utterances}
                   setUtterances={setUtterances}
                   entities={[entities, ...systemEntities]}
                   focusOnExpressionInput={focusOnExpressionInput}
+                  stateChange={stateChange}
+                  setStateChange={setStateChange}
                 />
               </div>
             </div>
