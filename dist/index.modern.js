@@ -470,17 +470,12 @@ function Dropdown(props) {
 }
 
 const Utterance = props => {
-  const [raw, setRaw] = useState('');
-  const [state, setState] = useState(false);
   const [dropdownState, setDropdownState] = useState({
     position: 0,
     active: false
   });
-  const [inputText, setInputText] = useState(null);
-  const [model, setModel] = useState(props.data.model);
   const [selection, setSelection] = useState(null);
   const [whitelist, setWhitelist] = useState([]);
-  const [selectedNodes, setSelectedNodes] = useState([]);
   const input = useRef('');
   const text = useRef('');
   const inputWrapper = useRef('');
@@ -495,22 +490,10 @@ const Utterance = props => {
         }
       }).join(' ');
       input.current.innerHTML = str;
-      text.current = props.data.raw;
+      text.current = str;
+      mapToWhitelist();
     }
-  }, []);
-
-  String.prototype.parseText = function () {
-    let str = this;
-
-    if (whitelist.length) {
-      let regex = new RegExp(whitelist.map(item => item.text.trim()).join('|'), 'gi\s');
-      str = str.replace(regex, function (match, index, originalString) {
-        return `<mark data-text="${match}" style="background:${stringToColor(match)}">${match}</mark>`;
-      });
-    }
-
-    return str;
-  };
+  }, [props.active]);
 
   function createNode(type, slot_value, text) {
     let mark = document.createElement('mark');
@@ -536,7 +519,6 @@ const Utterance = props => {
     }).filter(item => item.text.trim().length);
     setTimeout(() => {
       setWhitelist(arr);
-      setSelection(null);
     }, 220);
   };
 
@@ -569,61 +551,44 @@ const Utterance = props => {
         sel.modify('extend', direction[1], 'character');
         sel.modify('extend', direction[0], 'word');
       }
-    } else if ((sel = document.selection) && sel.type != 'Control') {
-      var textRange = sel.createRange();
-
-      if (textRange.text) {
-        textRange.expand('word');
-
-        while (/\s$/.test(textRange.text)) {
-          textRange.moveEnd('character', -1);
-        }
-
-        textRange.select();
-      }
     }
 
-    let nodes = rangy.getSelection().getRangeAt(0).getNodes();
-    let targetNode = sel.focusNode.parentNode;
+    if (sel.toString().length > 0) {
+      let _sel = rangy.getSelection();
 
-    if (nodes) {
-      nodes = nodes.filter(item => item.tagName === "MARK").map(item => item.textContent.trim());
-
-      if (targetNode.tagName === "MARK") {
-        setSelectedNodes([...nodes, targetNode.textContent.trim()]);
-      } else {
-        setSelectedNodes(nodes);
-      }
-    }
-
-    if (sel.toString().length) {
-      setSelection(sel);
-    } else if (targetNode.tagName === "MARK") ; else {
+      setSelection(_sel);
+    } else {
       setSelection(null);
     }
   };
 
+  console.log(selection && selection.toString());
+
   const tagSelection = (type, slot_value) => {
-    let mark = createNode(type, slot_value, selection.toString());
+    if (selection) {
+      let mark = createNode(type, slot_value, selection.toString());
 
-    if (mark) {
-      selection.getRangeAt(0).extractContents();
-      selection.getRangeAt(0).insertNode(mark);
+      if (mark) {
+        selection.getRangeAt(0).extractContents();
+        selection.getRangeAt(0).insertNode(mark);
 
-      if (mark.parentElement.tagName === "MARK") {
-        mark.parentElement.replaceWith(...mark.parentElement.childNodes);
-        mark.innerHTML = mark.textContent.trim();
-      }
-
-      input.current.childNodes.forEach((item, index) => {
-        if (item.tagName === "MARK") {
-          if (item.innerHTML.slice(-1).includes(' ')) {
-            item.innerHTML = item.innerHTML.trim();
-          }
+        if (mark.parentElement.tagName === "MARK") {
+          mark.parentElement.replaceWith(...mark.parentElement.childNodes);
+          mark.innerHTML = mark.textContent.trim();
         }
-      });
-      text.current = input.current.innerHTML;
-      mapToWhitelist();
+
+        input.current.childNodes.forEach((item, index) => {
+          if (item.tagName === "MARK") {
+            if (item.innerHTML.slice(-1).includes(' ')) {
+              item.innerHTML = item.innerHTML.trim();
+            }
+          }
+        });
+        text.current = input.current.innerHTML;
+        mapToWhitelist();
+        setSelection(null);
+        setCaretPosition(input.current, cursorPosition.current);
+      }
     }
   };
 
@@ -639,14 +604,11 @@ const Utterance = props => {
       });
     }
   }, [selection]);
-  useEffect(() => {
-    setCaretPosition(input.current, cursorPosition.current);
-  }, [whitelist]);
 
   if (props.data && props.data.raw) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       class: `field field--intent ${props.active === props.index ? 'field--active' : ''}`,
-      onClick: () => {
+      onFocus: () => {
         props.setActive(props.index);
       }
     }, /*#__PURE__*/React.createElement("div", {
@@ -663,8 +625,8 @@ const Utterance = props => {
       html: text.current,
       onChange: e => {
         text.current = e.target.value;
-        mapToWhitelist();
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+        mapToWhitelist();
       },
       onMouseUp: e => {
         handleSelection();
@@ -676,8 +638,8 @@ const Utterance = props => {
         }
       },
       onKeyUp: e => {
-        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
         handleSelection();
+        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
       }
     }), "      "), /*#__PURE__*/React.createElement(Dropdown, {
       dropdownState: dropdownState,
@@ -705,7 +667,7 @@ const Utterance = props => {
   }
 };
 
-const List = React.memo(function List(props) {
+const List = props => {
   const [active, setActive] = useState(null);
 
   if (props.utterances) {
@@ -722,7 +684,7 @@ const List = React.memo(function List(props) {
   } else {
     return null;
   }
-});
+};
 
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);

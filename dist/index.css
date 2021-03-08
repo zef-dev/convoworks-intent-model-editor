@@ -965,12 +965,7 @@
     align-items: center;
     width: 100%;
     line-height: 1.75;
-    padding: 12px;
-    -webkit-animation: fadeInOnShow;
-            animation: fadeInOnShow;
-    -webkit-animation-duration: 0.22s;
-            animation-duration: 0.22s;
-    transition: 0.22s; }
+    padding: 12px; }
     .convo-details .model-list__item input {
       border: none;
       padding-right: 24px;
@@ -1108,15 +1103,11 @@
       outline: none; }
     .convo-details .taggable-text__input mark {
       display: inline-block;
-      -webkit-animation-duration: 220ms;
-              animation-duration: 220ms;
       font-size: inherit;
       line-height: inherit;
       border: none;
       outline: 3px solid transparent;
-      transition: 0.22s;
-      -webkit-animation: popIn 220ms;
-              animation: popIn 220ms; }
+      transition: 0.22s; }
       .convo-details .taggable-text__input mark.active {
         box-shadow: 0px 0px 0px 2px rgba(47, 116, 234, 0.85);
         background: transparent !important; }

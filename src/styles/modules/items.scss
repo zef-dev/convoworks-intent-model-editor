@@ -186,9 +186,6 @@
     width: 100%;
     line-height: 1.75;
     padding: 12px;
-    animation: fadeInOnShow;
-    animation-duration: $transition-time;
-    transition: $transition-time;
 
     input {
         border: none;
@@ -374,13 +371,11 @@
 
     mark {
         display: inline-block;
-        animation-duration: 220ms;
         font-size: inherit;
         line-height: inherit;
         border: none;
         outline: 3px solid transparent;
         transition: $transition-time;
-        animation: popIn 220ms;
 
         &.active {
             box-shadow: 0px 0px 0px 2px rgba($color-primary, 0.85);

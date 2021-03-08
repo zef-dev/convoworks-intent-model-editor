@@ -8,29 +8,22 @@ import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '
 import Dropdown from '../Dropdown'
 
 export const Utterance = (props) => {
-	const [raw, setRaw] = useState('');
-	const [state, setState] = useState(false);
 	const [dropdownState, setDropdownState] = useState({
 		position: 0,
 		active: false
 	});
 
-	const [inputText, setInputText] = useState(null)
-
-	const [model, setModel] = useState(props.data.model)
 	const [selection, setSelection] = useState(null)
 	const [whitelist, setWhitelist] = useState([]);
 
-	const [selectedNodes, setSelectedNodes] = useState([]);
+	const active = props.active === props.index;
 
 	const input = useRef('');
 	const text = useRef('');
 	const inputWrapper = useRef('');
 	const cursorPosition = useRef(0);
 
-
 	useEffect(() => {
-
 		/* 
 		MAP MODEL TO STRING
 		Object with type param are mapped to MARK tags while those without are mapped to text NODES.
@@ -47,30 +40,10 @@ export const Utterance = (props) => {
 			}).join(' ');
 
 			input.current.innerHTML = str;
-			text.current = props.data.raw;
+			text.current = str;
+			mapToWhitelist();
 		}
-	}, []);
-
-	String.prototype.parseText = function () {
-
-		let str = this;
-
-
-		if (whitelist.length) {
-			let regex = new RegExp(
-				whitelist
-					.map((item) => item.text.trim())
-					.join('|'),
-				'gi\s'
-			)
-
-			str = str.replace(regex, function (match, index, originalString) {
-				return `<mark data-text="${match}" style="background:${stringToColor(match)}">${match}</mark>`
-			});
-
-		}
-		return str
-	};
+	}, [props.active]);
 
 	function createNode(type, slot_value, text) {
 		let mark = document.createElement('mark');
@@ -98,14 +71,12 @@ export const Utterance = (props) => {
 		}).filter(item => item.text.trim().length);
 
 		setTimeout(() => {
-			setWhitelist(arr);	
-			setSelection(null);
+			setWhitelist(arr);
 		}, 220)
 	}
 
 	const handleSelection = () => {
 		var sel
-
 		// Check for existence of window.getSelection() and that it has a
 		// modify() method. IE 9 has both selection APIs but no modify() method.
 		if (window.getSelection && (sel = window.getSelection()).modify) {
@@ -136,102 +107,51 @@ export const Utterance = (props) => {
 				sel.modify('extend', direction[1], 'character')
 				sel.modify('extend', direction[0], 'word')
 			}
-		} else if ((sel = document.selection) && sel.type != 'Control') {
-			var textRange = sel.createRange()
-			if (textRange.text) {
-				textRange.expand('word')
-				// Move the end back to not include the word's trailing space(s),
-				// if necessary
-				while (/\s$/.test(textRange.text)) {
-					textRange.moveEnd('character', -1)
-				}
-				textRange.select()
-			}
-		}
-
-		/* 
-		GET ALL SELECTED NODES
-		Get all nodes contained in user selection. 
-		Filter nodes of type MARK. These nodes will be removed from the whitelist. 
-		*/
-		let nodes = rangy.getSelection().getRangeAt(0).getNodes();
-		let targetNode = sel.focusNode.parentNode;
-		if (nodes) {
-			nodes = nodes.filter(item => item.tagName === "MARK").map(item => item.textContent.trim());
-
-			if (targetNode.tagName === "MARK") {
-				setSelectedNodes([...nodes, targetNode.textContent.trim()]);
-			} else {
-				setSelectedNodes(nodes);
-			}
 		}
 
 		/* 
 		SET CURRENT SELECTION
 		*/
-		if (sel.toString().length) {
+		if (sel.toString().length > 0) {
+			let sel = rangy.getSelection()
 			setSelection(sel)
-		} else if (targetNode.tagName === "MARK") {
 		} else {
 			setSelection(null);
 		}
+
+		//cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+
 	}
 
+	console.log(selection && selection.toString())
 
 	const tagSelection = (type, slot_value) => {
-		let mark = createNode(type, slot_value, selection.toString());
+		if (selection) {
+			let mark = createNode(type, slot_value, selection.toString());
 
-		if (mark) {
-			selection.getRangeAt(0).extractContents();
-			selection.getRangeAt(0).insertNode(mark);
+			if (mark) {
+				selection.getRangeAt(0).extractContents();
+				selection.getRangeAt(0).insertNode(mark);
 
-			if (mark.parentElement.tagName === "MARK") {
-				mark.parentElement.replaceWith(...mark.parentElement.childNodes);
-				mark.innerHTML = mark.textContent.trim();
-			}
+				if (mark.parentElement.tagName === "MARK") {
+					mark.parentElement.replaceWith(...mark.parentElement.childNodes);
+					mark.innerHTML = mark.textContent.trim();
+				}
 
-			input.current.childNodes.forEach((item, index) => {
-				if (item.tagName === "MARK") {
-					if (item.innerHTML.slice(-1).includes(' ')) {
-						item.innerHTML = item.innerHTML.trim();
+				input.current.childNodes.forEach((item, index) => {
+					if (item.tagName === "MARK") {
+						if (item.innerHTML.slice(-1).includes(' ')) {
+							item.innerHTML = item.innerHTML.trim();
+						}
 					}
-				}
-			})
+				})
 
-			text.current = input.current.innerHTML;
-			mapToWhitelist();
-		}
-
-
-		/* let arr = Array.from(input.current.childNodes).map(item => {
-			let obj;
-			if (item.dataset) {
-				obj = {
-					text: item.dataset.text,
-					type: item.dataset.type,
-					slot_value: item.dataset.slotValue
-				}
-			} else {
-				obj = {
-					text: item.textContent.trim()
-				}
+				text.current = input.current.innerHTML;
+				mapToWhitelist();
+				setSelection(null);
+				setCaretPosition(input.current, cursorPosition.current);
 			}
-
-			return obj;
-		}) */
-
-		// setModel(arr);
-
-		/* 
-		REMOVE OVERLAPPING NODES FROM THE WHITELIST
-		Check if any of whitelist items exist in selected nodes array.
-		If they do exist in selected nodes, they will be filtered out.
-		*/
-		/* let list = whitelist.filter(item => !selectedNodes.includes(item.text));
-		list = [...list, { text: selection, type: type, slot_value: slot_value }]
-		setSelectedNodes([]);
-		setWhitelist(list);
-		setSelection(null); */
+		}
 	}
 
 	useEffect(() => {
@@ -246,19 +166,12 @@ export const Utterance = (props) => {
 				active: selection !== null
 			})
 		}
-
-		// cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
 	}, [selection]);
-
-	useEffect(() => {
-		/* position caret after the whitelist is updated */
-		setCaretPosition(input.current, cursorPosition.current);
-	}, [whitelist]);
 
 	if (props.data && props.data.raw) {
 		return (
 			<React.Fragment>
-				<div class={`field field--intent ${props.active === props.index ? 'field--active' : ''}`} onClick={() => {
+				<div class={`field field--intent ${props.active === props.index ? 'field--active' : ''}`} onFocus={() => {
 					props.setActive(props.index)
 				}}>
 					<div
@@ -270,33 +183,14 @@ export const Utterance = (props) => {
 								<ContentEditable
 									innerRef={input}
 									className='taggable-text__input'
-									html={text.current}	
+									html={text.current}
 									onChange={(e) => {
 										text.current = e.target.value;
-
-										/* let sel = window.getSelection().anchorNode.parentElement;
-
-										if (sel.tagName === 'MARK') {
-											let arr = [...whitelist];
-											let item = arr.find(item => item.text === sel.dataset.text);
-											let index = arr.indexOf(item);
-
-											arr[index] = { ...item, text: sel.textContent };
-											setWhitelist(arr.filter(obj => obj.text.length));
-										} else {
-											let arr = whitelist.filter(item =>
-												text.current.includes(item.text)
-											);
-
-										}
-
-										 */
-
-										mapToWhitelist();
 										cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+										mapToWhitelist();
 									}}
 									onMouseUp={(e) => {
-										handleSelection()
+										handleSelection();
 										cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
 									}}
 
@@ -307,8 +201,8 @@ export const Utterance = (props) => {
 									}}
 
 									onKeyUp={(e) => {
-										cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
 										handleSelection();
+										cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
 									}}
 								/>
 								{/* 							<div ref={tagsRef} className="taggable-text__tags" contentEditable={false} />

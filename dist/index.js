@@ -579,32 +579,20 @@ function Dropdown(props) {
 }
 
 var Utterance = function Utterance(props) {
-  var _useState = React.useState('');
-
-  var _useState2 = React.useState(false);
-
-  var _useState3 = React.useState({
+  var _useState = React.useState({
     position: 0,
     active: false
   }),
-      dropdownState = _useState3[0],
-      setDropdownState = _useState3[1];
+      dropdownState = _useState[0],
+      setDropdownState = _useState[1];
 
-  var _useState4 = React.useState(null);
+  var _useState2 = React.useState(null),
+      selection = _useState2[0],
+      setSelection = _useState2[1];
 
-  var _useState5 = React.useState(props.data.model);
-
-  var _useState6 = React.useState(null),
-      selection = _useState6[0],
-      setSelection = _useState6[1];
-
-  var _useState7 = React.useState([]),
-      whitelist = _useState7[0],
-      setWhitelist = _useState7[1];
-
-  var _useState8 = React.useState([]),
-      setSelectedNodes = _useState8[1];
-
+  var _useState3 = React.useState([]),
+      whitelist = _useState3[0],
+      setWhitelist = _useState3[1];
   var input = React.useRef('');
   var text = React.useRef('');
   var inputWrapper = React.useRef('');
@@ -619,24 +607,10 @@ var Utterance = function Utterance(props) {
         }
       }).join(' ');
       input.current.innerHTML = str;
-      text.current = props.data.raw;
+      text.current = str;
+      mapToWhitelist();
     }
-  }, []);
-
-  String.prototype.parseText = function () {
-    var str = this;
-
-    if (whitelist.length) {
-      var regex = new RegExp(whitelist.map(function (item) {
-        return item.text.trim();
-      }).join('|'), 'gi\s');
-      str = str.replace(regex, function (match, index, originalString) {
-        return "<mark data-text=\"" + match + "\" style=\"background:" + stringToColor(match) + "\">" + match + "</mark>";
-      });
-    }
-
-    return str;
-  };
+  }, [props.active]);
 
   function createNode(type, slot_value, text) {
     var mark = document.createElement('mark');
@@ -666,7 +640,6 @@ var Utterance = function Utterance(props) {
     });
     setTimeout(function () {
       setWhitelist(arr);
-      setSelection(null);
     }, 220);
   };
 
@@ -699,68 +672,47 @@ var Utterance = function Utterance(props) {
         sel.modify('extend', direction[1], 'character');
         sel.modify('extend', direction[0], 'word');
       }
-    } else if ((sel = document.selection) && sel.type != 'Control') {
-      var textRange = sel.createRange();
-
-      if (textRange.text) {
-        textRange.expand('word');
-
-        while (/\s$/.test(textRange.text)) {
-          textRange.moveEnd('character', -1);
-        }
-
-        textRange.select();
-      }
     }
 
-    var nodes = rangy.getSelection().getRangeAt(0).getNodes();
-    var targetNode = sel.focusNode.parentNode;
+    if (sel.toString().length > 0) {
+      var _sel = rangy.getSelection();
 
-    if (nodes) {
-      nodes = nodes.filter(function (item) {
-        return item.tagName === "MARK";
-      }).map(function (item) {
-        return item.textContent.trim();
-      });
-
-      if (targetNode.tagName === "MARK") {
-        setSelectedNodes([].concat(nodes, [targetNode.textContent.trim()]));
-      } else {
-        setSelectedNodes(nodes);
-      }
-    }
-
-    if (sel.toString().length) {
-      setSelection(sel);
-    } else if (targetNode.tagName === "MARK") ; else {
+      setSelection(_sel);
+    } else {
       setSelection(null);
     }
   };
 
+  console.log(selection && selection.toString());
+
   var tagSelection = function tagSelection(type, slot_value) {
-    var mark = createNode(type, slot_value, selection.toString());
+    if (selection) {
+      var mark = createNode(type, slot_value, selection.toString());
 
-    if (mark) {
-      selection.getRangeAt(0).extractContents();
-      selection.getRangeAt(0).insertNode(mark);
+      if (mark) {
+        selection.getRangeAt(0).extractContents();
+        selection.getRangeAt(0).insertNode(mark);
 
-      if (mark.parentElement.tagName === "MARK") {
-        var _mark$parentElement;
+        if (mark.parentElement.tagName === "MARK") {
+          var _mark$parentElement;
 
-        (_mark$parentElement = mark.parentElement).replaceWith.apply(_mark$parentElement, mark.parentElement.childNodes);
+          (_mark$parentElement = mark.parentElement).replaceWith.apply(_mark$parentElement, mark.parentElement.childNodes);
 
-        mark.innerHTML = mark.textContent.trim();
-      }
-
-      input.current.childNodes.forEach(function (item, index) {
-        if (item.tagName === "MARK") {
-          if (item.innerHTML.slice(-1).includes(' ')) {
-            item.innerHTML = item.innerHTML.trim();
-          }
+          mark.innerHTML = mark.textContent.trim();
         }
-      });
-      text.current = input.current.innerHTML;
-      mapToWhitelist();
+
+        input.current.childNodes.forEach(function (item, index) {
+          if (item.tagName === "MARK") {
+            if (item.innerHTML.slice(-1).includes(' ')) {
+              item.innerHTML = item.innerHTML.trim();
+            }
+          }
+        });
+        text.current = input.current.innerHTML;
+        mapToWhitelist();
+        setSelection(null);
+        setCaretPosition(input.current, cursorPosition.current);
+      }
     }
   };
 
@@ -776,14 +728,11 @@ var Utterance = function Utterance(props) {
       });
     }
   }, [selection]);
-  React.useEffect(function () {
-    setCaretPosition(input.current, cursorPosition.current);
-  }, [whitelist]);
 
   if (props.data && props.data.raw) {
     return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
       "class": "field field--intent " + (props.active === props.index ? 'field--active' : ''),
-      onClick: function onClick() {
+      onFocus: function onFocus() {
         props.setActive(props.index);
       }
     }, /*#__PURE__*/React__default.createElement("div", {
@@ -800,8 +749,8 @@ var Utterance = function Utterance(props) {
       html: text.current,
       onChange: function onChange(e) {
         text.current = e.target.value;
-        mapToWhitelist();
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+        mapToWhitelist();
       },
       onMouseUp: function onMouseUp(e) {
         handleSelection();
@@ -813,8 +762,8 @@ var Utterance = function Utterance(props) {
         }
       },
       onKeyUp: function onKeyUp(e) {
-        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
         handleSelection();
+        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
       }
     }), "      "), /*#__PURE__*/React__default.createElement(Dropdown, {
       dropdownState: dropdownState,
@@ -842,7 +791,7 @@ var Utterance = function Utterance(props) {
   }
 };
 
-var List = React__default.memo(function List(props) {
+var List = function List(props) {
   var _useState = React.useState(null),
       active = _useState[0],
       setActive = _useState[1];
@@ -861,7 +810,7 @@ var List = React__default.memo(function List(props) {
   } else {
     return null;
   }
-});
+};
 
 function IntentDetails(props) {
   var _useState = React.useState(props.intent),
