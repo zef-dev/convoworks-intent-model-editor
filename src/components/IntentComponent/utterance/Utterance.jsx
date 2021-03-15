@@ -3,7 +3,7 @@ import '@yaireo/tagify/src/tagify.scss'
 import rangy from 'rangy'
 import _ from 'lodash'
 import ContentEditable from 'react-contenteditable'
-import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '../../../helpers/common_constants'
+import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition, generateId } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
 import { IconTrash } from '../../../assets/icon_trash'
 
@@ -26,17 +26,9 @@ export const Utterance = (props) => {
 
     /* handle validation */
     useEffect(() => {
-        let expression = props.utterance.model.filter(item => !item.type).map(item => item.text).join(' ').trim();
-        let slotValues = props.utterance.model.filter(item => item.slot_value).map(item => item.slot_value);
-        let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
+        let textReg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
 
-        if (whitelist.length > 0 && expression.length > 0) {
-            setValid((reg.test(expression)))
-        } else if (whitelist.length > 0 && expression.length < 1) {
-            setValid(true);
-        } else {
-            setValid(true)
-        }
+        let term = props.utterance.model.filter(item => !item.type).map(item => item.text).join(' ');
 
     }, [props.utterance.model])
 
@@ -82,17 +74,22 @@ export const Utterance = (props) => {
 
     const mapToWhitelist = () => {
         let arr = Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
+            let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
+
+            console.log('slot value --->', item.dataset.slotValue)
+
             return ({
                 type: item.dataset.type,
                 slot_value: item.dataset.slotValue,
                 text: item.textContent,
-                color: item.dataset.color
+                color: item.dataset.color,
+                validations: {
+                    slot_value: reg.test(item.dataset.slotValue)
+                }
             })
         }).filter(item => item.text.trim().length);
 
-        setTimeout(() => {
-            setWhitelist(arr);
-        }, 220)
+        setWhitelist(arr);
     }
 
     const handleSelection = () => {
@@ -141,6 +138,7 @@ export const Utterance = (props) => {
     }
 
     const tagSelection = (type, slot_value) => {
+        console.log(type, slot_value);
         if (selection) {
             if (!selection.tagName) {
                 let mark = createNode(type, slot_value, selection.toString());
@@ -216,10 +214,9 @@ export const Utterance = (props) => {
     if (props.utterance) {
         return (
             <React.Fragment>
-                <div class={`field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${props.active === props.index ? 'field--active' : ''}`}>
+                <div data-new={props.utterance.new} class={`field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${props.active === props.index ? 'field--active' : ''}`}>
                     <div
                         className='field__main'
-                        id='input'
                     >
                         <div className='field__input'>
                             <div class='taggable-text' ref={inputWrapper}>
@@ -246,6 +243,11 @@ export const Utterance = (props) => {
                                     onKeyDown={(e) => {
                                         if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
                                             e.preventDefault();
+
+                                            if (e.keyCode === 13) {
+                                                document.querySelectorAll('.taggable-text__input')[0].focus();
+                                            }
+
                                         }
                                     }}
                                     onKeyUp={(e) => {
@@ -281,11 +283,10 @@ export const Utterance = (props) => {
                             {whitelist.map((item, index) => {
                                 return (
                                     <li className="model-list__item">
-                                        <input defaultValue={item.slot_value.length ? item.slot_value : item.type} onChange={(e) => {
-                                            let arr = [...whitelist];
+                                        <input defaultValue={item.slot_value} onChange={(e) => {
+                                            /* let arr = [...whitelist];
                                             arr[index].slot_value = e.target.value;
-                                            setWhitelist(arr);
-                                            props.setStateChange(!props.stateChange);
+                                            setWhitelist(arr); */
                                         }} />
                                         <div><mark style={{ background: item.color }}>{item.type}</mark></div>
                                         <div>{item.text}</div>

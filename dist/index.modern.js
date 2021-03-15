@@ -349,7 +349,6 @@ Number.prototype.intToHSL = function () {
   var shortened = this % 220;
   return "hsl(" + shortened + ",100%, 80%)";
 };
-
 const getCaretCharacterOffsetWithin = element => {
   var caretOffset = 0;
   var doc = element.ownerDocument || element.document;
@@ -482,17 +481,7 @@ const Utterance = props => {
   const inputWrapper = useRef('');
   const cursorPosition = useRef(null);
   useEffect(() => {
-    let expression = props.utterance.model.filter(item => !item.type).map(item => item.text).join(' ').trim();
-    let slotValues = props.utterance.model.filter(item => item.slot_value).map(item => item.slot_value);
-    let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-
-    if (whitelist.length > 0 && expression.length > 0) {
-      setValid(reg.test(expression));
-    } else if (whitelist.length > 0 && expression.length < 1) {
-      setValid(true);
-    } else {
-      setValid(true);
-    }
+    let term = props.utterance.model.filter(item => !item.type).map(item => item.text).join(' ');
   }, [props.utterance.model]);
   useEffect(() => {
     if (props.utterance.model) {
@@ -529,16 +518,19 @@ const Utterance = props => {
 
   const mapToWhitelist = () => {
     let arr = Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
+      let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
+      console.log('slot value --->', item.dataset.slotValue);
       return {
         type: item.dataset.type,
         slot_value: item.dataset.slotValue,
         text: item.textContent,
-        color: item.dataset.color
+        color: item.dataset.color,
+        validations: {
+          slot_value: reg.test(item.dataset.slotValue)
+        }
       };
     }).filter(item => item.text.trim().length);
-    setTimeout(() => {
-      setWhitelist(arr);
-    }, 220);
+    setWhitelist(arr);
   };
 
   const handleSelection = () => {
@@ -582,6 +574,8 @@ const Utterance = props => {
   };
 
   const tagSelection = (type, slot_value) => {
+    console.log(type, slot_value);
+
     if (selection) {
       if (!selection.tagName) {
         let mark = createNode(type, slot_value, selection.toString());
@@ -659,10 +653,10 @@ const Utterance = props => {
 
   if (props.utterance) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      "data-new": props.utterance.new,
       class: `field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${props.active === props.index ? 'field--active' : ''}`
     }, /*#__PURE__*/React.createElement("div", {
-      className: "field__main",
-      id: "input"
+      className: "field__main"
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__input"
     }, /*#__PURE__*/React.createElement("div", {
@@ -690,6 +684,10 @@ const Utterance = props => {
       onKeyDown: e => {
         if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
           e.preventDefault();
+
+          if (e.keyCode === 13) {
+            document.querySelectorAll('.taggable-text__input')[0].focus();
+          }
         }
       },
       onKeyUp: e => {
@@ -720,13 +718,8 @@ const Utterance = props => {
       return /*#__PURE__*/React.createElement("li", {
         className: "model-list__item"
       }, /*#__PURE__*/React.createElement("input", {
-        defaultValue: item.slot_value.length ? item.slot_value : item.type,
-        onChange: e => {
-          let arr = [...whitelist];
-          arr[index].slot_value = e.target.value;
-          setWhitelist(arr);
-          props.setStateChange(!props.stateChange);
-        }
+        defaultValue: item.slot_value,
+        onChange: e => {}
       }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("mark", {
         style: {
           background: item.color
@@ -806,11 +799,7 @@ function IntentDetails(props) {
   useEffect(() => {
     if (intent) {
       setName(intent.name);
-      setUtterances([{
-        raw: '',
-        model: [],
-        new: true
-      }, ...intent.utterances]);
+      setUtterances(intent.utterances);
     }
   }, [intent]);
   useEffect(() => {

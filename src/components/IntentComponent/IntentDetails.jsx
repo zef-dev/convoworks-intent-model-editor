@@ -43,7 +43,7 @@ function IntentDetails(props) {
   useEffect(() => {
     if (intent) {
       setName(intent.name);
-      setUtterances([{raw: '', model: [], new: true}, ...intent.utterances]);
+      setUtterances(intent.utterances);
     }
   }, [intent]);
 
