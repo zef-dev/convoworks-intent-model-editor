@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { List as Utterances } from './IntentUtterances.jsx';
+import IntentUtterances from './IntentUtterances.jsx';
 import _, { debounce } from 'lodash';
 import { useRef } from 'react';
 import { validateInput } from '../../helpers/validations.jsx';
@@ -9,6 +9,7 @@ function IntentDetails(props) {
   const entities = props.entities;
   const systemEntities = props.systemEntities;
   const [stateChange, setStateChange] = useState(false);
+  const [update, setUpdate] = useState(false);
 
   const [name, setName] = useState('');
   const [utterances, setUtterances] = useState([]);
@@ -48,11 +49,20 @@ function IntentDetails(props) {
 
   useEffect(() => {
     if (name && utterances) {
-      props.onUpdate({
+
+      let intent = {
         ...intent,
         name: name,
         utterances: utterances.filter(item => item.new),
-      });
+      }
+
+      props.onUpdate(intent);
+      // localStorage.setItem('intent', JSON.stringify(intent));
+
+      setUpdate(true);
+      setTimeout(() => {
+        setUpdate(false);
+      }, 200)
     }
   }, [name, utterances]);
 
@@ -111,8 +121,9 @@ function IntentDetails(props) {
                   onChange()
                 }} />
               </div>
+              {update && <span style={{position: "fixed", left: 0, bottom: 0}}>Update!!</span>}
               <div className="margin--24--large">
-                <Utterances
+                <IntentUtterances
                   addNewValue={addNewValue}
                   utterances={utterances}
                   setUtterances={setUtterances}

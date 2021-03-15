@@ -115,6 +115,10 @@
         }
     }
 
+    &.field--invalid {
+        border-color: $color-alert;
+    }
+
     .field__main {
         width: 100%;
         display: flex;
@@ -349,11 +353,11 @@
     //height: $input-height;
     line-height: normal;
     outline: none;
-    white-space: pre-wrap;       /* css-3 */
-    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-    white-space: -pre-wrap;      /* Opera 4-6 */
-    white-space: -o-pre-wrap;    /* Opera 7 */
-    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
 
 .taggable-text__input,
@@ -384,10 +388,17 @@
     }
 }
 
+[data-placeholder]:empty:before {
+    content: attr(data-placeholder);
+    color: #888;
+    font-style: italic;
+}
+
 @keyframes popIn {
     from {
         opacity: 0;
-    } to {
+    }
+    to {
         opacity: 1;
     }
 }

@@ -442,7 +442,7 @@ String.prototype.getHashCode = function () {
 
 Number.prototype.intToHSL = function () {
   var shortened = this % 220;
-  return "hsl(" + shortened + ",100%, 75%)";
+  return "hsl(" + shortened + ",100%, 80%)";
 };
 
 var getCaretCharacterOffsetWithin = function getCaretCharacterOffsetWithin(element) {
@@ -593,17 +593,34 @@ var Utterance = function Utterance(props) {
       whitelist = _useState3[0],
       setWhitelist = _useState3[1];
 
+  var _useState4 = React.useState(true),
+      setValid = _useState4[1];
+
   var active = props.active === props.index;
   var input = React.useRef(null);
   var text = React.useRef(null);
   var inputWrapper = React.useRef('');
   var cursorPosition = React.useRef(null);
   React.useEffect(function () {
-    if (props.data.model) {
+    var expression = props.utterance.model.filter(function (item) {
+      return !item.type;
+    }).map(function (item) {
+      return item.text;
+    }).join(' ');
+    var slotValues = props.utterance.model.filter(function (item) {
+      return item.slot_value;
+    }).map(function (item) {
+      return item.slot_value;
+    }).join(' ');
+    var reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
+    setValid(reg.test(expression));
+  }, [props.utterance.model]);
+  React.useEffect(function () {
+    if (props.utterance.model) {
       var str = '';
 
-      if (props.data.model.length) {
-        str = props.data.model.map(function (item) {
+      if (props.utterance.model.length) {
+        str = props.utterance.model.map(function (item) {
           if (item.type) {
             return "<mark data-type=\"" + item.type + "\" data-slot-value=\"" + item.slot_value + "\" data-text=\"" + item.text + "\" data-color=\"" + stringToColor(item.text) + "\" style=\"background:" + stringToColor(item.text) + "\">" + item.text + "</mark>";
           } else {
@@ -612,11 +629,11 @@ var Utterance = function Utterance(props) {
         }).join(' ');
       }
 
-      input.current.innerHTML = str;
-      text.current = str;
+      input.current.innerHTML = str + ' ';
+      text.current = str + ' ';
       mapToWhitelist();
     }
-  }, [props.active]);
+  }, [props.stateChange]);
 
   function createNode(type, slot_value, text) {
     var mark = document.createElement('mark');
@@ -705,7 +722,7 @@ var Utterance = function Utterance(props) {
           mark.innerHTML = mark.textContent.trim();
         }
 
-        input.current.childNodes.forEach(function (item, index) {
+        input.current.childNodes.forEach(function (item) {
           if (item.tagName === "MARK") {
             if (item.innerHTML.slice(-1).includes(' ')) {
               item.innerHTML = item.innerHTML.trim();
@@ -765,12 +782,9 @@ var Utterance = function Utterance(props) {
     }
   }, [whitelist]);
 
-  if (props.data) {
+  if (props.utterance) {
     return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
-      "class": "field field--intent " + (props.active === props.index ? 'field--active' : ''),
-      onFocus: function onFocus() {
-        props.setActive(props.index);
-      }
+      "class": "field " + (props.valid ? 'field--valid' : 'field--invalid') + " field--intent " + (props.active === props.index ? 'field--active' : '')
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "field__main",
       id: "input"
@@ -780,6 +794,7 @@ var Utterance = function Utterance(props) {
       "class": "taggable-text",
       ref: inputWrapper
     }, /*#__PURE__*/React__default.createElement(ContentEditable, {
+      "data-placeholder": "Enter reference value",
       innerRef: input,
       className: "taggable-text__input",
       html: text.current,
@@ -788,18 +803,25 @@ var Utterance = function Utterance(props) {
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
         mapToWhitelist();
       },
-      onMouseUp: function onMouseUp(e) {
+      onMouseUp: function onMouseUp() {
         handleSelection();
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
       },
       onKeyDown: function onKeyDown(e) {
         if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
           e.preventDefault();
+
+          if (e.keyCode === 13) {
+            document.querySelectorAll('.taggable-text__input')[0].focus();
+          }
         }
       },
       onKeyUp: function onKeyUp(e) {
         handleSelection();
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+      },
+      onFocus: function onFocus() {
+        props.setActive(props.index);
       }
     })), /*#__PURE__*/React__default.createElement(Dropdown, {
       dropdownState: dropdownState,
@@ -809,19 +831,25 @@ var Utterance = function Utterance(props) {
       tagSelection: tagSelection
     }), /*#__PURE__*/React__default.createElement("div", {
       className: "field__actions"
-    }, !props.data["new"] && /*#__PURE__*/React__default.createElement("button", {
+    }, !props.utterance["new"] && /*#__PURE__*/React__default.createElement("button", {
       onClick: function onClick() {
-        props.removeFromUtterances(props.data);
+        props.removeFromUtterances(props.utterance);
       }
     }, /*#__PURE__*/React__default.createElement(IconTrash, null))))), props.active === props.index && /*#__PURE__*/React__default.createElement("ul", {
       className: "model-list"
-    }, /*#__PURE__*/React__default.createElement("header", {
+    }, whitelist.length > 0 && /*#__PURE__*/React__default.createElement("header", {
       className: "model-list__header"
     }, /*#__PURE__*/React__default.createElement("strong", null, "Parameter name"), /*#__PURE__*/React__default.createElement("strong", null, "Entity"), /*#__PURE__*/React__default.createElement("strong", null, "Resolved value")), whitelist.map(function (item, index) {
       return /*#__PURE__*/React__default.createElement("li", {
         className: "model-list__item"
       }, /*#__PURE__*/React__default.createElement("input", {
-        defaultValue: item.slot_value.length ? item.slot_value : item.type
+        defaultValue: item.slot_value.length ? item.slot_value : item.type,
+        onChange: function onChange(e) {
+          var arr = [].concat(whitelist);
+          arr[index].slot_value = e.target.value;
+          setWhitelist(arr);
+          props.setStateChange(!props.stateChange);
+        }
       }), /*#__PURE__*/React__default.createElement("div", null, /*#__PURE__*/React__default.createElement("mark", {
         style: {
           background: item.color
@@ -833,7 +861,7 @@ var Utterance = function Utterance(props) {
   }
 };
 
-var List = function List(props) {
+var IntentUtterances = function IntentUtterances(props) {
   var _useState = React.useState(null),
       active = _useState[0],
       setActive = _useState[1];
@@ -844,26 +872,31 @@ var List = function List(props) {
     });
     props.setUtterances(arr);
     setActive(null);
+    props.setStateChange(!props.stateChange);
   };
 
   if (props.utterances) {
     return /*#__PURE__*/React__default.createElement("ul", null, props.utterances.map(function (item, index) {
       return /*#__PURE__*/React__default.createElement(Utterance, {
         key: index,
-        data: item,
+        utterance: item,
         index: index,
         active: active,
         setActive: setActive,
         entities: props.entities,
         removeFromUtterances: removeFromUtterances,
         utterances: props.utterances,
-        setUtterances: props.setUtterances
+        setUtterances: props.setUtterances,
+        stateChange: props.stateChange,
+        setStateChange: props.setStateChange
       });
     }));
   } else {
     return null;
   }
 };
+
+var IntentUtterances$1 = React__default.memo(IntentUtterances);
 
 function IntentDetails(props) {
   var _useState = React.useState(props.intent),
@@ -876,18 +909,22 @@ function IntentDetails(props) {
       stateChange = _useState2[0],
       setStateChange = _useState2[1];
 
-  var _useState3 = React.useState(''),
-      name = _useState3[0],
-      setName = _useState3[1];
+  var _useState3 = React.useState(false),
+      update = _useState3[0],
+      setUpdate = _useState3[1];
 
-  var _useState4 = React.useState([]),
-      utterances = _useState4[0],
-      setUtterances = _useState4[1];
+  var _useState4 = React.useState(''),
+      name = _useState4[0],
+      setName = _useState4[1];
 
-  var _useState5 = React.useState(null),
-      newExpression = _useState5[0];
+  var _useState5 = React.useState([]),
+      utterances = _useState5[0],
+      setUtterances = _useState5[1];
 
-  var _useState6 = React.useState(true);
+  var _useState6 = React.useState(null),
+      newExpression = _useState6[0];
+
+  var _useState7 = React.useState(true);
 
   var newExpressionInput = React.useRef(null);
   var searchInput = React.useRef(null);
@@ -923,12 +960,18 @@ function IntentDetails(props) {
   }, [intent]);
   React.useEffect(function () {
     if (name && utterances) {
-      props.onUpdate(_extends({}, intent, {
+      var _intent = _extends({}, _intent, {
         name: name,
         utterances: utterances.filter(function (item) {
           return item["new"];
         })
-      }));
+      });
+
+      props.onUpdate(_intent);
+      setUpdate(true);
+      setTimeout(function () {
+        setUpdate(false);
+      }, 200);
     }
   }, [name, utterances]);
 
@@ -984,9 +1027,15 @@ function IntentDetails(props) {
       onChange: function onChange(e) {
         _onChange();
       }
-    })), /*#__PURE__*/React__default.createElement("div", {
+    })), update && /*#__PURE__*/React__default.createElement("span", {
+      style: {
+        position: "fixed",
+        left: 0,
+        bottom: 0
+      }
+    }, "Update!!"), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--24--large"
-    }, /*#__PURE__*/React__default.createElement(List, {
+    }, /*#__PURE__*/React__default.createElement(IntentUtterances$1, {
       addNewValue: addNewValue,
       utterances: utterances,
       setUtterances: setUtterances,

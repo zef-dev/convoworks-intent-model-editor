@@ -916,6 +916,8 @@
       z-index: 5; }
       .convo-details .field--intent.field--active .field__input {
         pointer-events: all; }
+    .convo-details .field--intent.field--invalid {
+      border-color: #d9543e; }
     .convo-details .field--intent .field__main {
       width: 100%;
       display: flex;
@@ -1111,6 +1113,10 @@
       .convo-details .taggable-text__input mark.active {
         box-shadow: 0px 0px 0px 2px rgba(47, 116, 234, 0.85);
         background: transparent !important; }
+  .convo-details [data-placeholder]:empty:before {
+    content: attr(data-placeholder);
+    color: #888;
+    font-style: italic; }
 
 @-webkit-keyframes popIn {
   from {

@@ -24,7 +24,7 @@ String.prototype.getHashCode = function () {
 
 Number.prototype.intToHSL = function () {
 	var shortened = this % 220;
-	return "hsl(" + shortened + ",100%, 75%)";
+	return "hsl(" + shortened + ",100%, 80%)";
 };
 
 

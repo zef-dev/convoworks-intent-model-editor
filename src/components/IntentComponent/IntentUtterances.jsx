@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import { Utterance } from './utterance/Utterance.jsx'
 
-const List = (props) => {
-	const [active, setActive] = useState(null)
+const IntentUtterances = (props) => {
+	const [active, setActive] = useState(null);
 
 	const removeFromUtterances = (object) => {
 		let arr = props.utterances.filter(item => item !== object);
 		props.setUtterances(arr);
 		setActive(null);
+		props.setStateChange(!props.stateChange)
 	}
 
 	if (props.utterances) {
@@ -15,7 +16,7 @@ const List = (props) => {
 			<ul>
 				{props.utterances.map((item, index) => {
 					return (
-						<Utterance key={index} data={item} index={index} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} />
+						<Utterance key={index} utterance={item} index={index} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} />
 					)
 				})}
 			</ul>
@@ -25,4 +26,4 @@ const List = (props) => {
 	}
 }
 
-export { List }
+export default React.memo(IntentUtterances);

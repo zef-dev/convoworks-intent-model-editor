@@ -15,7 +15,7 @@ const App = () => {
       </nav>
       {view === 'intent' ? 
       <IntentEditor
-        intent={data.intents[2]}
+        intent={data.intents[0]}
         entities={data.entities}
         systemEntities={[]}
         onUpdate={() => {console.log('update')}}

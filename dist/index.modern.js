@@ -347,7 +347,7 @@ String.prototype.getHashCode = function () {
 
 Number.prototype.intToHSL = function () {
   var shortened = this % 220;
-  return "hsl(" + shortened + ",100%, 75%)";
+  return "hsl(" + shortened + ",100%, 80%)";
 };
 
 const getCaretCharacterOffsetWithin = element => {
@@ -475,17 +475,24 @@ const Utterance = props => {
   });
   const [selection, setSelection] = useState(null);
   const [whitelist, setWhitelist] = useState([]);
+  const [valid, setValid] = useState(true);
   const active = props.active === props.index;
   const input = useRef(null);
   const text = useRef(null);
   const inputWrapper = useRef('');
   const cursorPosition = useRef(null);
   useEffect(() => {
-    if (props.data.model) {
+    let expression = props.utterance.model.filter(item => !item.type).map(item => item.text).join(' ');
+    let slotValues = props.utterance.model.filter(item => item.slot_value).map(item => item.slot_value).join(' ');
+    let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
+    setValid(reg.test(expression));
+  }, [props.utterance.model]);
+  useEffect(() => {
+    if (props.utterance.model) {
       let str = '';
 
-      if (props.data.model.length) {
-        str = props.data.model.map(item => {
+      if (props.utterance.model.length) {
+        str = props.utterance.model.map(item => {
           if (item.type) {
             return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text}</mark>`;
           } else {
@@ -494,11 +501,11 @@ const Utterance = props => {
         }).join(' ');
       }
 
-      input.current.innerHTML = str;
-      text.current = str;
+      input.current.innerHTML = str + ' ';
+      text.current = str + ' ';
       mapToWhitelist();
     }
-  }, [props.active]);
+  }, [props.stateChange]);
 
   function createNode(type, slot_value, text) {
     let mark = document.createElement('mark');
@@ -580,7 +587,7 @@ const Utterance = props => {
           mark.innerHTML = mark.textContent.trim();
         }
 
-        input.current.childNodes.forEach((item, index) => {
+        input.current.childNodes.forEach(item => {
           if (item.tagName === "MARK") {
             if (item.innerHTML.slice(-1).includes(' ')) {
               item.innerHTML = item.innerHTML.trim();
@@ -636,12 +643,9 @@ const Utterance = props => {
     }
   }, [whitelist]);
 
-  if (props.data) {
+  if (props.utterance) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-      class: `field field--intent ${props.active === props.index ? 'field--active' : ''}`,
-      onFocus: () => {
-        props.setActive(props.index);
-      }
+      class: `field ${props.valid ? 'field--valid' : 'field--invalid'} field--intent ${props.active === props.index ? 'field--active' : ''}`
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__main",
       id: "input"
@@ -651,6 +655,7 @@ const Utterance = props => {
       class: "taggable-text",
       ref: inputWrapper
     }, /*#__PURE__*/React.createElement(ContentEditable, {
+      "data-placeholder": "Enter reference value",
       innerRef: input,
       className: "taggable-text__input",
       html: text.current,
@@ -659,18 +664,25 @@ const Utterance = props => {
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
         mapToWhitelist();
       },
-      onMouseUp: e => {
+      onMouseUp: () => {
         handleSelection();
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
       },
       onKeyDown: e => {
         if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
           e.preventDefault();
+
+          if (e.keyCode === 13) {
+            document.querySelectorAll('.taggable-text__input')[0].focus();
+          }
         }
       },
       onKeyUp: e => {
         handleSelection();
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+      },
+      onFocus: () => {
+        props.setActive(props.index);
       }
     })), /*#__PURE__*/React.createElement(Dropdown, {
       dropdownState: dropdownState,
@@ -680,19 +692,25 @@ const Utterance = props => {
       tagSelection: tagSelection
     }), /*#__PURE__*/React.createElement("div", {
       className: "field__actions"
-    }, !props.data.new && /*#__PURE__*/React.createElement("button", {
+    }, !props.utterance.new && /*#__PURE__*/React.createElement("button", {
       onClick: () => {
-        props.removeFromUtterances(props.data);
+        props.removeFromUtterances(props.utterance);
       }
     }, /*#__PURE__*/React.createElement(IconTrash, null))))), props.active === props.index && /*#__PURE__*/React.createElement("ul", {
       className: "model-list"
-    }, /*#__PURE__*/React.createElement("header", {
+    }, whitelist.length > 0 && /*#__PURE__*/React.createElement("header", {
       className: "model-list__header"
     }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.map((item, index) => {
       return /*#__PURE__*/React.createElement("li", {
         className: "model-list__item"
       }, /*#__PURE__*/React.createElement("input", {
-        defaultValue: item.slot_value.length ? item.slot_value : item.type
+        defaultValue: item.slot_value.length ? item.slot_value : item.type,
+        onChange: e => {
+          let arr = [...whitelist];
+          arr[index].slot_value = e.target.value;
+          setWhitelist(arr);
+          props.setStateChange(!props.stateChange);
+        }
       }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("mark", {
         style: {
           background: item.color
@@ -704,27 +722,30 @@ const Utterance = props => {
   }
 };
 
-const List = props => {
+const IntentUtterances = props => {
   const [active, setActive] = useState(null);
 
   const removeFromUtterances = object => {
     let arr = props.utterances.filter(item => item !== object);
     props.setUtterances(arr);
     setActive(null);
+    props.setStateChange(!props.stateChange);
   };
 
   if (props.utterances) {
     return /*#__PURE__*/React.createElement("ul", null, props.utterances.map((item, index) => {
       return /*#__PURE__*/React.createElement(Utterance, {
         key: index,
-        data: item,
+        utterance: item,
         index: index,
         active: active,
         setActive: setActive,
         entities: props.entities,
         removeFromUtterances: removeFromUtterances,
         utterances: props.utterances,
-        setUtterances: props.setUtterances
+        setUtterances: props.setUtterances,
+        stateChange: props.stateChange,
+        setStateChange: props.setStateChange
       });
     }));
   } else {
@@ -732,11 +753,14 @@ const List = props => {
   }
 };
 
+var IntentUtterances$1 = React.memo(IntentUtterances);
+
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
   const entities = props.entities;
   const systemEntities = props.systemEntities;
   const [stateChange, setStateChange] = useState(false);
+  const [update, setUpdate] = useState(false);
   const [name, setName] = useState('');
   const [utterances, setUtterances] = useState([]);
   const [newExpression, setNewExpression] = useState(null);
@@ -775,10 +799,15 @@ function IntentDetails(props) {
   }, [intent]);
   useEffect(() => {
     if (name && utterances) {
-      props.onUpdate({ ...intent,
+      let intent = { ...intent,
         name: name,
         utterances: utterances.filter(item => item.new)
-      });
+      };
+      props.onUpdate(intent);
+      setUpdate(true);
+      setTimeout(() => {
+        setUpdate(false);
+      }, 200);
     }
   }, [name, utterances]);
 
@@ -832,9 +861,15 @@ function IntentDetails(props) {
       onChange: e => {
         onChange();
       }
-    })), /*#__PURE__*/React.createElement("div", {
+    })), update && /*#__PURE__*/React.createElement("span", {
+      style: {
+        position: "fixed",
+        left: 0,
+        bottom: 0
+      }
+    }, "Update!!"), /*#__PURE__*/React.createElement("div", {
       className: "margin--24--large"
-    }, /*#__PURE__*/React.createElement(List, {
+    }, /*#__PURE__*/React.createElement(IntentUtterances$1, {
       addNewValue: addNewValue,
       utterances: utterances,
       setUtterances: setUtterances,
