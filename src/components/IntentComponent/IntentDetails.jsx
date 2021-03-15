@@ -55,9 +55,8 @@ function IntentDetails(props) {
         name: name,
         utterances: utterances.filter(item => item.new),
       }
-
+      
       props.onUpdate(intent);
-      // localStorage.setItem('intent', JSON.stringify(intent));
 
       setUpdate(true);
       setTimeout(() => {

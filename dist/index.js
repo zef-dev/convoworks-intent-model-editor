@@ -594,6 +594,7 @@ var Utterance = function Utterance(props) {
       setWhitelist = _useState3[1];
 
   var _useState4 = React.useState(true),
+      valid = _useState4[0],
       setValid = _useState4[1];
 
   var active = props.active === props.index;
@@ -606,14 +607,21 @@ var Utterance = function Utterance(props) {
       return !item.type;
     }).map(function (item) {
       return item.text;
-    }).join(' ');
+    }).join(' ').trim();
     var slotValues = props.utterance.model.filter(function (item) {
       return item.slot_value;
     }).map(function (item) {
       return item.slot_value;
-    }).join(' ');
+    });
     var reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-    setValid(reg.test(expression));
+
+    if (whitelist.length > 0 && expression.length > 0) {
+      setValid(reg.test(expression));
+    } else if (whitelist.length > 0 && expression.length < 1) {
+      setValid(true);
+    } else {
+      setValid(true);
+    }
   }, [props.utterance.model]);
   React.useEffect(function () {
     if (props.utterance.model) {
@@ -633,7 +641,7 @@ var Utterance = function Utterance(props) {
       text.current = str + ' ';
       mapToWhitelist();
     }
-  }, [props.stateChange]);
+  }, [props.stateChange, active]);
 
   function createNode(type, slot_value, text) {
     var mark = document.createElement('mark');
@@ -708,32 +716,39 @@ var Utterance = function Utterance(props) {
 
   var tagSelection = function tagSelection(type, slot_value) {
     if (selection) {
-      var mark = createNode(type, slot_value, selection.toString());
+      if (!selection.tagName) {
+        var mark = createNode(type, slot_value, selection.toString());
 
-      if (mark) {
-        selection.getRangeAt(0).extractContents();
-        selection.getRangeAt(0).insertNode(mark);
+        if (mark) {
+          selection.getRangeAt(0).extractContents();
+          selection.getRangeAt(0).insertNode(mark);
 
-        if (mark.parentElement.tagName === "MARK") {
-          var _mark$parentElement;
+          if (mark.parentElement.tagName === "MARK") {
+            var _mark$parentElement;
 
-          (_mark$parentElement = mark.parentElement).replaceWith.apply(_mark$parentElement, mark.parentElement.childNodes);
+            (_mark$parentElement = mark.parentElement).replaceWith.apply(_mark$parentElement, mark.parentElement.childNodes);
 
-          mark.innerHTML = mark.textContent.trim();
-        }
-
-        input.current.childNodes.forEach(function (item) {
-          if (item.tagName === "MARK") {
-            if (item.innerHTML.slice(-1).includes(' ')) {
-              item.innerHTML = item.innerHTML.trim();
-            }
+            mark.innerHTML = mark.textContent.trim();
           }
-        });
-        text.current = input.current.innerHTML;
-        mapToWhitelist();
-        setSelection(null);
-        cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
+
+          input.current.childNodes.forEach(function (item) {
+            if (item.tagName === "MARK") {
+              if (item.innerHTML.slice(-1).includes(' ')) {
+                item.innerHTML = item.innerHTML.trim();
+              }
+            }
+          });
+        }
+      } else {
+        var _mark = selection;
+        _mark.style.outline = "none";
+        _mark.dataset.type = type;
       }
+
+      text.current = input.current.innerHTML;
+      mapToWhitelist();
+      setSelection(null);
+      cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
     }
   };
 
@@ -784,7 +799,7 @@ var Utterance = function Utterance(props) {
 
   if (props.utterance) {
     return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
-      "class": "field " + (props.valid ? 'field--valid' : 'field--invalid') + " field--intent " + (props.active === props.index ? 'field--active' : '')
+      "class": "field " + (valid ? 'field--valid' : 'field--invalid') + " field--intent " + (props.active === props.index ? 'field--active' : '')
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "field__main",
       id: "input"
@@ -798,6 +813,11 @@ var Utterance = function Utterance(props) {
       innerRef: input,
       className: "taggable-text__input",
       html: text.current,
+      onClick: function onClick(e) {
+        if (e.target.tagName === 'MARK') {
+          setSelection(e.target);
+        }
+      },
       onChange: function onChange(e) {
         text.current = e.target.value;
         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
@@ -810,10 +830,6 @@ var Utterance = function Utterance(props) {
       onKeyDown: function onKeyDown(e) {
         if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
           e.preventDefault();
-
-          if (e.keyCode === 13) {
-            document.querySelectorAll('.taggable-text__input')[0].focus();
-          }
         }
       },
       onKeyUp: function onKeyUp(e) {
@@ -823,7 +839,7 @@ var Utterance = function Utterance(props) {
       onFocus: function onFocus() {
         props.setActive(props.index);
       }
-    })), /*#__PURE__*/React__default.createElement(Dropdown, {
+    })), active && /*#__PURE__*/React__default.createElement(Dropdown, {
       dropdownState: dropdownState,
       entities: props.entities,
       selection: selection,
@@ -834,6 +850,7 @@ var Utterance = function Utterance(props) {
     }, !props.utterance["new"] && /*#__PURE__*/React__default.createElement("button", {
       onClick: function onClick() {
         props.removeFromUtterances(props.utterance);
+        document.querySelectorAll('.taggable-text__input')[0].focus();
       }
     }, /*#__PURE__*/React__default.createElement(IconTrash, null))))), props.active === props.index && /*#__PURE__*/React__default.createElement("ul", {
       className: "model-list"

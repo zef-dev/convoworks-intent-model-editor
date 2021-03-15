@@ -26,11 +26,17 @@ export const Utterance = (props) => {
 
     /* handle validation */
     useEffect(() => {
-        let expression = props.utterance.model.filter(item => !item.type).map(item => item.text).join(' ');
-        let slotValues = props.utterance.model.filter(item => item.slot_value).map(item => item.slot_value).join(' ');
+        let expression = props.utterance.model.filter(item => !item.type).map(item => item.text).join(' ').trim();
+        let slotValues = props.utterance.model.filter(item => item.slot_value).map(item => item.slot_value);
         let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
 
-        setValid(reg.test(expression))
+        if (whitelist.length > 0 && expression.length > 0) {
+            setValid((reg.test(expression)))
+        } else if (whitelist.length > 0 && expression.length < 1) {
+            setValid(true);
+        } else {
+            setValid(true)
+        }
 
     }, [props.utterance.model])
 
@@ -57,7 +63,7 @@ export const Utterance = (props) => {
             text.current = str + ' ';
             mapToWhitelist();
         }
-    }, [props.stateChange]);
+    }, [props.stateChange, active]);
 
     function createNode(type, slot_value, text) {
         let mark = document.createElement('mark');
@@ -136,30 +142,35 @@ export const Utterance = (props) => {
 
     const tagSelection = (type, slot_value) => {
         if (selection) {
-            let mark = createNode(type, slot_value, selection.toString());
+            if (!selection.tagName) {
+                let mark = createNode(type, slot_value, selection.toString());
+                if (mark) {
+                    selection.getRangeAt(0).extractContents();
+                    selection.getRangeAt(0).insertNode(mark);
 
-            if (mark) {
-                selection.getRangeAt(0).extractContents();
-                selection.getRangeAt(0).insertNode(mark);
-
-                if (mark.parentElement.tagName === "MARK") {
-                    mark.parentElement.replaceWith(...mark.parentElement.childNodes);
-                    mark.innerHTML = mark.textContent.trim();
-                }
-
-                input.current.childNodes.forEach((item) => {
-                    if (item.tagName === "MARK") {
-                        if (item.innerHTML.slice(-1).includes(' ')) {
-                            item.innerHTML = item.innerHTML.trim();
-                        }
+                    if (mark.parentElement.tagName === "MARK") {
+                        mark.parentElement.replaceWith(...mark.parentElement.childNodes);
+                        mark.innerHTML = mark.textContent.trim();
                     }
-                })
 
-                text.current = input.current.innerHTML;
-                mapToWhitelist();
-                setSelection(null);
-                cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
+                    input.current.childNodes.forEach((item) => {
+                        if (item.tagName === "MARK") {
+                            if (item.innerHTML.slice(-1).includes(' ')) {
+                                item.innerHTML = item.innerHTML.trim();
+                            }
+                        }
+                    })
+                }
+            } else {
+                let mark = selection;
+                mark.style.outline = "none";
+                mark.dataset.type = type;
             }
+
+            text.current = input.current.innerHTML;
+            mapToWhitelist();
+            setSelection(null);
+            cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
         }
     }
 
@@ -205,7 +216,7 @@ export const Utterance = (props) => {
     if (props.utterance) {
         return (
             <React.Fragment>
-                <div class={`field ${props.valid ? 'field--valid' : 'field--invalid'} field--intent ${props.active === props.index ? 'field--active' : ''}`}>
+                <div class={`field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${props.active === props.index ? 'field--active' : ''}`}>
                     <div
                         className='field__main'
                         id='input'
@@ -217,6 +228,11 @@ export const Utterance = (props) => {
                                     innerRef={input}
                                     className='taggable-text__input'
                                     html={text.current}
+                                    onClick={(e) => {
+                                        if (e.target.tagName === 'MARK') {
+                                            setSelection(e.target);
+                                        }
+                                    }}
                                     onChange={(e) => {
                                         text.current = e.target.value;
                                         cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
@@ -230,10 +246,6 @@ export const Utterance = (props) => {
                                     onKeyDown={(e) => {
                                         if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
                                             e.preventDefault();
-
-                                            if (e.keyCode === 13) {
-                                                document.querySelectorAll('.taggable-text__input')[0].focus();
-                                            }
                                         }
                                     }}
                                     onKeyUp={(e) => {
@@ -245,9 +257,15 @@ export const Utterance = (props) => {
                                     }}
                                 />
                             </div>
-                            <Dropdown dropdownState={dropdownState} entities={props.entities} selection={selection} setSelection={setSelection} tagSelection={tagSelection} />
+                            {active && <Dropdown dropdownState={dropdownState} entities={props.entities} selection={selection} setSelection={setSelection} tagSelection={tagSelection} />}
                             <div className="field__actions">
-                                {!props.utterance.new && <button onClick={() => { props.removeFromUtterances(props.utterance) }}><IconTrash /></button>}
+                                {!props.utterance.new &&
+                                    <button onClick={() => {
+                                        props.removeFromUtterances(props.utterance);
+                                        document.querySelectorAll('.taggable-text__input')[0].focus();
+                                    }}>
+                                        <IconTrash />
+                                    </button>}
                             </div>
                         </div>
                     </div>

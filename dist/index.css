@@ -917,7 +917,8 @@
       .convo-details .field--intent.field--active .field__input {
         pointer-events: all; }
     .convo-details .field--intent.field--invalid {
-      border-color: #d9543e; }
+      border-color: #d9543e;
+      color: #d9543e; }
     .convo-details .field--intent .field__main {
       width: 100%;
       display: flex;

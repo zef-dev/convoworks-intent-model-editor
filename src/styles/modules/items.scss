@@ -117,6 +117,7 @@
 
     &.field--invalid {
         border-color: $color-alert;
+        color: $color-alert;
     }
 
     .field__main {
