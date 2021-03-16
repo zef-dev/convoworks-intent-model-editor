@@ -467,6 +467,13 @@ function Dropdown(props) {
   }
 }
 
+const UtteranceSlotValue = React.memo(props => {
+  return /*#__PURE__*/React.createElement("input", {
+    defaultValue: props.slotValue,
+    onChange: e => {}
+  });
+});
+
 const Utterance = props => {
   const [dropdownState, setDropdownState] = useState({
     position: 0,
@@ -717,9 +724,8 @@ const Utterance = props => {
     }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.map((item, index) => {
       return /*#__PURE__*/React.createElement("li", {
         className: "model-list__item"
-      }, /*#__PURE__*/React.createElement("input", {
-        defaultValue: item.slot_value,
-        onChange: e => {}
+      }, /*#__PURE__*/React.createElement(UtteranceSlotValue, {
+        slotValue: item.slot_value
       }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("mark", {
         style: {
           background: item.color

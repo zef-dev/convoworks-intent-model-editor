@@ -6,6 +6,7 @@ import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition, generateId } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
 import { IconTrash } from '../../../assets/icon_trash'
+import UtteranceSlotValue from './UtteranceSlotValue'
 
 export const Utterance = (props) => {
     const [dropdownState, setDropdownState] = useState({
@@ -283,11 +284,7 @@ export const Utterance = (props) => {
                             {whitelist.map((item, index) => {
                                 return (
                                     <li className="model-list__item">
-                                        <input defaultValue={item.slot_value} onChange={(e) => {
-                                            /* let arr = [...whitelist];
-                                            arr[index].slot_value = e.target.value;
-                                            setWhitelist(arr); */
-                                        }} />
+                                        <UtteranceSlotValue slotValue={item.slot_value} />
                                         <div><mark style={{ background: item.color }}>{item.type}</mark></div>
                                         <div>{item.text}</div>
                                     </li>

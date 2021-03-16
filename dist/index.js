@@ -576,6 +576,13 @@ function Dropdown(props) {
   }
 }
 
+var UtteranceSlotValue = React__default.memo(function (props) {
+  return /*#__PURE__*/React__default.createElement("input", {
+    defaultValue: props.slotValue,
+    onChange: function onChange(e) {}
+  });
+});
+
 var Utterance = function Utterance(props) {
   var _useState = React.useState({
     position: 0,
@@ -852,9 +859,8 @@ var Utterance = function Utterance(props) {
     }, /*#__PURE__*/React__default.createElement("strong", null, "Parameter name"), /*#__PURE__*/React__default.createElement("strong", null, "Entity"), /*#__PURE__*/React__default.createElement("strong", null, "Resolved value")), whitelist.map(function (item, index) {
       return /*#__PURE__*/React__default.createElement("li", {
         className: "model-list__item"
-      }, /*#__PURE__*/React__default.createElement("input", {
-        defaultValue: item.slot_value,
-        onChange: function onChange(e) {}
+      }, /*#__PURE__*/React__default.createElement(UtteranceSlotValue, {
+        slotValue: item.slot_value
       }), /*#__PURE__*/React__default.createElement("div", null, /*#__PURE__*/React__default.createElement("mark", {
         style: {
           background: item.color
