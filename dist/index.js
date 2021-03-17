@@ -2,8 +2,8 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var React = require('react');
 var React__default = _interopDefault(React);
-var lodash = require('lodash');
-var lodash__default = _interopDefault(lodash);
+var _ = require('lodash');
+var ___default = _interopDefault(_);
 var rangy = _interopDefault(require('rangy'));
 var ContentEditable = _interopDefault(require('react-contenteditable'));
 var useOnclickOutside = _interopDefault(require('react-cool-onclickoutside'));
@@ -599,19 +599,22 @@ var UtteranceInput = React__default.memo(function (props) {
   var text = React.useRef(null);
   var input = React.useRef(null);
   var cursorPosition = React.useRef(null);
-  var whitelist = input.current && Array.from(input.current.childNodes).filter(function (item) {
-    return item.dataset;
-  }).map(function (item) {
-    return {
-      type: item.dataset.type,
-      slot_value: item.dataset.slotValue,
-      text: item.textContent,
-      color: item.dataset.color,
-      target: item
-    };
-  }).filter(function (item) {
-    return item.text.trim().length;
-  });
+  var whitelist = input.current && {
+    tags: Array.from(input.current.childNodes).filter(function (item) {
+      return item.dataset;
+    }).map(function (item) {
+      return {
+        type: item.dataset.type,
+        slot_value: item.dataset.slotValue,
+        text: item.textContent,
+        color: item.dataset.color,
+        target: item
+      };
+    }).filter(function (item) {
+      return item.text.trim().length;
+    }),
+    nodes: Array.from(input.current.childNodes)
+  };
 
   function createNode(type, slot_value, text) {
     var mark = document.createElement('mark');
@@ -794,11 +797,44 @@ var Utterance = React__default.memo(function (props) {
         }).join(' ');
       }
 
-      console.log('string-->', str);
       setRaw(str);
     }
-  }, [props.stateChange]);
-  React.useEffect(function () {}, [whitelist]);
+  }, []);
+  React.useEffect(function () {
+    if (whitelist && whitelist.nodes) {
+      var model = whitelist.nodes.map(function (item) {
+        if (item.dataset) {
+          return {
+            type: item.dataset.type,
+            text: item.textContent.trim(),
+            slot_value: item.dataset.slotValue
+          };
+        } else {
+          return {
+            text: item.textContent.trim()
+          };
+        }
+      }).filter(function (item) {
+        return item.text.length;
+      });
+
+      var _raw = model.map(function (item) {
+        return item.text;
+      }).join(' ');
+
+      var utterances = [].concat(props.utterances);
+      var newUtterance = {
+        raw: _raw,
+        model: model
+      };
+      console.log(___default.isEqual(newUtterance, props.utterance));
+
+      if (!___default.isEqual(newUtterance, props.utterance)) {
+        utterances[props.index] = newUtterance;
+        props.setUtterances(utterances);
+      }
+    }
+  }, [whitelist]);
 
   if (raw) {
     return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
@@ -826,7 +862,7 @@ var Utterance = React__default.memo(function (props) {
       className: "model-list"
     }, /*#__PURE__*/React__default.createElement("header", {
       className: "model-list__header"
-    }, /*#__PURE__*/React__default.createElement("strong", null, "Parameter name"), /*#__PURE__*/React__default.createElement("strong", null, "Entity"), /*#__PURE__*/React__default.createElement("strong", null, "Resolved value")), whitelist.map(function (item, index) {
+    }, /*#__PURE__*/React__default.createElement("strong", null, "Parameter name"), /*#__PURE__*/React__default.createElement("strong", null, "Entity"), /*#__PURE__*/React__default.createElement("strong", null, "Resolved value")), whitelist.tags && whitelist.tags.map(function (item, index) {
       return /*#__PURE__*/React__default.createElement("li", {
         className: "model-list__item"
       }, /*#__PURE__*/React__default.createElement(UtteranceSlotValue, {
@@ -861,27 +897,11 @@ var IntentUtterances = function IntentUtterances(props) {
   };
 
   if (props.utterances) {
-    return /*#__PURE__*/React__default.createElement("div", null, /*#__PURE__*/React__default.createElement(Utterance, {
-      key: 'utterance_new',
-      index: 0,
-      "new": true,
-      utterance: {
-        raw: '',
-        model: []
-      },
-      active: active,
-      setActive: setActive,
-      entities: props.entities,
-      removeFromUtterances: removeFromUtterances,
-      utterances: props.utterances,
-      setUtterances: props.setUtterances,
-      stateChange: props.stateChange,
-      setStateChange: props.setStateChange
-    }), props.utterances.map(function (item, index) {
+    return /*#__PURE__*/React__default.createElement("div", null, props.utterances.map(function (item, index) {
       return /*#__PURE__*/React__default.createElement(Utterance, {
-        key: index + 1,
+        key: index,
         utterance: item,
-        index: index + 1,
+        index: index,
         active: active,
         setActive: setActive,
         entities: props.entities,
@@ -948,6 +968,8 @@ function IntentDetails(props) {
   }
 
   React.useEffect(function () {
+    console.log(intent);
+
     if (intent) {
       setName(intent.name);
       setUtterances(intent.utterances);
@@ -980,7 +1002,7 @@ function IntentDetails(props) {
     }
   };
 
-  var handler = React.useCallback(lodash.debounce(handleSearch, 300), []);
+  var handler = React.useCallback(_.debounce(handleSearch, 300), []);
 
   var _onChange = function onChange() {
     handler();

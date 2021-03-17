@@ -16,10 +16,9 @@ const IntentUtterances = (props) => {
 	if (props.utterances) {
 		return (
 			<div>
-				<Utterance key={'utterance_new'} index={0} new={true} utterance={{raw: '', model: []}} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} />
 				{props.utterances.map((item, index) => {
 					return (
-						<Utterance key={index + 1} utterance={item} index={index + 1} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} />
+						<Utterance key={index} utterance={item} index={index} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} />
 					)
 				})}
 			</div>

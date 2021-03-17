@@ -16,15 +16,18 @@ const UtteranceInput = React.memo((props) => {
   const input = useRef(null);
   const cursorPosition = useRef(null);
 
-  const whitelist = input.current && Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
-    return ({
-      type: item.dataset.type,
-      slot_value: item.dataset.slotValue,
-      text: item.textContent,
-      color: item.dataset.color,
-      target: item
-    })
-  }).filter(item => item.text.trim().length);
+  const whitelist = input.current && {
+    tags: Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
+      return ({
+        type: item.dataset.type,
+        slot_value: item.dataset.slotValue,
+        text: item.textContent,
+        color: item.dataset.color,
+        target: item
+      })
+    }).filter(item => item.text.trim().length),
+    nodes: Array.from(input.current.childNodes)
+  }
 
   function createNode(type, slot_value, text) {
     let mark = document.createElement('mark');

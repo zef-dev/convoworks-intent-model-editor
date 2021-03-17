@@ -26,15 +26,13 @@ export const Utterance = React.memo(props => {
                 }).join(' ');
             }
 
-            console.log('string-->', str)
-
             setRaw(str);
         }
-    }, [props.stateChange]);
+    }, []);
 
     useEffect(() => {
-        /* if (input.current.childNodes.length) {
-            let model = Array.from(input.current.childNodes).map(item => {
+        if (whitelist && whitelist.nodes) {
+            let model = whitelist.nodes.map(item => {
                 if (item.dataset) {
                     return ({
                         type: item.dataset.type,
@@ -49,9 +47,15 @@ export const Utterance = React.memo(props => {
 
             let raw = model.map(item => item.text).join(' ');
             let utterances = [...props.utterances];
-            utterances[props.index] = { raw: raw, model: model }
-            props.setUtterances(utterances)
-        } */
+            let newUtterance = { raw: raw, model: model }
+            
+            console.log(_.isEqual(newUtterance, props.utterance))
+
+            if (!_.isEqual(newUtterance, props.utterance)) {
+                utterances[props.index] = newUtterance;
+                props.setUtterances(utterances)
+            }
+        }
     }, [whitelist]);
 
     if (raw) {
@@ -81,7 +85,7 @@ export const Utterance = React.memo(props => {
                                 <strong>Entity</strong>
                                 <strong>Resolved value</strong>
                             </header>
-                            {whitelist.map((item, index) => {
+                            {whitelist.tags && whitelist.tags.map((item, index) => {
                                 return (
                                     <li className="model-list__item">
                                         <UtteranceSlotValue key={`${item.slot_value}_${index}`} target={item.target} slotValue={item.slot_value} />

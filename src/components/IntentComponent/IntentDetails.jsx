@@ -41,6 +41,7 @@ function IntentDetails(props) {
 
   // check if data is passed in props
   useEffect(() => {
+    console.log(intent);
     if (intent) {
       setName(intent.name);
       setUtterances(intent.utterances);

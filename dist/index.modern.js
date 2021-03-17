@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { debounce } from 'lodash';
+import _, { debounce } from 'lodash';
 import rangy from 'rangy';
 import ContentEditable from 'react-contenteditable';
 import useOnclickOutside from 'react-cool-onclickoutside';
@@ -484,15 +484,18 @@ const UtteranceInput = React.memo(props => {
   const text = useRef(null);
   const input = useRef(null);
   const cursorPosition = useRef(null);
-  const whitelist = input.current && Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
-    return {
-      type: item.dataset.type,
-      slot_value: item.dataset.slotValue,
-      text: item.textContent,
-      color: item.dataset.color,
-      target: item
-    };
-  }).filter(item => item.text.trim().length);
+  const whitelist = input.current && {
+    tags: Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
+      return {
+        type: item.dataset.type,
+        slot_value: item.dataset.slotValue,
+        text: item.textContent,
+        color: item.dataset.color,
+        target: item
+      };
+    }).filter(item => item.text.trim().length),
+    nodes: Array.from(input.current.childNodes)
+  };
 
   function createNode(type, slot_value, text) {
     let mark = document.createElement('mark');
@@ -664,11 +667,38 @@ const Utterance = React.memo(props => {
         }).join(' ');
       }
 
-      console.log('string-->', str);
       setRaw(str);
     }
-  }, [props.stateChange]);
-  useEffect(() => {}, [whitelist]);
+  }, []);
+  useEffect(() => {
+    if (whitelist && whitelist.nodes) {
+      let model = whitelist.nodes.map(item => {
+        if (item.dataset) {
+          return {
+            type: item.dataset.type,
+            text: item.textContent.trim(),
+            slot_value: item.dataset.slotValue
+          };
+        } else {
+          return {
+            text: item.textContent.trim()
+          };
+        }
+      }).filter(item => item.text.length);
+      let raw = model.map(item => item.text).join(' ');
+      let utterances = [...props.utterances];
+      let newUtterance = {
+        raw: raw,
+        model: model
+      };
+      console.log(_.isEqual(newUtterance, props.utterance));
+
+      if (!_.isEqual(newUtterance, props.utterance)) {
+        utterances[props.index] = newUtterance;
+        props.setUtterances(utterances);
+      }
+    }
+  }, [whitelist]);
 
   if (raw) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
@@ -696,7 +726,7 @@ const Utterance = React.memo(props => {
       className: "model-list"
     }, /*#__PURE__*/React.createElement("header", {
       className: "model-list__header"
-    }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.map((item, index) => {
+    }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.tags && whitelist.tags.map((item, index) => {
       return /*#__PURE__*/React.createElement("li", {
         className: "model-list__item"
       }, /*#__PURE__*/React.createElement(UtteranceSlotValue, {
@@ -726,27 +756,11 @@ const IntentUtterances = props => {
   };
 
   if (props.utterances) {
-    return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Utterance, {
-      key: 'utterance_new',
-      index: 0,
-      new: true,
-      utterance: {
-        raw: '',
-        model: []
-      },
-      active: active,
-      setActive: setActive,
-      entities: props.entities,
-      removeFromUtterances: removeFromUtterances,
-      utterances: props.utterances,
-      setUtterances: props.setUtterances,
-      stateChange: props.stateChange,
-      setStateChange: props.setStateChange
-    }), props.utterances.map((item, index) => {
+    return /*#__PURE__*/React.createElement("div", null, props.utterances.map((item, index) => {
       return /*#__PURE__*/React.createElement(Utterance, {
-        key: index + 1,
+        key: index,
         utterance: item,
-        index: index + 1,
+        index: index,
         active: active,
         setActive: setActive,
         entities: props.entities,
@@ -795,6 +809,8 @@ function IntentDetails(props) {
   }
 
   useEffect(() => {
+    console.log(intent);
+
     if (intent) {
       setName(intent.name);
       setUtterances(intent.utterances);
