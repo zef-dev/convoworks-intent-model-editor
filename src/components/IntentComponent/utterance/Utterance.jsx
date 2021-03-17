@@ -5,7 +5,7 @@ import { IconTrash } from '../../../assets/icon_trash'
 import UtteranceSlotValue from './UtteranceSlotValue'
 import UtteranceInput from './UtteranceInput'
 
-export const Utterance = (props) => {
+export const Utterance = React.memo(props => {
 
     const [whitelist, setWhitelist] = useState([]);
     const [raw, setRaw] = useState('');
@@ -25,9 +25,12 @@ export const Utterance = (props) => {
                     }
                 }).join(' ');
             }
-            setRaw(str + ' ');
+
+            console.log('string-->', str)
+
+            setRaw(str);
         }
-    }, []);
+    }, [props.stateChange]);
 
     useEffect(() => {
         /* if (input.current.childNodes.length) {
@@ -54,14 +57,14 @@ export const Utterance = (props) => {
     if (raw) {
         return (
             <React.Fragment>
-                <div data-new={props.utterance.new} class={`field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${active ? 'field--active' : ''}`}>
+                <div class={`field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${active ? 'field--active' : ''}`}>
                     <div
                         className='field__main'
                     >
                         <div className='field__input'>
                             <UtteranceInput index={props.index} active={active} setActive={props.setActive} raw={raw} setRaw={setRaw} setWhitelist={setWhitelist} entities={props.entities} />
                             <div className="field__actions">
-                                {!props.utterance.new &&
+                                {!props.new &&
                                     <button onClick={() => {
                                         props.removeFromUtterances(props.utterance);
                                         document.querySelectorAll('.taggable-text__input')[0].focus();
@@ -95,4 +98,4 @@ export const Utterance = (props) => {
     } else {
         return null
     }
-}
+})

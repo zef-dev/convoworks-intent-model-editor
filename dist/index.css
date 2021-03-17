@@ -1022,7 +1022,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      cursor: pointer; }
+      cursor: pointer;
+      transition: 0.22s; }
+      .convo-details .field__actions button:focus, .convo-details .field__actions button:hover {
+        outline: none; }
+        .convo-details .field__actions button:focus svg g, .convo-details .field__actions button:hover svg g {
+          stroke: #d9543e; }
   .convo-details .field__synonyms {
     display: inline-flex;
     align-items: center;
@@ -1081,7 +1086,6 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    padding: 10px 12px;
     cursor: text;
     caret-color: #1a1a1a;
     line-height: normal;
@@ -1101,9 +1105,11 @@
     width: 100%; }
   .convo-details .taggable-text__input {
     outline: none;
-    line-height: 1.25; }
+    line-height: 1.25;
+    padding: 10px 12px; }
     .convo-details .taggable-text__input:focus {
-      outline: none; }
+      outline: none;
+      background: rgba(47, 116, 234, 0.065); }
     .convo-details .taggable-text__input mark {
       display: inline-block;
       font-size: inherit;

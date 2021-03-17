@@ -645,7 +645,7 @@ const UtteranceInput = React.memo(props => {
   }));
 });
 
-const Utterance = props => {
+const Utterance = React.memo(props => {
   const [whitelist, setWhitelist] = useState([]);
   const [raw, setRaw] = useState('');
   const [valid, setValid] = useState(true);
@@ -664,14 +664,14 @@ const Utterance = props => {
         }).join(' ');
       }
 
-      setRaw(str + ' ');
+      console.log('string-->', str);
+      setRaw(str);
     }
-  }, []);
+  }, [props.stateChange]);
   useEffect(() => {}, [whitelist]);
 
   if (raw) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-      "data-new": props.utterance.new,
       class: `field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${active ? 'field--active' : ''}`
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__main"
@@ -687,7 +687,7 @@ const Utterance = props => {
       entities: props.entities
     }), /*#__PURE__*/React.createElement("div", {
       className: "field__actions"
-    }, !props.utterance.new && /*#__PURE__*/React.createElement("button", {
+    }, !props.new && /*#__PURE__*/React.createElement("button", {
       onClick: () => {
         props.removeFromUtterances(props.utterance);
         document.querySelectorAll('.taggable-text__input')[0].focus();
@@ -712,7 +712,7 @@ const Utterance = props => {
   } else {
     return null;
   }
-};
+});
 
 const IntentUtterances = props => {
   const [active, setActive] = useState(0);
@@ -726,11 +726,27 @@ const IntentUtterances = props => {
   };
 
   if (props.utterances) {
-    return /*#__PURE__*/React.createElement("ul", null, props.utterances.map((item, index) => {
+    return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Utterance, {
+      key: 'utterance_new',
+      index: 0,
+      new: true,
+      utterance: {
+        raw: '',
+        model: []
+      },
+      active: active,
+      setActive: setActive,
+      entities: props.entities,
+      removeFromUtterances: removeFromUtterances,
+      utterances: props.utterances,
+      setUtterances: props.setUtterances,
+      stateChange: props.stateChange,
+      setStateChange: props.setStateChange
+    }), props.utterances.map((item, index) => {
       return /*#__PURE__*/React.createElement(Utterance, {
-        key: index,
+        key: index + 1,
         utterance: item,
-        index: index,
+        index: index + 1,
         active: active,
         setActive: setActive,
         entities: props.entities,
