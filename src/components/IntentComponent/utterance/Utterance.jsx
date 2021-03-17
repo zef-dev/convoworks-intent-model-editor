@@ -50,8 +50,6 @@ export const Utterance = React.memo(props => {
             let utterances = [...props.utterances];
             let newUtterance = { raw: raw, model: model }
 
-            console.log(_.isEqual(newUtterance, props.utterance))
-
             if (!_.isEqual(newUtterance, props.utterance)) {
                 utterances[props.index] = newUtterance;
                 props.setUtterances(utterances)

@@ -6,16 +6,17 @@ import { validateInput } from '../../helpers/validations.jsx';
 
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
+  const [savedIntent, setSavedIntent] = useState(props.intent);
   const entities = props.entities;
   const systemEntities = props.systemEntities;
   const [stateChange, setStateChange] = useState(false);
-  const [update, setUpdate] = useState(false);
 
   const [name, setName] = useState('');
   const [utterances, setUtterances] = useState([]);
   const [newExpression, setNewExpression] = useState(null);
 
   const [valid, setValid] = useState(true);
+  const [searchPhrase, setSearchPhrase] = useState('');
 
   const newExpressionInput = useRef(null);
 
@@ -41,7 +42,6 @@ function IntentDetails(props) {
 
   // check if data is passed in props
   useEffect(() => {
-    console.log(intent);
     if (intent) {
       setName(intent.name);
       setUtterances(intent.utterances);
@@ -54,23 +54,17 @@ function IntentDetails(props) {
       let intent = {
         ...intent,
         name: name,
-        utterances: utterances.filter(item => item.new),
+        utterances: utterances
       }
-      
-      props.onUpdate(intent);
 
-      setUpdate(true);
-      setTimeout(() => {
-        setUpdate(false);
-      }, 200)
+      props.onUpdate(intent);
     }
   }, [name, utterances]);
 
   const handleSearch = () => {
     if (searchInput.current) {
-      let arr = intent.utterances;
-      arr = arr.filter(item => item.raw.toLowerCase().includes(searchInput.current.value.toLowerCase().trim()));
-      setUtterances(arr)
+      let term = searchInput.current.value.toLowerCase().trim();
+      setSearchPhrase(term);
     }
   }
 
@@ -118,10 +112,9 @@ function IntentDetails(props) {
               <div className="search-wrapper">
                 <h3>Utterances</h3>
                 <input ref={searchInput} className="editor-input input--search" type="text" placeholder="Search utterances" onChange={(e) => {
-                  onChange()
+                  onChange();
                 }} />
               </div>
-              {update && <span style={{position: "fixed", left: 0, bottom: 0}}>Update!!</span>}
               <div className="margin--24--large">
                 <IntentUtterances
                   addNewValue={addNewValue}
@@ -131,6 +124,7 @@ function IntentDetails(props) {
                   focusOnExpressionInput={focusOnExpressionInput}
                   stateChange={stateChange}
                   setStateChange={setStateChange}
+                  searchPhrase={searchPhrase}
                 />
               </div>
             </div>

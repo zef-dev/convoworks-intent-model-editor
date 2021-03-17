@@ -35,7 +35,6 @@ function Dropdown(props) {
 		[entities]
 	);
 
-
 	if (entities) {
 
 		let dropdownStyles = {

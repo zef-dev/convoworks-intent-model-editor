@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 
 import { IntentEditor } from 'convoworks-intent-model-editor'
 import { EntityEditor } from 'convoworks-intent-model-editor'
@@ -7,6 +7,20 @@ import data from './guess-the-number-game.json'
 
 const App = () => {
   const [view, setView] = useState('intent');
+  const [intent, setIntent] = useState(null);
+
+  const saveIntent = (item) => {
+    localStorage.setItem('intent', JSON.stringify(item));
+  }
+
+  useEffect(() => {
+    setIntent(data.intents[0])
+  }, [data])
+
+  useEffect(() => {
+    saveIntent(intent);
+  }, [intent])
+
   return (
     <React.Fragment>
       <nav>
@@ -15,10 +29,10 @@ const App = () => {
       </nav>
       {view === 'intent' ? 
       <IntentEditor
-        intent={data.intents[0]}
+        intent={JSON.parse(localStorage.getItem('intent'))}
         entities={data.entities}
         systemEntities={[]}
-        onUpdate={() => {console.log('update')}}
+        onUpdate={(item) => {saveIntent(item);}}
       />
 
       :

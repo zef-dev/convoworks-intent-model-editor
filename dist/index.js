@@ -827,7 +827,6 @@ var Utterance = React__default.memo(function (props) {
         raw: _raw,
         model: model
       };
-      console.log(___default.isEqual(newUtterance, props.utterance));
 
       if (!___default.isEqual(newUtterance, props.utterance)) {
         utterances[props.index] = newUtterance;
@@ -906,8 +905,12 @@ var IntentUtterances = function IntentUtterances(props) {
   };
 
   if (props.utterances) {
-    return /*#__PURE__*/React__default.createElement("div", null, props.utterances.map(function (item, index) {
-      return /*#__PURE__*/React__default.createElement(Utterance, {
+    return /*#__PURE__*/React__default.createElement("ul", null, props.utterances.map(function (item, index) {
+      return /*#__PURE__*/React__default.createElement("li", {
+        style: {
+          display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none'
+        }
+      }, /*#__PURE__*/React__default.createElement(Utterance, {
         key: index,
         utterance: item,
         index: index,
@@ -919,7 +922,7 @@ var IntentUtterances = function IntentUtterances(props) {
         setUtterances: props.setUtterances,
         stateChange: props.stateChange,
         setStateChange: props.setStateChange
-      });
+      }));
     }));
   } else {
     return null;
@@ -930,16 +933,14 @@ function IntentDetails(props) {
   var _useState = React.useState(props.intent),
       intent = _useState[0];
 
+  var _useState2 = React.useState(props.intent);
+
   var entities = props.entities;
   var systemEntities = props.systemEntities;
 
-  var _useState2 = React.useState(false),
-      stateChange = _useState2[0],
-      setStateChange = _useState2[1];
-
   var _useState3 = React.useState(false),
-      update = _useState3[0],
-      setUpdate = _useState3[1];
+      stateChange = _useState3[0],
+      setStateChange = _useState3[1];
 
   var _useState4 = React.useState(''),
       name = _useState4[0],
@@ -953,6 +954,10 @@ function IntentDetails(props) {
       newExpression = _useState6[0];
 
   var _useState7 = React.useState(true);
+
+  var _useState8 = React.useState(''),
+      searchPhrase = _useState8[0],
+      setSearchPhrase = _useState8[1];
 
   var newExpressionInput = React.useRef(null);
   var searchInput = React.useRef(null);
@@ -977,8 +982,6 @@ function IntentDetails(props) {
   }
 
   React.useEffect(function () {
-    console.log(intent);
-
     if (intent) {
       setName(intent.name);
       setUtterances(intent.utterances);
@@ -988,26 +991,17 @@ function IntentDetails(props) {
     if (name && utterances) {
       var _intent = _extends({}, _intent, {
         name: name,
-        utterances: utterances.filter(function (item) {
-          return item["new"];
-        })
+        utterances: utterances
       });
 
       props.onUpdate(_intent);
-      setUpdate(true);
-      setTimeout(function () {
-        setUpdate(false);
-      }, 200);
     }
   }, [name, utterances]);
 
   var handleSearch = function handleSearch() {
     if (searchInput.current) {
-      var arr = intent.utterances;
-      arr = arr.filter(function (item) {
-        return item.raw.toLowerCase().includes(searchInput.current.value.toLowerCase().trim());
-      });
-      setUtterances(arr);
+      var term = searchInput.current.value.toLowerCase().trim();
+      setSearchPhrase(term);
     }
   };
 
@@ -1053,13 +1047,7 @@ function IntentDetails(props) {
       onChange: function onChange(e) {
         _onChange();
       }
-    })), update && /*#__PURE__*/React__default.createElement("span", {
-      style: {
-        position: "fixed",
-        left: 0,
-        bottom: 0
-      }
-    }, "Update!!"), /*#__PURE__*/React__default.createElement("div", {
+    })), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--24--large"
     }, /*#__PURE__*/React__default.createElement(IntentUtterances, {
       addNewValue: addNewValue,
@@ -1068,7 +1056,8 @@ function IntentDetails(props) {
       entities: [entities].concat(systemEntities),
       focusOnExpressionInput: focusOnExpressionInput,
       stateChange: stateChange,
-      setStateChange: setStateChange
+      setStateChange: setStateChange,
+      searchPhrase: searchPhrase
     }))))));
   } else {
     return null;

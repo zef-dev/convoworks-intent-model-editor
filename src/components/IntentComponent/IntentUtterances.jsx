@@ -15,13 +15,13 @@ const IntentUtterances = (props) => {
 
 	if (props.utterances) {
 		return (
-			<div>
+			<ul>
 				{props.utterances.map((item, index) => {
 					return (
-						<Utterance key={index} utterance={item} index={index} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} />
+						<li style={{display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none'}}><Utterance key={index} utterance={item} index={index} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} /></li>
 					)
 				})}
-			</div>
+			</ul>
 		)
 	} else {
 		return null
