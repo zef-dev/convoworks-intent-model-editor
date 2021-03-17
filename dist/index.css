@@ -869,6 +869,22 @@
       color: #d9543e; }
     .convo-details .field .btn--remove:hover {
       opacity: 1; }
+    .convo-details .field mark, .convo-details .field .mark {
+      display: inline-block;
+      font-size: inherit;
+      line-height: inherit;
+      border: none;
+      outline: 2px solid transparent;
+      padding: 0;
+      transition: 0.22s;
+      cursor: pointer; }
+      .convo-details .field mark.active, .convo-details .field .mark.active {
+        box-shadow: 0px 0px 0px 2px rgba(47, 116, 234, 0.85);
+        background: transparent !important; }
+      .convo-details .field mark:focus, .convo-details .field .mark:focus {
+        outline: 2px solid #2f74ea; }
+    .convo-details .field button.mark {
+      padding: 0 2px; }
   .convo-details .field__error {
     position: absolute;
     top: 100%;
@@ -1110,16 +1126,6 @@
     .convo-details .taggable-text__input:focus {
       outline: none;
       background: rgba(47, 116, 234, 0.065); }
-    .convo-details .taggable-text__input mark {
-      display: inline-block;
-      font-size: inherit;
-      line-height: inherit;
-      border: none;
-      outline: 3px solid transparent;
-      transition: 0.22s; }
-      .convo-details .taggable-text__input mark.active {
-        box-shadow: 0px 0px 0px 2px rgba(47, 116, 234, 0.85);
-        background: transparent !important; }
   .convo-details [data-placeholder]:empty:before {
     content: attr(data-placeholder);
     color: #888;

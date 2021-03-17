@@ -10,6 +10,7 @@ export const Utterance = React.memo(props => {
     const [whitelist, setWhitelist] = useState([]);
     const [raw, setRaw] = useState('');
     const [valid, setValid] = useState(true);
+    const [selection, setSelection] = useState(null);
 
     const active = props.active === props.index;
 
@@ -48,7 +49,7 @@ export const Utterance = React.memo(props => {
             let raw = model.map(item => item.text).join(' ');
             let utterances = [...props.utterances];
             let newUtterance = { raw: raw, model: model }
-            
+
             console.log(_.isEqual(newUtterance, props.utterance))
 
             if (!_.isEqual(newUtterance, props.utterance)) {
@@ -66,7 +67,7 @@ export const Utterance = React.memo(props => {
                         className='field__main'
                     >
                         <div className='field__input'>
-                            <UtteranceInput index={props.index} active={active} setActive={props.setActive} raw={raw} setRaw={setRaw} setWhitelist={setWhitelist} entities={props.entities} />
+                            <UtteranceInput index={props.index} active={active} setActive={props.setActive} raw={raw} setRaw={setRaw} setWhitelist={setWhitelist} entities={props.entities} selection={selection} setSelection={setSelection} />
                             <div className="field__actions">
                                 {!props.new &&
                                     <button onClick={() => {
@@ -89,7 +90,7 @@ export const Utterance = React.memo(props => {
                                 return (
                                     <li className="model-list__item">
                                         <UtteranceSlotValue key={`${item.slot_value}_${index}`} target={item.target} slotValue={item.slot_value} />
-                                        <div><mark style={{ background: item.color }}>{item.type}</mark></div>
+                                        <div><button className="mark" type="button" style={{ background: item.color }} onClick={() => setTimeout(() => {setSelection(item.target)}, 220)}>{item.type}</button></div>
                                         <div>{item.text}</div>
                                     </li>
                                 )

@@ -476,7 +476,6 @@ function Dropdown(props) {
 }
 
 const UtteranceInput = React.memo(props => {
-  const [selection, setSelection] = useState(null);
   const [dropdownState, setDropdownState] = useState({
     position: 0,
     active: false
@@ -511,13 +510,13 @@ const UtteranceInput = React.memo(props => {
   }
 
   const tagSelection = (type, slot_value) => {
-    if (selection) {
-      if (!selection.tagName) {
-        let mark = createNode(type, slot_value, selection.toString());
+    if (props.selection) {
+      if (!props.selection.tagName) {
+        let mark = createNode(type, slot_value, props.selection.toString());
 
         if (mark) {
-          selection.getRangeAt(0).extractContents();
-          selection.getRangeAt(0).insertNode(mark);
+          props.selection.getRangeAt(0).extractContents();
+          props.selection.getRangeAt(0).insertNode(mark);
 
           if (mark.parentElement.tagName === "MARK") {
             mark.parentElement.replaceWith(...mark.parentElement.childNodes);
@@ -533,13 +532,13 @@ const UtteranceInput = React.memo(props => {
           });
         }
       } else {
-        let mark = selection;
+        let mark = props.selection;
         mark.style.outline = "none";
         mark.dataset.type = type;
       }
 
       props.setRaw(input.current.innerHTML);
-      setSelection(null);
+      props.setSelection(null);
       cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
     }
   };
@@ -578,9 +577,9 @@ const UtteranceInput = React.memo(props => {
     if (sel.toString().length > 0) {
       let _sel = rangy.getSelection();
 
-      setSelection(_sel);
+      props.setSelection(_sel);
     } else {
-      setSelection(null);
+      props.setSelection(null);
     }
   };
 
@@ -592,14 +591,14 @@ const UtteranceInput = React.memo(props => {
       let oRect = oRange.getBoundingClientRect();
       setDropdownState({
         position: oRect.x,
-        active: selection !== null
+        active: props.selection !== null
       });
     } else {
       setDropdownState({ ...dropdownState,
         active: false
       });
     }
-  }, [selection, props.active]);
+  }, [props.selection, props.active]);
   useEffect(() => {
     props.setWhitelist(whitelist);
   }, [whitelist]);
@@ -612,7 +611,7 @@ const UtteranceInput = React.memo(props => {
     html: props.raw,
     onClick: e => {
       if (e.target.tagName === 'MARK') {
-        setSelection(e.target);
+        props.setSelection(e.target);
       }
     },
     onChange: e => {
@@ -642,8 +641,8 @@ const UtteranceInput = React.memo(props => {
   }), props.active && /*#__PURE__*/React.createElement(Dropdown, {
     dropdownState: dropdownState,
     entities: props.entities,
-    selection: selection,
-    setSelection: setSelection,
+    selection: props.selection,
+    setSelection: props.setSelection,
     tagSelection: tagSelection
   }));
 });
@@ -652,6 +651,7 @@ const Utterance = React.memo(props => {
   const [whitelist, setWhitelist] = useState([]);
   const [raw, setRaw] = useState('');
   const [valid, setValid] = useState(true);
+  const [selection, setSelection] = useState(null);
   const active = props.active === props.index;
   useEffect(() => {
     if (props.utterance.model) {
@@ -714,7 +714,9 @@ const Utterance = React.memo(props => {
       raw: raw,
       setRaw: setRaw,
       setWhitelist: setWhitelist,
-      entities: props.entities
+      entities: props.entities,
+      selection: selection,
+      setSelection: setSelection
     }), /*#__PURE__*/React.createElement("div", {
       className: "field__actions"
     }, !props.new && /*#__PURE__*/React.createElement("button", {
@@ -733,10 +735,15 @@ const Utterance = React.memo(props => {
         key: `${item.slot_value}_${index}`,
         target: item.target,
         slotValue: item.slot_value
-      }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("mark", {
+      }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("button", {
+        className: "mark",
+        type: "button",
         style: {
           background: item.color
-        }
+        },
+        onClick: () => setTimeout(() => {
+          setSelection(item.target);
+        }, 220)
       }, item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
     }))));
   } else {

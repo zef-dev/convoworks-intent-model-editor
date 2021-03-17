@@ -6,7 +6,6 @@ import Dropdown from '../Dropdown'
 
 const UtteranceInput = React.memo((props) => {
 
-  const [selection, setSelection] = useState(null);
   const [dropdownState, setDropdownState] = useState({
     position: 0,
     active: false
@@ -45,12 +44,12 @@ const UtteranceInput = React.memo((props) => {
   }
 
   const tagSelection = (type, slot_value) => {
-    if (selection) {
-      if (!selection.tagName) {
-        let mark = createNode(type, slot_value, selection.toString());
+    if (props.selection) {
+      if (!props.selection.tagName) {
+        let mark = createNode(type, slot_value, props.selection.toString());
         if (mark) {
-          selection.getRangeAt(0).extractContents();
-          selection.getRangeAt(0).insertNode(mark);
+          props.selection.getRangeAt(0).extractContents();
+          props.selection.getRangeAt(0).insertNode(mark);
 
           if (mark.parentElement.tagName === "MARK") {
             mark.parentElement.replaceWith(...mark.parentElement.childNodes);
@@ -66,13 +65,13 @@ const UtteranceInput = React.memo((props) => {
           })
         }
       } else {
-        let mark = selection;
+        let mark = props.selection;
         mark.style.outline = "none";
         mark.dataset.type = type;
       }
 
       props.setRaw(input.current.innerHTML);
-      setSelection(null);
+      props.setSelection(null);
       cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
 
     }
@@ -117,9 +116,9 @@ const UtteranceInput = React.memo((props) => {
     */
     if (sel.toString().length > 0) {
       let sel = rangy.getSelection()
-      setSelection(sel)
+      props.setSelection(sel)
     } else {
-      setSelection(null);
+      props.setSelection(null);
     }
   }
 
@@ -132,12 +131,12 @@ const UtteranceInput = React.memo((props) => {
 
       setDropdownState({
         position: oRect.x,
-        active: selection !== null
+        active: props.selection !== null
       })
     } else {
       setDropdownState({ ...dropdownState, active: false });
     }
-  }, [selection, props.active]);
+  }, [props.selection, props.active]);
 
   useEffect(() => {
     props.setWhitelist(whitelist);
@@ -152,7 +151,7 @@ const UtteranceInput = React.memo((props) => {
         html={props.raw}
         onClick={(e) => {
           if (e.target.tagName === 'MARK') {
-            setSelection(e.target);
+            props.setSelection(e.target);
           }
         }}
 
@@ -181,7 +180,7 @@ const UtteranceInput = React.memo((props) => {
           props.setActive(props.index)
         }}
       />
-      {props.active && <Dropdown dropdownState={dropdownState} entities={props.entities} selection={selection} setSelection={setSelection} tagSelection={tagSelection} />}
+      {props.active && <Dropdown dropdownState={dropdownState} entities={props.entities} selection={props.selection} setSelection={props.setSelection} tagSelection={tagSelection} />}
     </div>
   )
 

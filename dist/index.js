@@ -585,16 +585,12 @@ function Dropdown(props) {
 }
 
 var UtteranceInput = React__default.memo(function (props) {
-  var _useState = React.useState(null),
-      selection = _useState[0],
-      setSelection = _useState[1];
-
-  var _useState2 = React.useState({
+  var _useState = React.useState({
     position: 0,
     active: false
   }),
-      dropdownState = _useState2[0],
-      setDropdownState = _useState2[1];
+      dropdownState = _useState[0],
+      setDropdownState = _useState[1];
 
   var text = React.useRef(null);
   var input = React.useRef(null);
@@ -630,13 +626,13 @@ var UtteranceInput = React__default.memo(function (props) {
   }
 
   var tagSelection = function tagSelection(type, slot_value) {
-    if (selection) {
-      if (!selection.tagName) {
-        var mark = createNode(type, slot_value, selection.toString());
+    if (props.selection) {
+      if (!props.selection.tagName) {
+        var mark = createNode(type, slot_value, props.selection.toString());
 
         if (mark) {
-          selection.getRangeAt(0).extractContents();
-          selection.getRangeAt(0).insertNode(mark);
+          props.selection.getRangeAt(0).extractContents();
+          props.selection.getRangeAt(0).insertNode(mark);
 
           if (mark.parentElement.tagName === "MARK") {
             var _mark$parentElement;
@@ -655,13 +651,13 @@ var UtteranceInput = React__default.memo(function (props) {
           });
         }
       } else {
-        var _mark = selection;
+        var _mark = props.selection;
         _mark.style.outline = "none";
         _mark.dataset.type = type;
       }
 
       props.setRaw(input.current.innerHTML);
-      setSelection(null);
+      props.setSelection(null);
       cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
     }
   };
@@ -700,9 +696,9 @@ var UtteranceInput = React__default.memo(function (props) {
     if (sel.toString().length > 0) {
       var _sel = rangy.getSelection();
 
-      setSelection(_sel);
+      props.setSelection(_sel);
     } else {
-      setSelection(null);
+      props.setSelection(null);
     }
   };
 
@@ -714,14 +710,14 @@ var UtteranceInput = React__default.memo(function (props) {
       var oRect = oRange.getBoundingClientRect();
       setDropdownState({
         position: oRect.x,
-        active: selection !== null
+        active: props.selection !== null
       });
     } else {
       setDropdownState(_extends({}, dropdownState, {
         active: false
       }));
     }
-  }, [selection, props.active]);
+  }, [props.selection, props.active]);
   React.useEffect(function () {
     props.setWhitelist(whitelist);
   }, [whitelist]);
@@ -734,7 +730,7 @@ var UtteranceInput = React__default.memo(function (props) {
     html: props.raw,
     onClick: function onClick(e) {
       if (e.target.tagName === 'MARK') {
-        setSelection(e.target);
+        props.setSelection(e.target);
       }
     },
     onChange: function onChange(e) {
@@ -764,8 +760,8 @@ var UtteranceInput = React__default.memo(function (props) {
   }), props.active && /*#__PURE__*/React__default.createElement(Dropdown, {
     dropdownState: dropdownState,
     entities: props.entities,
-    selection: selection,
-    setSelection: setSelection,
+    selection: props.selection,
+    setSelection: props.setSelection,
     tagSelection: tagSelection
   }));
 });
@@ -781,6 +777,10 @@ var Utterance = React__default.memo(function (props) {
 
   var _useState3 = React.useState(true),
       valid = _useState3[0];
+
+  var _useState4 = React.useState(null),
+      selection = _useState4[0],
+      setSelection = _useState4[1];
 
   var active = props.active === props.index;
   React.useEffect(function () {
@@ -850,7 +850,9 @@ var Utterance = React__default.memo(function (props) {
       raw: raw,
       setRaw: setRaw,
       setWhitelist: setWhitelist,
-      entities: props.entities
+      entities: props.entities,
+      selection: selection,
+      setSelection: setSelection
     }), /*#__PURE__*/React__default.createElement("div", {
       className: "field__actions"
     }, !props["new"] && /*#__PURE__*/React__default.createElement("button", {
@@ -869,9 +871,16 @@ var Utterance = React__default.memo(function (props) {
         key: item.slot_value + "_" + index,
         target: item.target,
         slotValue: item.slot_value
-      }), /*#__PURE__*/React__default.createElement("div", null, /*#__PURE__*/React__default.createElement("mark", {
+      }), /*#__PURE__*/React__default.createElement("div", null, /*#__PURE__*/React__default.createElement("button", {
+        className: "mark",
+        type: "button",
         style: {
           background: item.color
+        },
+        onClick: function onClick() {
+          return setTimeout(function () {
+            setSelection(item.target);
+          }, 220);
         }
       }, item.type)), /*#__PURE__*/React__default.createElement("div", null, item.text));
     }))));
