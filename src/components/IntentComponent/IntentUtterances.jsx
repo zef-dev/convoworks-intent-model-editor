@@ -2,7 +2,9 @@ import React, { useState } from 'react'
 import { Utterance } from './utterance/Utterance.jsx'
 
 const IntentUtterances = (props) => {
-	const [active, setActive] = useState(null);
+	const [active, setActive] = useState(0);
+
+	console.log(active)
 
 	const removeFromUtterances = (object) => {
 		let arr = props.utterances.filter(item => item !== object);
@@ -26,4 +28,4 @@ const IntentUtterances = (props) => {
 	}
 }
 
-export default React.memo(IntentUtterances);
+export default IntentUtterances;

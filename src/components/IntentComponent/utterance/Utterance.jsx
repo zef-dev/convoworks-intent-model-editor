@@ -1,45 +1,19 @@
 import React, { useRef, useState, useEffect } from 'react'
-import '@yaireo/tagify/src/tagify.scss'
-import rangy from 'rangy'
 import _ from 'lodash'
-import ContentEditable from 'react-contenteditable'
-import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition, generateId } from '../../../helpers/common_constants'
-import Dropdown from '../Dropdown'
+import { stringToColor } from '../../../helpers/common_constants'
 import { IconTrash } from '../../../assets/icon_trash'
 import UtteranceSlotValue from './UtteranceSlotValue'
+import UtteranceInput from './UtteranceInput'
 
 export const Utterance = (props) => {
-    const [dropdownState, setDropdownState] = useState({
-        position: 0,
-        active: false
-    });
 
-    const [selection, setSelection] = useState(null)
     const [whitelist, setWhitelist] = useState([]);
+    const [raw, setRaw] = useState('');
     const [valid, setValid] = useState(true);
 
     const active = props.active === props.index;
 
-    const input = useRef(null);
-    const text = useRef(null);
-    const inputWrapper = useRef('');
-    const cursorPosition = useRef(null);
-
-    /* handle validation */
     useEffect(() => {
-        let textReg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-
-        let term = props.utterance.model.filter(item => !item.type).map(item => item.text).join(' ');
-
-    }, [props.utterance.model])
-
-    useEffect(() => {
-        /* 
-        MAP MODEL TO STRING
-        Object with type param are mapped to MARK tags while those without are mapped to text NODES.
-        This is done only on initial component render.
-        */
-
         if (props.utterance.model) {
             let str = '';
             if (props.utterance.model.length) {
@@ -51,146 +25,12 @@ export const Utterance = (props) => {
                     }
                 }).join(' ');
             }
-
-            input.current.innerHTML = str + ' ';
-            text.current = str + ' ';
-            mapToWhitelist();
+            setRaw(str + ' ');
         }
-    }, [props.stateChange, active]);
-
-    function createNode(type, slot_value, text) {
-        let mark = document.createElement('mark');
-        let newTextNode = document.createTextNode(text);
-
-        mark.appendChild(newTextNode);
-        mark.textContent = mark.textContent.trim();
-        mark.setAttribute('data-type', type);
-        mark.setAttribute('data-slot-value', slot_value);
-        mark.setAttribute('data-text', mark.textContent.trim());
-        mark.setAttribute('data-color', stringToColor(mark.textContent.trim()));
-        mark.style.background = stringToColor(text);
-
-        return mark;
-    }
-
-    const mapToWhitelist = () => {
-        let arr = Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
-            let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-
-            console.log('slot value --->', item.dataset.slotValue)
-
-            return ({
-                type: item.dataset.type,
-                slot_value: item.dataset.slotValue,
-                text: item.textContent,
-                color: item.dataset.color,
-                validations: {
-                    slot_value: reg.test(item.dataset.slotValue)
-                }
-            })
-        }).filter(item => item.text.trim().length);
-
-        setWhitelist(arr);
-    }
-
-    const handleSelection = () => {
-        var sel
-        // Check for existence of window.getSelection() and that it has a
-        // modify() method. IE 9 has both selection APIs but no modify() method.
-        if (window.getSelection && (sel = window.getSelection()).modify) {
-            sel = window.getSelection()
-            if (!sel.isCollapsed) {
-                // Detect if selection is backwards
-                var range = document.createRange()
-                range.setStart(sel.anchorNode, sel.anchorOffset)
-                range.setEnd(sel.focusNode, sel.focusOffset)
-                var backwards = range.collapsed
-                range.detach()
-
-                // modify() works on the focus of the selection
-                var endNode = sel.focusNode,
-                    endOffset = sel.focusOffset
-                sel.collapse(sel.anchorNode, sel.anchorOffset)
-
-                var direction = []
-                if (backwards) {
-                    direction = ['backward', 'forward']
-                } else {
-                    direction = ['forward', 'backward']
-                }
-
-                sel.modify('move', direction[0], 'character')
-                sel.modify('move', direction[1], 'word')
-                sel.extend(endNode, endOffset)
-                sel.modify('extend', direction[1], 'character')
-                sel.modify('extend', direction[0], 'word')
-            }
-        }
-
-        /* 
-        SET CURRENT SELECTION
-        */
-        if (sel.toString().length > 0) {
-            let sel = rangy.getSelection()
-            setSelection(sel)
-        } else {
-            setSelection(null);
-        }
-    }
-
-    const tagSelection = (type, slot_value) => {
-        console.log(type, slot_value);
-        if (selection) {
-            if (!selection.tagName) {
-                let mark = createNode(type, slot_value, selection.toString());
-                if (mark) {
-                    selection.getRangeAt(0).extractContents();
-                    selection.getRangeAt(0).insertNode(mark);
-
-                    if (mark.parentElement.tagName === "MARK") {
-                        mark.parentElement.replaceWith(...mark.parentElement.childNodes);
-                        mark.innerHTML = mark.textContent.trim();
-                    }
-
-                    input.current.childNodes.forEach((item) => {
-                        if (item.tagName === "MARK") {
-                            if (item.innerHTML.slice(-1).includes(' ')) {
-                                item.innerHTML = item.innerHTML.trim();
-                            }
-                        }
-                    })
-                }
-            } else {
-                let mark = selection;
-                mark.style.outline = "none";
-                mark.dataset.type = type;
-            }
-
-            text.current = input.current.innerHTML;
-            mapToWhitelist();
-            setSelection(null);
-            cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
-        }
-    }
+    }, []);
 
     useEffect(() => {
-        let s = window.getSelection();
-
-        if (s && s.rangeCount > 0) {
-            let oRange = s.getRangeAt(0); //get the text range
-            let oRect = oRange.getBoundingClientRect();
-
-            setDropdownState({
-                position: oRect.x,
-                active: selection !== null
-            })
-        } else {
-            setDropdownState({ ...dropdownState, active: false });
-        }
-    }, [selection, active]);
-
-    useEffect(() => {
-        if (input.current.childNodes.length) {
+        /* if (input.current.childNodes.length) {
             let model = Array.from(input.current.childNodes).map(item => {
                 if (item.dataset) {
                     return ({
@@ -208,59 +48,18 @@ export const Utterance = (props) => {
             let utterances = [...props.utterances];
             utterances[props.index] = { raw: raw, model: model }
             props.setUtterances(utterances)
-        }
-
+        } */
     }, [whitelist]);
 
-    if (props.utterance) {
+    if (raw) {
         return (
             <React.Fragment>
-                <div data-new={props.utterance.new} class={`field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${props.active === props.index ? 'field--active' : ''}`}>
+                <div data-new={props.utterance.new} class={`field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${active ? 'field--active' : ''}`}>
                     <div
                         className='field__main'
                     >
                         <div className='field__input'>
-                            <div class='taggable-text' ref={inputWrapper}>
-                                <ContentEditable
-                                    data-placeholder="Enter reference value"
-                                    innerRef={input}
-                                    className='taggable-text__input'
-                                    html={text.current}
-                                    onClick={(e) => {
-                                        if (e.target.tagName === 'MARK') {
-                                            setSelection(e.target);
-                                        }
-                                    }}
-                                    onChange={(e) => {
-                                        text.current = e.target.value;
-                                        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
-                                        mapToWhitelist();
-                                    }}
-                                    onMouseUp={() => {
-                                        handleSelection();
-                                        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
-                                    }}
-
-                                    onKeyDown={(e) => {
-                                        if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
-                                            e.preventDefault();
-
-                                            if (e.keyCode === 13) {
-                                                document.querySelectorAll('.taggable-text__input')[0].focus();
-                                            }
-
-                                        }
-                                    }}
-                                    onKeyUp={(e) => {
-                                        handleSelection();
-                                        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
-                                    }}
-                                    onFocus={() => {
-                                        props.setActive(props.index)
-                                    }}
-                                />
-                            </div>
-                            {active && <Dropdown dropdownState={dropdownState} entities={props.entities} selection={selection} setSelection={setSelection} tagSelection={tagSelection} />}
+                            <UtteranceInput index={props.index} active={active} setActive={props.setActive} raw={raw} setRaw={setRaw} setWhitelist={setWhitelist} entities={props.entities} />
                             <div className="field__actions">
                                 {!props.utterance.new &&
                                     <button onClick={() => {
@@ -272,19 +71,17 @@ export const Utterance = (props) => {
                             </div>
                         </div>
                     </div>
-                    {props.active === props.index &&
+                    {active && whitelist &&
                         <ul className="model-list">
-                            {whitelist.length > 0 &&
-                                <header className="model-list__header">
-                                    <strong>Parameter name</strong>
-                                    <strong>Entity</strong>
-                                    <strong>Resolved value</strong>
-                                </header>
-                            }
+                            <header className="model-list__header">
+                                <strong>Parameter name</strong>
+                                <strong>Entity</strong>
+                                <strong>Resolved value</strong>
+                            </header>
                             {whitelist.map((item, index) => {
                                 return (
                                     <li className="model-list__item">
-                                        <UtteranceSlotValue slotValue={item.slot_value} />
+                                        <UtteranceSlotValue key={`${item.slot_value}_${index}`} target={item.target} slotValue={item.slot_value} />
                                         <div><mark style={{ background: item.color }}>{item.type}</mark></div>
                                         <div>{item.text}</div>
                                     </li>

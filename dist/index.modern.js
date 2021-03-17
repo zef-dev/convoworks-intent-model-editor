@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { debounce } from 'lodash';
-import '@yaireo/tagify/src/tagify.scss';
 import rangy from 'rangy';
 import ContentEditable from 'react-contenteditable';
 import useOnclickOutside from 'react-cool-onclickoutside';
@@ -401,6 +400,15 @@ const setCaretPosition = (el, pos) => {
   return pos;
 };
 
+const UtteranceSlotValue = props => {
+  return /*#__PURE__*/React.createElement("input", {
+    defaultValue: props.slotValue,
+    onChange: e => {
+      props.target.dataset.slotValue = e.target.value;
+    }
+  });
+};
+
 function Dropdown(props) {
   const [entities, setEntities] = useState(props.entities);
   const [allEntities, setAllEntities] = useState(props.entities);
@@ -467,48 +475,24 @@ function Dropdown(props) {
   }
 }
 
-const UtteranceSlotValue = React.memo(props => {
-  return /*#__PURE__*/React.createElement("input", {
-    defaultValue: props.slotValue,
-    onChange: e => {}
-  });
-});
-
-const Utterance = props => {
+const UtteranceInput = React.memo(props => {
+  const [selection, setSelection] = useState(null);
   const [dropdownState, setDropdownState] = useState({
     position: 0,
     active: false
   });
-  const [selection, setSelection] = useState(null);
-  const [whitelist, setWhitelist] = useState([]);
-  const [valid, setValid] = useState(true);
-  const active = props.active === props.index;
-  const input = useRef(null);
   const text = useRef(null);
-  const inputWrapper = useRef('');
+  const input = useRef(null);
   const cursorPosition = useRef(null);
-  useEffect(() => {
-    let term = props.utterance.model.filter(item => !item.type).map(item => item.text).join(' ');
-  }, [props.utterance.model]);
-  useEffect(() => {
-    if (props.utterance.model) {
-      let str = '';
-
-      if (props.utterance.model.length) {
-        str = props.utterance.model.map(item => {
-          if (item.type) {
-            return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text}</mark>`;
-          } else {
-            return item.text;
-          }
-        }).join(' ');
-      }
-
-      input.current.innerHTML = str + ' ';
-      text.current = str + ' ';
-      mapToWhitelist();
-    }
-  }, [props.stateChange, active]);
+  const whitelist = input.current && Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
+    return {
+      type: item.dataset.type,
+      slot_value: item.dataset.slotValue,
+      text: item.textContent,
+      color: item.dataset.color,
+      target: item
+    };
+  }).filter(item => item.text.trim().length);
 
   function createNode(type, slot_value, text) {
     let mark = document.createElement('mark');
@@ -523,21 +507,38 @@ const Utterance = props => {
     return mark;
   }
 
-  const mapToWhitelist = () => {
-    let arr = Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
-      let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-      console.log('slot value --->', item.dataset.slotValue);
-      return {
-        type: item.dataset.type,
-        slot_value: item.dataset.slotValue,
-        text: item.textContent,
-        color: item.dataset.color,
-        validations: {
-          slot_value: reg.test(item.dataset.slotValue)
+  const tagSelection = (type, slot_value) => {
+    if (selection) {
+      if (!selection.tagName) {
+        let mark = createNode(type, slot_value, selection.toString());
+
+        if (mark) {
+          selection.getRangeAt(0).extractContents();
+          selection.getRangeAt(0).insertNode(mark);
+
+          if (mark.parentElement.tagName === "MARK") {
+            mark.parentElement.replaceWith(...mark.parentElement.childNodes);
+            mark.innerHTML = mark.textContent.trim();
+          }
+
+          input.current.childNodes.forEach(item => {
+            if (item.tagName === "MARK") {
+              if (item.innerHTML.slice(-1).includes(' ')) {
+                item.innerHTML = item.innerHTML.trim();
+              }
+            }
+          });
         }
-      };
-    }).filter(item => item.text.trim().length);
-    setWhitelist(arr);
+      } else {
+        let mark = selection;
+        mark.style.outline = "none";
+        mark.dataset.type = type;
+      }
+
+      props.setRaw(input.current.innerHTML);
+      setSelection(null);
+      cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
+    }
   };
 
   const handleSelection = () => {
@@ -580,43 +581,6 @@ const Utterance = props => {
     }
   };
 
-  const tagSelection = (type, slot_value) => {
-    console.log(type, slot_value);
-
-    if (selection) {
-      if (!selection.tagName) {
-        let mark = createNode(type, slot_value, selection.toString());
-
-        if (mark) {
-          selection.getRangeAt(0).extractContents();
-          selection.getRangeAt(0).insertNode(mark);
-
-          if (mark.parentElement.tagName === "MARK") {
-            mark.parentElement.replaceWith(...mark.parentElement.childNodes);
-            mark.innerHTML = mark.textContent.trim();
-          }
-
-          input.current.childNodes.forEach(item => {
-            if (item.tagName === "MARK") {
-              if (item.innerHTML.slice(-1).includes(' ')) {
-                item.innerHTML = item.innerHTML.trim();
-              }
-            }
-          });
-        }
-      } else {
-        let mark = selection;
-        mark.style.outline = "none";
-        mark.dataset.type = type;
-      }
-
-      text.current = input.current.innerHTML;
-      mapToWhitelist();
-      setSelection(null);
-      cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
-    }
-  };
-
   useEffect(() => {
     let s = window.getSelection();
 
@@ -632,84 +596,95 @@ const Utterance = props => {
         active: false
       });
     }
-  }, [selection, active]);
+  }, [selection, props.active]);
   useEffect(() => {
-    if (input.current.childNodes.length) {
-      let model = Array.from(input.current.childNodes).map(item => {
-        if (item.dataset) {
-          return {
-            type: item.dataset.type,
-            text: item.textContent.trim(),
-            slot_value: item.dataset.slotValue
-          };
-        } else {
-          return {
-            text: item.textContent.trim()
-          };
-        }
-      }).filter(item => item.text.length);
-      let raw = model.map(item => item.text).join(' ');
-      let utterances = [...props.utterances];
-      utterances[props.index] = {
-        raw: raw,
-        model: model
-      };
-      props.setUtterances(utterances);
-    }
+    props.setWhitelist(whitelist);
   }, [whitelist]);
+  return /*#__PURE__*/React.createElement("div", {
+    class: "taggable-text"
+  }, /*#__PURE__*/React.createElement(ContentEditable, {
+    "data-placeholder": "Enter reference value",
+    innerRef: input,
+    className: "taggable-text__input",
+    html: props.raw,
+    onClick: e => {
+      if (e.target.tagName === 'MARK') {
+        setSelection(e.target);
+      }
+    },
+    onChange: e => {
+      props.setRaw(e.target.value);
+      cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+    },
+    onMouseUp: () => {
+      handleSelection();
+      cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+    },
+    onKeyDown: e => {
+      if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
+        e.preventDefault();
 
-  if (props.utterance) {
+        if (e.keyCode === 13) {
+          document.querySelectorAll('.taggable-text__input')[0].focus();
+        }
+      }
+    },
+    onKeyUp: e => {
+      handleSelection();
+      cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+    },
+    onFocus: () => {
+      props.setActive(props.index);
+    }
+  }), props.active && /*#__PURE__*/React.createElement(Dropdown, {
+    dropdownState: dropdownState,
+    entities: props.entities,
+    selection: selection,
+    setSelection: setSelection,
+    tagSelection: tagSelection
+  }));
+});
+
+const Utterance = props => {
+  const [whitelist, setWhitelist] = useState([]);
+  const [raw, setRaw] = useState('');
+  const [valid, setValid] = useState(true);
+  const active = props.active === props.index;
+  useEffect(() => {
+    if (props.utterance.model) {
+      let str = '';
+
+      if (props.utterance.model.length) {
+        str = props.utterance.model.map(item => {
+          if (item.type) {
+            return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text}</mark>`;
+          } else {
+            return item.text;
+          }
+        }).join(' ');
+      }
+
+      setRaw(str + ' ');
+    }
+  }, []);
+  useEffect(() => {}, [whitelist]);
+
+  if (raw) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       "data-new": props.utterance.new,
-      class: `field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${props.active === props.index ? 'field--active' : ''}`
+      class: `field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${active ? 'field--active' : ''}`
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__main"
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__input"
-    }, /*#__PURE__*/React.createElement("div", {
-      class: "taggable-text",
-      ref: inputWrapper
-    }, /*#__PURE__*/React.createElement(ContentEditable, {
-      "data-placeholder": "Enter reference value",
-      innerRef: input,
-      className: "taggable-text__input",
-      html: text.current,
-      onClick: e => {
-        if (e.target.tagName === 'MARK') {
-          setSelection(e.target);
-        }
-      },
-      onChange: e => {
-        text.current = e.target.value;
-        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
-        mapToWhitelist();
-      },
-      onMouseUp: () => {
-        handleSelection();
-        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
-      },
-      onKeyDown: e => {
-        if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
-          e.preventDefault();
-
-          if (e.keyCode === 13) {
-            document.querySelectorAll('.taggable-text__input')[0].focus();
-          }
-        }
-      },
-      onKeyUp: e => {
-        handleSelection();
-        cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
-      },
-      onFocus: () => {
-        props.setActive(props.index);
-      }
-    })), active && /*#__PURE__*/React.createElement(Dropdown, {
-      dropdownState: dropdownState,
-      entities: props.entities,
-      selection: selection,
-      setSelection: setSelection,
-      tagSelection: tagSelection
+    }, /*#__PURE__*/React.createElement(UtteranceInput, {
+      index: props.index,
+      active: active,
+      setActive: props.setActive,
+      raw: raw,
+      setRaw: setRaw,
+      setWhitelist: setWhitelist,
+      entities: props.entities
     }), /*#__PURE__*/React.createElement("div", {
       className: "field__actions"
     }, !props.utterance.new && /*#__PURE__*/React.createElement("button", {
@@ -717,14 +692,16 @@ const Utterance = props => {
         props.removeFromUtterances(props.utterance);
         document.querySelectorAll('.taggable-text__input')[0].focus();
       }
-    }, /*#__PURE__*/React.createElement(IconTrash, null))))), props.active === props.index && /*#__PURE__*/React.createElement("ul", {
+    }, /*#__PURE__*/React.createElement(IconTrash, null))))), active && whitelist && /*#__PURE__*/React.createElement("ul", {
       className: "model-list"
-    }, whitelist.length > 0 && /*#__PURE__*/React.createElement("header", {
+    }, /*#__PURE__*/React.createElement("header", {
       className: "model-list__header"
     }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.map((item, index) => {
       return /*#__PURE__*/React.createElement("li", {
         className: "model-list__item"
       }, /*#__PURE__*/React.createElement(UtteranceSlotValue, {
+        key: `${item.slot_value}_${index}`,
+        target: item.target,
         slotValue: item.slot_value
       }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("mark", {
         style: {
@@ -738,7 +715,8 @@ const Utterance = props => {
 };
 
 const IntentUtterances = props => {
-  const [active, setActive] = useState(null);
+  const [active, setActive] = useState(0);
+  console.log(active);
 
   const removeFromUtterances = object => {
     let arr = props.utterances.filter(item => item !== object);
@@ -767,8 +745,6 @@ const IntentUtterances = props => {
     return null;
   }
 };
-
-var IntentUtterances$1 = React.memo(IntentUtterances);
 
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
@@ -880,7 +856,7 @@ function IntentDetails(props) {
       }
     }, "Update!!"), /*#__PURE__*/React.createElement("div", {
       className: "margin--24--large"
-    }, /*#__PURE__*/React.createElement(IntentUtterances$1, {
+    }, /*#__PURE__*/React.createElement(IntentUtterances, {
       addNewValue: addNewValue,
       utterances: utterances,
       setUtterances: setUtterances,
