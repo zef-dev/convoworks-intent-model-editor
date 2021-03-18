@@ -1005,12 +1005,6 @@ function IntentDetails(props) {
     }
   };
 
-  var handler = React.useCallback(_.debounce(handleSearch, 300), []);
-
-  var _onChange = function onChange() {
-    handler();
-  };
-
   if (intent) {
     return /*#__PURE__*/React__default.createElement("div", {
       className: "convo-details"
@@ -1045,7 +1039,7 @@ function IntentDetails(props) {
       type: "text",
       placeholder: "Search utterances",
       onChange: function onChange(e) {
-        _onChange();
+        handleSearch();
       }
     })), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--24--large"

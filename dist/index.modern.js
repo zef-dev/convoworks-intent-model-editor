@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import _, { debounce } from 'lodash';
+import React, { useState, useRef, useEffect } from 'react';
+import _ from 'lodash';
 import rangy from 'rangy';
 import ContentEditable from 'react-contenteditable';
 import useOnclickOutside from 'react-cool-onclickoutside';
@@ -842,12 +842,6 @@ function IntentDetails(props) {
     }
   };
 
-  const handler = useCallback(debounce(handleSearch, 300), []);
-
-  const onChange = () => {
-    handler();
-  };
-
   if (intent) {
     return /*#__PURE__*/React.createElement("div", {
       className: "convo-details"
@@ -882,7 +876,7 @@ function IntentDetails(props) {
       type: "text",
       placeholder: "Search utterances",
       onChange: e => {
-        onChange();
+        handleSearch();
       }
     })), /*#__PURE__*/React.createElement("div", {
       className: "margin--24--large"

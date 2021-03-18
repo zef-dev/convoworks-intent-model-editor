@@ -68,12 +68,6 @@ function IntentDetails(props) {
     }
   }
 
-  const handler = useCallback(debounce(handleSearch, 300), []);
-
-  const onChange = () => {
-    handler();
-  };
-
   if (intent) {
     return (
       <div className="convo-details">
@@ -112,7 +106,7 @@ function IntentDetails(props) {
               <div className="search-wrapper">
                 <h3>Utterances</h3>
                 <input ref={searchInput} className="editor-input input--search" type="text" placeholder="Search utterances" onChange={(e) => {
-                  onChange();
+                  handleSearch();
                 }} />
               </div>
               <div className="margin--24--large">
