@@ -497,14 +497,21 @@ var setCaretPosition = function setCaretPosition(el, pos) {
   return pos;
 };
 
-var UtteranceSlotValue = function UtteranceSlotValue(props) {
+var UtteranceSlotValue = React__default.memo(function (props) {
+  var validateSlotValue = function validateSlotValue() {
+    var reg = /^[A-Za-z](_*[A-Za-z])*_*$/;
+    return reg.test(slotValue);
+  };
+
   return /*#__PURE__*/React__default.createElement("input", {
+    "data-valid": validateSlotValue ? 'true' : 'false',
     defaultValue: props.slotValue,
     onChange: function onChange(e) {
       props.target.dataset.slotValue = e.target.value;
+      props.updateRaw();
     }
   });
-};
+});
 
 function Dropdown(props) {
   var _useState = React.useState(props.entities),
@@ -584,7 +591,7 @@ function Dropdown(props) {
   }
 }
 
-var UtteranceInput = React__default.memo(function (props) {
+var UtteranceInput = function UtteranceInput(props) {
   var _useState = React.useState({
     position: 0,
     active: false
@@ -592,25 +599,11 @@ var UtteranceInput = React__default.memo(function (props) {
       dropdownState = _useState[0],
       setDropdownState = _useState[1];
 
+  var _useState2 = React.useState(true);
+
   var text = React.useRef(null);
-  var input = React.useRef(null);
+  var input = props.input;
   var cursorPosition = React.useRef(null);
-  var whitelist = input.current && {
-    tags: Array.from(input.current.childNodes).filter(function (item) {
-      return item.dataset;
-    }).map(function (item) {
-      return {
-        type: item.dataset.type,
-        slot_value: item.dataset.slotValue,
-        text: item.textContent,
-        color: item.dataset.color,
-        target: item
-      };
-    }).filter(function (item) {
-      return item.text.trim().length;
-    }),
-    nodes: Array.from(input.current.childNodes)
-  };
 
   function createNode(type, slot_value, text) {
     var mark = document.createElement('mark');
@@ -720,9 +713,6 @@ var UtteranceInput = React__default.memo(function (props) {
       }));
     }
   }, [props.selection, props.active]);
-  React.useEffect(function () {
-    props.setWhitelist(whitelist);
-  }, [whitelist]);
   return /*#__PURE__*/React__default.createElement("div", {
     "class": "taggable-text"
   }, /*#__PURE__*/React__default.createElement(ContentEditable, {
@@ -766,24 +756,36 @@ var UtteranceInput = React__default.memo(function (props) {
     setSelection: props.setSelection,
     tagSelection: tagSelection
   }));
-});
+};
 
 var Utterance = React__default.memo(function (props) {
-  var _useState = React.useState([]),
-      whitelist = _useState[0],
-      setWhitelist = _useState[1];
+  var _useState = React.useState(''),
+      raw = _useState[0],
+      setRaw = _useState[1];
 
-  var _useState2 = React.useState(''),
-      raw = _useState2[0],
-      setRaw = _useState2[1];
+  var _useState2 = React.useState(true);
 
-  var _useState3 = React.useState(true),
-      valid = _useState3[0];
+  var _useState3 = React.useState(null),
+      selection = _useState3[0],
+      setSelection = _useState3[1];
 
-  var _useState4 = React.useState(null),
-      selection = _useState4[0],
-      setSelection = _useState4[1];
-
+  var input = React.useRef(null);
+  var whitelist = input.current && {
+    tags: Array.from(input.current.childNodes).filter(function (item) {
+      return item.dataset;
+    }).map(function (item) {
+      return {
+        type: item.dataset.type,
+        slot_value: item.dataset.slotValue,
+        text: item.textContent,
+        color: item.dataset.color,
+        target: item
+      };
+    }).filter(function (item) {
+      return item.text.trim().length;
+    }),
+    nodes: Array.from(input.current.childNodes)
+  };
   var active = props.active === props.index;
   React.useEffect(function () {
     if (props.utterance.model) {
@@ -802,7 +804,7 @@ var Utterance = React__default.memo(function (props) {
       var lastChar = str[str.length - 1];
       setRaw(str + ("" + (lastChar === '>' ? ' ' : '')));
     }
-  }, [props.stateChange]);
+  }, []);
   React.useEffect(function () {
     if (whitelist && whitelist.nodes) {
       var model = whitelist.nodes.map(function (item) {
@@ -838,20 +840,40 @@ var Utterance = React__default.memo(function (props) {
     }
   }, [whitelist]);
 
+  var validateInput = function validateInput() {
+    if (whitelist && whitelist.nodes) {
+      if (whitelist.nodes.length) {
+        var textNodes = whitelist.nodes.filter(function (item) {
+          return !item.dataset;
+        });
+        var str = textNodes.map(function (item) {
+          return item.textContent.trim();
+        }).join(' ');
+        var reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
+        return reg.test(str);
+      }
+    }
+  };
+
+  var updateRaw = function updateRaw() {
+    setRaw(input.current.innerHTML);
+  };
+
   if (props) {
     return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
-      "class": "field " + (valid ? 'field--valid' : 'field--invalid') + " field--intent " + (active ? 'field--active' : '')
+      "class": "field field--intent " + (active ? 'field--active' : '')
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "field__main"
     }, /*#__PURE__*/React__default.createElement("div", {
-      className: "field__input"
+      className: "field__input",
+      "data-valid": validateInput() ? 'true' : 'false'
     }, /*#__PURE__*/React__default.createElement(UtteranceInput, {
       index: props.index,
+      input: input,
       active: active,
       setActive: props.setActive,
       raw: raw,
       setRaw: setRaw,
-      setWhitelist: setWhitelist,
       entities: props.entities,
       selection: selection,
       setSelection: setSelection
@@ -862,8 +884,11 @@ var Utterance = React__default.memo(function (props) {
         props.removeFromUtterances(props.utterance);
         document.querySelectorAll('.taggable-text__input')[0].focus();
       }
-    }, /*#__PURE__*/React__default.createElement(IconTrash, null))))), !props["new"] && active && whitelist && /*#__PURE__*/React__default.createElement("ul", {
-      className: "model-list"
+    }, /*#__PURE__*/React__default.createElement(IconTrash, null))))), !props["new"] && whitelist && /*#__PURE__*/React__default.createElement("ul", {
+      className: "model-list",
+      style: {
+        display: active ? 'block' : 'none'
+      }
     }, /*#__PURE__*/React__default.createElement("header", {
       className: "model-list__header"
     }, /*#__PURE__*/React__default.createElement("strong", null, "Parameter name"), /*#__PURE__*/React__default.createElement("strong", null, "Entity"), /*#__PURE__*/React__default.createElement("strong", null, "Resolved value")), whitelist.tags && whitelist.tags.map(function (item, index) {
@@ -871,8 +896,11 @@ var Utterance = React__default.memo(function (props) {
         className: "model-list__item"
       }, /*#__PURE__*/React__default.createElement(UtteranceSlotValue, {
         key: item.slot_value + "_" + index,
+        index: index,
         target: item.target,
-        slotValue: item.slot_value
+        slotValue: item.slot_value,
+        whitelist: whitelist,
+        updateRaw: updateRaw
       }), /*#__PURE__*/React__default.createElement("div", null, /*#__PURE__*/React__default.createElement("button", {
         className: "mark",
         type: "button",

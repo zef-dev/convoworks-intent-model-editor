@@ -407,6 +407,7 @@
     outline: none;
     line-height: 1.25;
     padding: 10px 12px;
+    border-bottom: 1px solid transparent;
 
     &:focus {
         outline: none;
@@ -440,4 +441,9 @@
         height: auto;
         padding: 12px;
     }
+}
+
+[data-valid="false"] {
+    color: $color-alert;
+    border-bottom: 1px dashed $color-alert !important;
 }

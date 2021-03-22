@@ -4,29 +4,20 @@ import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
 
-const UtteranceInput = React.memo((props) => {
+const UtteranceInput = (props) => {
 
   const [dropdownState, setDropdownState] = useState({
     position: 0,
     active: false
   });
 
+  const [valid, setValid] = useState(true);
+
   const text = useRef(null);
-  const input = useRef(null);
+  const input = props.input;
   const cursorPosition = useRef(null);
 
-  const whitelist = input.current && {
-    tags: Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
-      return ({
-        type: item.dataset.type,
-        slot_value: item.dataset.slotValue,
-        text: item.textContent,
-        color: item.dataset.color,
-        target: item
-      })
-    }).filter(item => item.text.trim().length),
-    nodes: Array.from(input.current.childNodes)
-  }
+  
 
   function createNode(type, slot_value, text) {
     let mark = document.createElement('mark');
@@ -70,7 +61,7 @@ const UtteranceInput = React.memo((props) => {
         mark.dataset.type = type;
       }
 
-      
+
       let lastChar = input.current.innerHTML[input.current.innerHTML.length - 1];
       let newRaw = input.current.innerHTML + `${lastChar === ' ' ? '' : ' '}`;
       props.setRaw(newRaw);
@@ -141,10 +132,6 @@ const UtteranceInput = React.memo((props) => {
     }
   }, [props.selection, props.active]);
 
-  useEffect(() => {
-    props.setWhitelist(whitelist);
-  }, [whitelist]);
-
   return (
     <div class='taggable-text'>
       <ContentEditable
@@ -186,7 +173,6 @@ const UtteranceInput = React.memo((props) => {
       {props.active && <Dropdown dropdownState={dropdownState} entities={props.entities} selection={props.selection} setSelection={props.setSelection} tagSelection={tagSelection} />}
     </div>
   )
-
-})
+}
 
 export default UtteranceInput;
