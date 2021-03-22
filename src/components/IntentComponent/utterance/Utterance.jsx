@@ -8,9 +8,10 @@ import UtteranceInput from './UtteranceInput'
 export const Utterance = React.memo(props => {
 
     const [raw, setRaw] = useState('');
-    const [valid, setValid] = useState(true);
     const [selection, setSelection] = useState(null);
+    const [valid, setValid] = useState(true);
 
+    const wrapper = useRef(null);
     const input = useRef(null);
 
     const whitelist = input.current && {
@@ -48,6 +49,10 @@ export const Utterance = React.memo(props => {
     }, [props.stateChange]);
 
     useEffect(() => {
+        let isValid = wrapper.current.querySelectorAll("[data-valid='false']").length < 1;
+
+        setValid(isValid);
+
         if (whitelist && whitelist.nodes) {
             let model = whitelist.nodes.map(item => {
                 if (item.dataset) {
@@ -77,10 +82,15 @@ export const Utterance = React.memo(props => {
         if (whitelist && whitelist.nodes) {
             if (whitelist.nodes.length) {
                 let textNodes = whitelist.nodes.filter(item => !item.dataset);
+                console.log(textNodes)
                 let str = textNodes.map(item => item.textContent.trim()).join(' ');
                 let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-                return reg.test(str);
+                return reg.test(str.trim());
+            } else {
+                return true
             }
+        } else {
+            return true
         }
     }
 
@@ -91,7 +101,7 @@ export const Utterance = React.memo(props => {
     if (props) {
         return (
             <React.Fragment>
-                <div class={`field field--intent ${active ? 'field--active' : ''}`}>
+                <div ref={wrapper} data-field-valid={`${valid}`} class={`field field--intent ${active ? 'field--active' : ''}`}>
                     <div
                         className='field__main'
                     >

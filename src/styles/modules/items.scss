@@ -47,7 +47,8 @@
         opacity: 1;
     }
 
-    mark, .mark {
+    mark,
+    .mark {
         display: inline-block;
         font-size: inherit;
         line-height: inherit;
@@ -443,7 +444,35 @@
     }
 }
 
-[data-valid="false"] {
+[data-field-valid="false"] {
+    border-color: $color-alert;
+
+    &:hover {
+        border-color: $color-alert;
+    }
+}
+
+[data-valid="false"] .taggable-text__input {
     color: $color-alert;
-    border-bottom: 1px dashed $color-alert !important;
+}
+
+.field--active {
+    [data-valid="false"] .taggable-text__input {
+        color: $color-alert;
+        border-bottom: 1px dashed $color-alert;
+    }
+}
+
+input[data-valid="false"] {
+    color: $color-alert;
+    border-bottom: 1px dashed $color-alert;
+
+    &:hover, &:focus {
+        border-bottom: 1px dashed $color-alert;
+    }
+}
+
+input:invalid {
+    border-color: $color-alert;
+    color: $color-alert;
 }

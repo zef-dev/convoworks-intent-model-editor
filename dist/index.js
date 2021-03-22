@@ -522,32 +522,30 @@ var UtteranceSlotValue = React__default.memo(function (props) {
 });
 
 function Dropdown(props) {
-  var _useState = React.useState(props.entities),
-      entities = _useState[0],
-      setEntities = _useState[1];
+  var _useState = React.useState(''),
+      term = _useState[0],
+      setTerm = _useState[1];
 
   var _useState2 = React.useState(props.entities),
-      allEntities = _useState2[0];
+      entities = _useState2[0];
 
-  var _useState3 = React.useState([]),
-      entitiesNames = _useState3[0],
-      setEntitiesNames = _useState3[1];
+  var _useState3 = React.useState(props.entities);
+
+  var _useState4 = React.useState([]),
+      entitiesNames = _useState4[0],
+      setEntitiesNames = _useState4[1];
 
   var input = React.useRef();
   var modalRef = useOnclickOutside(function () {
     props.setSelection(null);
   });
 
-  var filterEntities = function filterEntities(term) {
-    var arr = [].concat(allEntities);
-    var filteredArr = arr.filter(function (item) {
-      return item.name && item.name.toLowerCase().includes(term.trim().toLowerCase());
-    });
-    setEntities(filteredArr);
+  var filterEntities = function filterEntities(str) {
+    setTerm(str);
   };
 
   React.useEffect(function () {
-    var arr = entities.map(function (item) {
+    var arr = entities.flat().map(function (item) {
       return item.name;
     }).filter(function (item) {
       return item;
@@ -586,8 +584,11 @@ function Dropdown(props) {
       "class": "dropdown__selection"
     }, "Selection: ", /*#__PURE__*/React__default.createElement("strong", null, props.selection && props.selection.toString()))), /*#__PURE__*/React__default.createElement("div", {
       "class": "dropdown__items"
-    }, entities[0] && entities[0].map(function (item, i) {
+    }, entities.length && entities.flat().map(function (item, i) {
       return /*#__PURE__*/React__default.createElement("button", {
+        style: {
+          display: item.name.toLowerCase().includes(term.toLocaleLowerCase().trim()) ? 'block' : 'none'
+        },
         key: i,
         onClick: function onClick() {
           props.tagSelection(item.name, item.name);
@@ -607,9 +608,6 @@ var UtteranceInput = function UtteranceInput(props) {
       dropdownState = _useState[0],
       setDropdownState = _useState[1];
 
-  var _useState2 = React.useState(true);
-
-  var text = React.useRef(null);
   var input = props.input;
   var cursorPosition = React.useRef(null);
 
@@ -771,12 +769,15 @@ var Utterance = React__default.memo(function (props) {
       raw = _useState[0],
       setRaw = _useState[1];
 
-  var _useState2 = React.useState(true);
+  var _useState2 = React.useState(null),
+      selection = _useState2[0],
+      setSelection = _useState2[1];
 
-  var _useState3 = React.useState(null),
-      selection = _useState3[0],
-      setSelection = _useState3[1];
+  var _useState3 = React.useState(true),
+      valid = _useState3[0],
+      setValid = _useState3[1];
 
+  var wrapper = React.useRef(null);
   var input = React.useRef(null);
   var whitelist = input.current && {
     tags: Array.from(input.current.childNodes).filter(function (item) {
@@ -814,6 +815,9 @@ var Utterance = React__default.memo(function (props) {
     }
   }, [props.stateChange]);
   React.useEffect(function () {
+    var isValid = wrapper.current.querySelectorAll("[data-valid='false']").length < 1;
+    setValid(isValid);
+
     if (whitelist && whitelist.nodes) {
       var model = whitelist.nodes.map(function (item) {
         if (item.dataset) {
@@ -854,12 +858,17 @@ var Utterance = React__default.memo(function (props) {
         var textNodes = whitelist.nodes.filter(function (item) {
           return !item.dataset;
         });
+        console.log(textNodes);
         var str = textNodes.map(function (item) {
           return item.textContent.trim();
         }).join(' ');
         var reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-        return reg.test(str);
+        return reg.test(str.trim());
+      } else {
+        return true;
       }
+    } else {
+      return true;
     }
   };
 
@@ -869,6 +878,8 @@ var Utterance = React__default.memo(function (props) {
 
   if (props) {
     return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
+      ref: wrapper,
+      "data-field-valid": "" + valid,
       "class": "field field--intent " + (active ? 'field--active' : '')
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "field__main"

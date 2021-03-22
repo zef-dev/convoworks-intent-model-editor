@@ -11,13 +11,8 @@ const UtteranceInput = (props) => {
     active: false
   });
 
-  const [valid, setValid] = useState(true);
-
-  const text = useRef(null);
   const input = props.input;
   const cursorPosition = useRef(null);
-
-  
 
   function createNode(type, slot_value, text) {
     let mark = document.createElement('mark');

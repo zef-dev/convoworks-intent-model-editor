@@ -869,7 +869,8 @@
       color: #d9543e; }
     .convo-details .field .btn--remove:hover {
       opacity: 1; }
-    .convo-details .field mark, .convo-details .field .mark {
+    .convo-details .field mark,
+    .convo-details .field .mark {
       display: inline-block;
       font-size: inherit;
       line-height: inherit;
@@ -878,10 +879,12 @@
       padding: 0;
       transition: 0.22s;
       cursor: pointer; }
-      .convo-details .field mark.active, .convo-details .field .mark.active {
+      .convo-details .field mark.active,
+      .convo-details .field .mark.active {
         box-shadow: 0px 0px 0px 2px rgba(47, 116, 234, 0.85);
         background: transparent !important; }
-      .convo-details .field mark:focus, .convo-details .field .mark:focus {
+      .convo-details .field mark:focus,
+      .convo-details .field .mark:focus {
         outline: 2px solid #2f74ea; }
     .convo-details .field button.mark {
       padding: 0 2px; }
@@ -1165,6 +1168,20 @@
     opacity: 1;
     height: auto;
     padding: 12px; } }
-  .convo-details [data-valid="false"] {
+  .convo-details [data-field-valid="false"] {
+    border-color: #d9543e; }
+    .convo-details [data-field-valid="false"]:hover {
+      border-color: #d9543e; }
+  .convo-details [data-valid="false"] .taggable-text__input {
+    color: #d9543e; }
+  .convo-details .field--active [data-valid="false"] .taggable-text__input {
     color: #d9543e;
-    border-bottom: 1px dashed #d9543e !important; }
+    border-bottom: 1px dashed #d9543e; }
+  .convo-details input[data-valid="false"] {
+    color: #d9543e;
+    border-bottom: 1px dashed #d9543e; }
+    .convo-details input[data-valid="false"]:hover, .convo-details input[data-valid="false"]:focus {
+      border-bottom: 1px dashed #d9543e; }
+  .convo-details input:invalid {
+    border-color: #d9543e;
+    color: #d9543e; }

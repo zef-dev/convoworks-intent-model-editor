@@ -423,6 +423,7 @@ const UtteranceSlotValue = React.memo(props => {
 });
 
 function Dropdown(props) {
+  const [term, setTerm] = useState('');
   const [entities, setEntities] = useState(props.entities);
   const [allEntities, setAllEntities] = useState(props.entities);
   const [entitiesNames, setEntitiesNames] = useState([]);
@@ -431,14 +432,12 @@ function Dropdown(props) {
     props.setSelection(null);
   });
 
-  const filterEntities = term => {
-    let arr = [...allEntities];
-    let filteredArr = arr.filter(item => item.name && item.name.toLowerCase().includes(term.trim().toLowerCase()));
-    setEntities(filteredArr);
+  const filterEntities = str => {
+    setTerm(str);
   };
 
   useEffect(() => {
-    let arr = entities.map(item => {
+    let arr = entities.flat().map(item => {
       return item.name;
     }).filter(item => item);
     setEntitiesNames(arr);
@@ -475,8 +474,11 @@ function Dropdown(props) {
       class: "dropdown__selection"
     }, "Selection: ", /*#__PURE__*/React.createElement("strong", null, props.selection && props.selection.toString()))), /*#__PURE__*/React.createElement("div", {
       class: "dropdown__items"
-    }, entities[0] && entities[0].map((item, i) => {
+    }, entities.length && entities.flat().map((item, i) => {
       return /*#__PURE__*/React.createElement("button", {
+        style: {
+          display: item.name.toLowerCase().includes(term.toLocaleLowerCase().trim()) ? 'block' : 'none'
+        },
         key: i,
         onClick: () => {
           props.tagSelection(item.name, item.name);
@@ -493,8 +495,6 @@ const UtteranceInput = props => {
     position: 0,
     active: false
   });
-  const [valid, setValid] = useState(true);
-  const text = useRef(null);
   const input = props.input;
   const cursorPosition = useRef(null);
 
@@ -650,8 +650,9 @@ const UtteranceInput = props => {
 
 const Utterance = React.memo(props => {
   const [raw, setRaw] = useState('');
-  const [valid, setValid] = useState(true);
   const [selection, setSelection] = useState(null);
+  const [valid, setValid] = useState(true);
+  const wrapper = useRef(null);
   const input = useRef(null);
   const whitelist = input.current && {
     tags: Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
@@ -685,6 +686,9 @@ const Utterance = React.memo(props => {
     }
   }, [props.stateChange]);
   useEffect(() => {
+    let isValid = wrapper.current.querySelectorAll("[data-valid='false']").length < 1;
+    setValid(isValid);
+
     if (whitelist && whitelist.nodes) {
       let model = whitelist.nodes.map(item => {
         if (item.dataset) {
@@ -717,10 +721,15 @@ const Utterance = React.memo(props => {
     if (whitelist && whitelist.nodes) {
       if (whitelist.nodes.length) {
         let textNodes = whitelist.nodes.filter(item => !item.dataset);
+        console.log(textNodes);
         let str = textNodes.map(item => item.textContent.trim()).join(' ');
         let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-        return reg.test(str);
+        return reg.test(str.trim());
+      } else {
+        return true;
       }
+    } else {
+      return true;
     }
   };
 
@@ -730,6 +739,8 @@ const Utterance = React.memo(props => {
 
   if (props) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      ref: wrapper,
+      "data-field-valid": `${valid}`,
       class: `field field--intent ${active ? 'field--active' : ''}`
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__main"

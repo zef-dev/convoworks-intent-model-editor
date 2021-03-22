@@ -4,6 +4,7 @@ import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
 
 function Dropdown(props) {
+	const [term, setTerm] = useState('');
 	const [entities, setEntities] = useState(props.entities);
 	const [allEntities, setAllEntities] = useState(props.entities);
 	const [entitiesNames, setEntitiesNames] = useState([]);
@@ -13,23 +14,17 @@ function Dropdown(props) {
 		props.setSelection(null);
 	});
 
-	const filterEntities = (term) => {
-		let arr = [...allEntities];
-		let filteredArr = arr.filter(
-			(item) => item.name && item.name.toLowerCase().includes(term.trim().toLowerCase())
-		);
-
-		setEntities(filteredArr);
+	const filterEntities = (str) => {
+		setTerm(str);
 	};
 
 	useEffect(
 		() => {
-			let arr = entities
+			let arr = entities.flat()
 				.map((item) => {
 					return item.name;
 				})
 				.filter((item) => item);
-			//console.log(arr)
 			setEntitiesNames(arr);
 		},
 		[entities]
@@ -65,9 +60,10 @@ function Dropdown(props) {
 					<div class="dropdown__selection">Selection: <strong>{props.selection && props.selection.toString()}</strong></div>
 				</header>
 				<div class="dropdown__items">
-					{entities[0] && entities[0].map((item, i) => {
+					{entities.length && entities.flat().map((item, i) => {
 						return (
 							<button
+								style={{display: item.name.toLowerCase().includes(term.toLocaleLowerCase().trim()) ? 'block' : 'none'}}
 								key={i}
 								onClick={() => {
 									props.tagSelection(item.name, item.name)
