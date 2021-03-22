@@ -45,7 +45,7 @@ export const Utterance = React.memo(props => {
             let lastChar = str[str.length - 1];
             setRaw(str + `${lastChar === '>' ? ' ' : ''}`);
         }
-    }, []);
+    }, [props.stateChange]);
 
     useEffect(() => {
         if (whitelist && whitelist.nodes) {
@@ -85,7 +85,7 @@ export const Utterance = React.memo(props => {
     }
 
     const updateRaw = () => {
-      setRaw(input.current.innerHTML);
+        setRaw(input.current.innerHTML);
     }
 
     if (props) {

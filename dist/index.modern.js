@@ -401,13 +401,19 @@ const setCaretPosition = (el, pos) => {
 };
 
 const UtteranceSlotValue = React.memo(props => {
+  const [valid, setValid] = useState(true);
+
   const validateSlotValue = () => {
     let reg = /^[A-Za-z](_*[A-Za-z])*_*$/;
-    return reg.test(slotValue);
+    setValid(reg.test(props.target.dataset.slotValue));
   };
 
+  useEffect(() => {
+    validateSlotValue();
+  }, [props]);
   return /*#__PURE__*/React.createElement("input", {
-    "data-valid": validateSlotValue ? 'true' : 'false',
+    "data-valid": valid,
+    pattern: "^[A-Za-z](_*[A-Za-z])*_*$",
     value: props.slotValue,
     onChange: e => {
       props.target.dataset.slotValue = e.target.value;
@@ -677,7 +683,7 @@ const Utterance = React.memo(props => {
       let lastChar = str[str.length - 1];
       setRaw(str + `${lastChar === '>' ? ' ' : ''}`);
     }
-  }, []);
+  }, [props.stateChange]);
   useEffect(() => {
     if (whitelist && whitelist.nodes) {
       let model = whitelist.nodes.map(item => {

@@ -498,13 +498,21 @@ var setCaretPosition = function setCaretPosition(el, pos) {
 };
 
 var UtteranceSlotValue = React__default.memo(function (props) {
+  var _useState = React.useState(true),
+      valid = _useState[0],
+      setValid = _useState[1];
+
   var validateSlotValue = function validateSlotValue() {
     var reg = /^[A-Za-z](_*[A-Za-z])*_*$/;
-    return reg.test(slotValue);
+    setValid(reg.test(props.target.dataset.slotValue));
   };
 
+  React.useEffect(function () {
+    validateSlotValue();
+  }, [props]);
   return /*#__PURE__*/React__default.createElement("input", {
-    "data-valid": validateSlotValue ? 'true' : 'false',
+    "data-valid": valid,
+    pattern: "^[A-Za-z](_*[A-Za-z])*_*$",
     value: props.slotValue,
     onChange: function onChange(e) {
       props.target.dataset.slotValue = e.target.value;
@@ -804,7 +812,7 @@ var Utterance = React__default.memo(function (props) {
       var lastChar = str[str.length - 1];
       setRaw(str + ("" + (lastChar === '>' ? ' ' : '')));
     }
-  }, []);
+  }, [props.stateChange]);
   React.useEffect(function () {
     if (whitelist && whitelist.nodes) {
       var model = whitelist.nodes.map(function (item) {
