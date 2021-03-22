@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 const UtteranceSlotValue = React.memo((props) => {
 
@@ -8,7 +8,7 @@ const UtteranceSlotValue = React.memo((props) => {
   }
 
   return (
-    <input data-valid={validateSlotValue ? 'true' : 'false'} defaultValue={props.slotValue} onChange={(e) => {
+    <input data-valid={validateSlotValue ? 'true' : 'false'} value={props.slotValue} onChange={(e) => {
       props.target.dataset.slotValue = e.target.value;
       props.updateRaw();
     }} />

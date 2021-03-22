@@ -505,7 +505,7 @@ var UtteranceSlotValue = React__default.memo(function (props) {
 
   return /*#__PURE__*/React__default.createElement("input", {
     "data-valid": validateSlotValue ? 'true' : 'false',
-    defaultValue: props.slotValue,
+    value: props.slotValue,
     onChange: function onChange(e) {
       props.target.dataset.slotValue = e.target.value;
       props.updateRaw();
@@ -895,7 +895,7 @@ var Utterance = React__default.memo(function (props) {
       return /*#__PURE__*/React__default.createElement("li", {
         className: "model-list__item"
       }, /*#__PURE__*/React__default.createElement(UtteranceSlotValue, {
-        key: item.slot_value + "_" + index,
+        key: index,
         index: index,
         target: item.target,
         slotValue: item.slot_value,

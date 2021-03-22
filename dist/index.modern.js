@@ -408,7 +408,7 @@ const UtteranceSlotValue = React.memo(props => {
 
   return /*#__PURE__*/React.createElement("input", {
     "data-valid": validateSlotValue ? 'true' : 'false',
-    defaultValue: props.slotValue,
+    value: props.slotValue,
     onChange: e => {
       props.target.dataset.slotValue = e.target.value;
       props.updateRaw();
@@ -758,7 +758,7 @@ const Utterance = React.memo(props => {
       return /*#__PURE__*/React.createElement("li", {
         className: "model-list__item"
       }, /*#__PURE__*/React.createElement(UtteranceSlotValue, {
-        key: `${item.slot_value}_${index}`,
+        key: index,
         index: index,
         target: item.target,
         slotValue: item.slot_value,
