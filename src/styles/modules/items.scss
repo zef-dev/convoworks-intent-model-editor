@@ -216,6 +216,10 @@
     line-height: 1.75;
     padding: 12px;
 
+    &:hover {
+        background: rgba($color-primary, 0.035);
+    }
+
     input {
         border: none;
         padding-right: 24px;

@@ -537,7 +537,9 @@ const UtteranceInput = React.memo(props => {
         mark.dataset.type = type;
       }
 
-      props.setRaw(input.current.innerHTML);
+      let lastChar = input.current.innerHTML[input.current.innerHTML.length - 1];
+      let newRaw = input.current.innerHTML + `${lastChar === ' ' ? '' : ' '}`;
+      props.setRaw(newRaw);
       props.setSelection(null);
       cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
     }
@@ -667,9 +669,10 @@ const Utterance = React.memo(props => {
         }).join(' ');
       }
 
-      setRaw(str);
+      let lastChar = str[str.length - 1];
+      setRaw(str + `${lastChar === '>' ? ' ' : ''}`);
     }
-  }, []);
+  }, [props.stateChange]);
   useEffect(() => {
     if (whitelist && whitelist.nodes) {
       let model = whitelist.nodes.map(item => {
@@ -699,7 +702,7 @@ const Utterance = React.memo(props => {
     }
   }, [whitelist]);
 
-  if (raw) {
+  if (props) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       class: `field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${active ? 'field--active' : ''}`
     }, /*#__PURE__*/React.createElement("div", {
@@ -723,7 +726,7 @@ const Utterance = React.memo(props => {
         props.removeFromUtterances(props.utterance);
         document.querySelectorAll('.taggable-text__input')[0].focus();
       }
-    }, /*#__PURE__*/React.createElement(IconTrash, null))))), active && whitelist && /*#__PURE__*/React.createElement("ul", {
+    }, /*#__PURE__*/React.createElement(IconTrash, null))))), !props.new && active && whitelist && /*#__PURE__*/React.createElement("ul", {
       className: "model-list"
     }, /*#__PURE__*/React.createElement("header", {
       className: "model-list__header"
@@ -752,7 +755,6 @@ const Utterance = React.memo(props => {
 
 const IntentUtterances = props => {
   const [active, setActive] = useState(0);
-  console.log(active);
 
   const removeFromUtterances = object => {
     let arr = props.utterances.filter(item => item !== object);
@@ -761,8 +763,20 @@ const IntentUtterances = props => {
     props.setStateChange(!props.stateChange);
   };
 
+  useEffect(() => {
+    if (props.utterances[0].model.filter(item => item.type).length > 0) {
+      props.setUtterances([{
+        raw: '',
+        model: [],
+        new: true
+      }, ...props.utterances]);
+      props.setStateChange(!props.stateChange);
+    }
+  }, [props.utterances]);
+
   if (props.utterances) {
     return /*#__PURE__*/React.createElement("ul", null, props.utterances.map((item, index) => {
+      let isNew = index === 0;
       return /*#__PURE__*/React.createElement("li", {
         style: {
           display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none'
@@ -770,6 +784,7 @@ const IntentUtterances = props => {
       }, /*#__PURE__*/React.createElement(Utterance, {
         key: index,
         utterance: item,
+        new: isNew,
         index: index,
         active: active,
         setActive: setActive,
@@ -799,26 +814,6 @@ function IntentDetails(props) {
   const [searchPhrase, setSearchPhrase] = useState('');
   const newExpressionInput = useRef(null);
   const searchInput = useRef(null);
-
-  const focusOnExpressionInput = () => {
-    newExpressionInput.current.focus();
-    newExpressionInput.current.value = '';
-    setActive(null);
-  };
-
-  function addNewValue() {
-    let arr = [...utterances];
-    let newUtterance = {
-      raw: newExpression ? newExpression : '',
-      model: [{
-        text: newExpression ? newExpression : ''
-      }]
-    };
-    arr = [newUtterance, ...arr];
-    setUtterances(arr);
-    setActive(0);
-  }
-
   useEffect(() => {
     if (intent) {
       setName(intent.name);
@@ -842,7 +837,7 @@ function IntentDetails(props) {
     }
   };
 
-  if (intent) {
+  if (utterances.length) {
     return /*#__PURE__*/React.createElement("div", {
       className: "convo-details"
     }, /*#__PURE__*/React.createElement("section", {
@@ -881,11 +876,9 @@ function IntentDetails(props) {
     })), /*#__PURE__*/React.createElement("div", {
       className: "margin--24--large"
     }, /*#__PURE__*/React.createElement(IntentUtterances, {
-      addNewValue: addNewValue,
       utterances: utterances,
       setUtterances: setUtterances,
       entities: [entities, ...systemEntities],
-      focusOnExpressionInput: focusOnExpressionInput,
       stateChange: stateChange,
       setStateChange: setStateChange,
       searchPhrase: searchPhrase

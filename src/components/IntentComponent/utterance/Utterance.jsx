@@ -27,9 +27,11 @@ export const Utterance = React.memo(props => {
                 }).join(' ');
             }
 
-            setRaw(str);
+
+            let lastChar = str[str.length - 1];
+            setRaw(str + `${lastChar === '>' ? ' ' : ''}`);
         }
-    }, []);
+    }, [props.stateChange]);
 
     useEffect(() => {
         if (whitelist && whitelist.nodes) {
@@ -57,7 +59,8 @@ export const Utterance = React.memo(props => {
         }
     }, [whitelist]);
 
-    if (raw) {
+
+    if (props) {
         return (
             <React.Fragment>
                 <div class={`field ${valid ? 'field--valid' : 'field--invalid'} field--intent ${active ? 'field--active' : ''}`}>
@@ -77,7 +80,7 @@ export const Utterance = React.memo(props => {
                             </div>
                         </div>
                     </div>
-                    {active && whitelist &&
+                    {!props.new && active && whitelist &&
                         <ul className="model-list">
                             <header className="model-list__header">
                                 <strong>Parameter name</strong>

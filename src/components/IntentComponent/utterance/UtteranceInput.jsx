@@ -70,7 +70,10 @@ const UtteranceInput = React.memo((props) => {
         mark.dataset.type = type;
       }
 
-      props.setRaw(input.current.innerHTML);
+      
+      let lastChar = input.current.innerHTML[input.current.innerHTML.length - 1];
+      let newRaw = input.current.innerHTML + `${lastChar === ' ' ? '' : ' '}`;
+      props.setRaw(newRaw);
       props.setSelection(null);
       cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
 

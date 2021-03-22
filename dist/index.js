@@ -656,7 +656,9 @@ var UtteranceInput = React__default.memo(function (props) {
         _mark.dataset.type = type;
       }
 
-      props.setRaw(input.current.innerHTML);
+      var lastChar = input.current.innerHTML[input.current.innerHTML.length - 1];
+      var newRaw = input.current.innerHTML + ("" + (lastChar === ' ' ? '' : ' '));
+      props.setRaw(newRaw);
       props.setSelection(null);
       cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
     }
@@ -797,9 +799,10 @@ var Utterance = React__default.memo(function (props) {
         }).join(' ');
       }
 
-      setRaw(str);
+      var lastChar = str[str.length - 1];
+      setRaw(str + ("" + (lastChar === '>' ? ' ' : '')));
     }
-  }, []);
+  }, [props.stateChange]);
   React.useEffect(function () {
     if (whitelist && whitelist.nodes) {
       var model = whitelist.nodes.map(function (item) {
@@ -835,7 +838,7 @@ var Utterance = React__default.memo(function (props) {
     }
   }, [whitelist]);
 
-  if (raw) {
+  if (props) {
     return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
       "class": "field " + (valid ? 'field--valid' : 'field--invalid') + " field--intent " + (active ? 'field--active' : '')
     }, /*#__PURE__*/React__default.createElement("div", {
@@ -859,7 +862,7 @@ var Utterance = React__default.memo(function (props) {
         props.removeFromUtterances(props.utterance);
         document.querySelectorAll('.taggable-text__input')[0].focus();
       }
-    }, /*#__PURE__*/React__default.createElement(IconTrash, null))))), active && whitelist && /*#__PURE__*/React__default.createElement("ul", {
+    }, /*#__PURE__*/React__default.createElement(IconTrash, null))))), !props["new"] && active && whitelist && /*#__PURE__*/React__default.createElement("ul", {
       className: "model-list"
     }, /*#__PURE__*/React__default.createElement("header", {
       className: "model-list__header"
@@ -893,8 +896,6 @@ var IntentUtterances = function IntentUtterances(props) {
       active = _useState[0],
       setActive = _useState[1];
 
-  console.log(active);
-
   var removeFromUtterances = function removeFromUtterances(object) {
     var arr = props.utterances.filter(function (item) {
       return item !== object;
@@ -904,8 +905,22 @@ var IntentUtterances = function IntentUtterances(props) {
     props.setStateChange(!props.stateChange);
   };
 
+  React.useEffect(function () {
+    if (props.utterances[0].model.filter(function (item) {
+      return item.type;
+    }).length > 0) {
+      props.setUtterances([{
+        raw: '',
+        model: [],
+        "new": true
+      }].concat(props.utterances));
+      props.setStateChange(!props.stateChange);
+    }
+  }, [props.utterances]);
+
   if (props.utterances) {
     return /*#__PURE__*/React__default.createElement("ul", null, props.utterances.map(function (item, index) {
+      var isNew = index === 0;
       return /*#__PURE__*/React__default.createElement("li", {
         style: {
           display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none'
@@ -913,6 +928,7 @@ var IntentUtterances = function IntentUtterances(props) {
       }, /*#__PURE__*/React__default.createElement(Utterance, {
         key: index,
         utterance: item,
+        "new": isNew,
         index: index,
         active: active,
         setActive: setActive,
@@ -950,8 +966,7 @@ function IntentDetails(props) {
       utterances = _useState5[0],
       setUtterances = _useState5[1];
 
-  var _useState6 = React.useState(null),
-      newExpression = _useState6[0];
+  var _useState6 = React.useState(null);
 
   var _useState7 = React.useState(true);
 
@@ -961,26 +976,6 @@ function IntentDetails(props) {
 
   var newExpressionInput = React.useRef(null);
   var searchInput = React.useRef(null);
-
-  var focusOnExpressionInput = function focusOnExpressionInput() {
-    newExpressionInput.current.focus();
-    newExpressionInput.current.value = '';
-    setActive(null);
-  };
-
-  function addNewValue() {
-    var arr = [].concat(utterances);
-    var newUtterance = {
-      raw: newExpression ? newExpression : '',
-      model: [{
-        text: newExpression ? newExpression : ''
-      }]
-    };
-    arr = [newUtterance].concat(arr);
-    setUtterances(arr);
-    setActive(0);
-  }
-
   React.useEffect(function () {
     if (intent) {
       setName(intent.name);
@@ -1005,7 +1000,7 @@ function IntentDetails(props) {
     }
   };
 
-  if (intent) {
+  if (utterances.length) {
     return /*#__PURE__*/React__default.createElement("div", {
       className: "convo-details"
     }, /*#__PURE__*/React__default.createElement("section", {
@@ -1044,11 +1039,9 @@ function IntentDetails(props) {
     })), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--24--large"
     }, /*#__PURE__*/React__default.createElement(IntentUtterances, {
-      addNewValue: addNewValue,
       utterances: utterances,
       setUtterances: setUtterances,
       entities: [entities].concat(systemEntities),
-      focusOnExpressionInput: focusOnExpressionInput,
       stateChange: stateChange,
       setStateChange: setStateChange,
       searchPhrase: searchPhrase

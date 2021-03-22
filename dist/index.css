@@ -985,6 +985,8 @@
     width: 100%;
     line-height: 1.75;
     padding: 12px; }
+    .convo-details .model-list__item:hover {
+      background: rgba(47, 116, 234, 0.035); }
     .convo-details .model-list__item input {
       border: none;
       padding-right: 24px;

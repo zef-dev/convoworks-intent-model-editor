@@ -22,24 +22,6 @@ function IntentDetails(props) {
 
   const searchInput = useRef(null);
 
-  const focusOnExpressionInput = () => {
-    newExpressionInput.current.focus();
-    newExpressionInput.current.value = '';
-    setActive(null);
-  };
-
-  // add new value to value array
-  function addNewValue() {
-    let arr = [...utterances];
-    let newUtterance = {
-      raw: newExpression ? newExpression : '',
-      model: [{ text: newExpression ? newExpression : '' }],
-    };
-    arr = [newUtterance, ...arr];
-    setUtterances(arr);
-    setActive(0);
-  }
-
   // check if data is passed in props
   useEffect(() => {
     if (intent) {
@@ -68,7 +50,7 @@ function IntentDetails(props) {
     }
   }
 
-  if (intent) {
+  if (utterances.length) {
     return (
       <div className="convo-details">
         <section className="layout--editor-content">
@@ -111,11 +93,9 @@ function IntentDetails(props) {
               </div>
               <div className="margin--24--large">
                 <IntentUtterances
-                  addNewValue={addNewValue}
                   utterances={utterances}
                   setUtterances={setUtterances}
                   entities={[entities, ...systemEntities]}
-                  focusOnExpressionInput={focusOnExpressionInput}
                   stateChange={stateChange}
                   setStateChange={setStateChange}
                   searchPhrase={searchPhrase}
