@@ -9,6 +9,7 @@ var ContentEditable = _interopDefault(require('react-contenteditable'));
 var useOnclickOutside = _interopDefault(require('react-cool-onclickoutside'));
 var TextInput = _interopDefault(require('react-autocomplete-input'));
 require('react-autocomplete-input/dist/bundle.css');
+var sanitizeHtml = _interopDefault(require('sanitize-html'));
 
 function IconTrash() {
   return /*#__PURE__*/React__default.createElement("svg", {
@@ -719,13 +720,20 @@ var UtteranceInput = function UtteranceInput(props) {
       }));
     }
   }, [props.selection, props.active]);
+  var sanitized = sanitizeHtml(props.raw, {
+    allowedTags: ['mark'],
+    allowedAttributes: false,
+    exclusiveFilter: function exclusiveFilter(frame) {
+      return !frame.text.trim();
+    }
+  });
   return /*#__PURE__*/React__default.createElement("div", {
     "class": "taggable-text"
   }, /*#__PURE__*/React__default.createElement(ContentEditable, {
     "data-placeholder": "Enter reference value",
     innerRef: input,
     className: "taggable-text__input",
-    html: props.raw,
+    html: sanitized,
     onClick: function onClick(e) {
       if (e.target.tagName === 'MARK') {
         props.setSelection(e.target);
@@ -764,6 +772,8 @@ var UtteranceInput = function UtteranceInput(props) {
   }));
 };
 
+var UtteranceInput$1 = React__default.memo(UtteranceInput);
+
 var Utterance = React__default.memo(function (props) {
   var _useState = React.useState(''),
       raw = _useState[0],
@@ -793,7 +803,9 @@ var Utterance = React__default.memo(function (props) {
     }).filter(function (item) {
       return item.text.trim().length;
     }),
-    nodes: Array.from(input.current.childNodes)
+    nodes: Array.from(input.current.childNodes).filter(function (item) {
+      return item.textContent.trim().length > 0;
+    })
   };
   var active = props.active === props.index;
   React.useEffect(function () {
@@ -854,11 +866,15 @@ var Utterance = React__default.memo(function (props) {
 
   var validateInput = function validateInput() {
     if (whitelist && whitelist.nodes) {
-      if (whitelist.nodes.length) {
-        var textNodes = whitelist.nodes.filter(function (item) {
-          return !item.dataset;
-        });
-        console.log(textNodes);
+      var nodes = whitelist.nodes;
+      var textNodes = nodes.filter(function (item) {
+        return !item.tagName;
+      });
+      console.log(textNodes);
+
+      if (whitelist.tags.length > 0 && textNodes.length < 1) {
+        return true;
+      } else if (textNodes.length > 0) {
         var str = textNodes.map(function (item) {
           return item.textContent.trim();
         }).join(' ');
@@ -886,7 +902,7 @@ var Utterance = React__default.memo(function (props) {
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "field__input",
       "data-valid": validateInput() ? 'true' : 'false'
-    }, /*#__PURE__*/React__default.createElement(UtteranceInput, {
+    }, /*#__PURE__*/React__default.createElement(UtteranceInput$1, {
       index: props.index,
       input: input,
       active: active,
@@ -992,6 +1008,8 @@ var IntentUtterances = function IntentUtterances(props) {
   }
 };
 
+var IntentUtterances$1 = React__default.memo(IntentUtterances);
+
 function IntentDetails(props) {
   var _useState = React.useState(props.intent),
       intent = _useState[0];
@@ -1085,7 +1103,7 @@ function IntentDetails(props) {
       }
     })), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--24--large"
-    }, /*#__PURE__*/React__default.createElement(IntentUtterances, {
+    }, /*#__PURE__*/React__default.createElement(IntentUtterances$1, {
       utterances: utterances,
       setUtterances: setUtterances,
       entities: [entities].concat(systemEntities),

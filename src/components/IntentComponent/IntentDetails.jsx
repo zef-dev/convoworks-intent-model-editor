@@ -39,6 +39,7 @@ function IntentDetails(props) {
         utterances: utterances
       }
 
+
       props.onUpdate(intent);
     }
   }, [name, utterances]);

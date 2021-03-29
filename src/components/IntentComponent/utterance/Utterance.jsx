@@ -24,7 +24,7 @@ export const Utterance = React.memo(props => {
                 target: item
             })
         }).filter(item => item.text.trim().length),
-        nodes: Array.from(input.current.childNodes)
+        nodes: Array.from(input.current.childNodes).filter(item => item.textContent.trim().length > 0)
     }
 
     const active = props.active === props.index;
@@ -80,9 +80,14 @@ export const Utterance = React.memo(props => {
 
     const validateInput = () => {
         if (whitelist && whitelist.nodes) {
-            if (whitelist.nodes.length) {
-                let textNodes = whitelist.nodes.filter(item => !item.dataset);
-                console.log(textNodes)
+            let nodes = whitelist.nodes;
+            let textNodes = nodes.filter(item => !item.tagName);
+
+            console.log(textNodes)
+
+            if (whitelist.tags.length > 0 && textNodes.length < 1) {
+                return true
+            } else if (textNodes.length > 0) {
                 let str = textNodes.map(item => item.textContent.trim()).join(' ');
                 let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
                 return reg.test(str.trim());

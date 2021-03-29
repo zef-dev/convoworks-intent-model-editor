@@ -36,4 +36,4 @@ const IntentUtterances = (props) => {
 	}
 }
 
-export default IntentUtterances;
+export default React.memo(IntentUtterances);

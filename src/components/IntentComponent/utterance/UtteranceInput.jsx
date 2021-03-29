@@ -3,6 +3,7 @@ import rangy from 'rangy';
 import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
+import sanitizeHtml from 'sanitize-html';
 
 const UtteranceInput = (props) => {
 
@@ -127,13 +128,21 @@ const UtteranceInput = (props) => {
     }
   }, [props.selection, props.active]);
 
+  const sanitized = sanitizeHtml(props.raw, {
+    allowedTags: ['mark'],
+    allowedAttributes: false,
+    exclusiveFilter: function (frame) {
+      return !frame.text.trim();
+    }
+  });
+
   return (
     <div class='taggable-text'>
       <ContentEditable
         data-placeholder="Enter reference value"
         innerRef={input}
         className='taggable-text__input'
-        html={props.raw}
+        html={sanitized}
         onClick={(e) => {
           if (e.target.tagName === 'MARK') {
             props.setSelection(e.target);
@@ -170,4 +179,4 @@ const UtteranceInput = (props) => {
   )
 }
 
-export default UtteranceInput;
+export default React.memo(UtteranceInput);

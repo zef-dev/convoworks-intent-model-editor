@@ -5,6 +5,7 @@ import ContentEditable from 'react-contenteditable';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
+import sanitizeHtml from 'sanitize-html';
 
 function IconTrash() {
   return /*#__PURE__*/React.createElement("svg", {
@@ -603,13 +604,20 @@ const UtteranceInput = props => {
       });
     }
   }, [props.selection, props.active]);
+  const sanitized = sanitizeHtml(props.raw, {
+    allowedTags: ['mark'],
+    allowedAttributes: false,
+    exclusiveFilter: function (frame) {
+      return !frame.text.trim();
+    }
+  });
   return /*#__PURE__*/React.createElement("div", {
     class: "taggable-text"
   }, /*#__PURE__*/React.createElement(ContentEditable, {
     "data-placeholder": "Enter reference value",
     innerRef: input,
     className: "taggable-text__input",
-    html: props.raw,
+    html: sanitized,
     onClick: e => {
       if (e.target.tagName === 'MARK') {
         props.setSelection(e.target);
@@ -648,6 +656,8 @@ const UtteranceInput = props => {
   }));
 };
 
+var UtteranceInput$1 = React.memo(UtteranceInput);
+
 const Utterance = React.memo(props => {
   const [raw, setRaw] = useState('');
   const [selection, setSelection] = useState(null);
@@ -664,7 +674,7 @@ const Utterance = React.memo(props => {
         target: item
       };
     }).filter(item => item.text.trim().length),
-    nodes: Array.from(input.current.childNodes)
+    nodes: Array.from(input.current.childNodes).filter(item => item.textContent.trim().length > 0)
   };
   const active = props.active === props.index;
   useEffect(() => {
@@ -719,9 +729,13 @@ const Utterance = React.memo(props => {
 
   const validateInput = () => {
     if (whitelist && whitelist.nodes) {
-      if (whitelist.nodes.length) {
-        let textNodes = whitelist.nodes.filter(item => !item.dataset);
-        console.log(textNodes);
+      let nodes = whitelist.nodes;
+      let textNodes = nodes.filter(item => !item.tagName);
+      console.log(textNodes);
+
+      if (whitelist.tags.length > 0 && textNodes.length < 1) {
+        return true;
+      } else if (textNodes.length > 0) {
         let str = textNodes.map(item => item.textContent.trim()).join(' ');
         let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
         return reg.test(str.trim());
@@ -747,7 +761,7 @@ const Utterance = React.memo(props => {
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__input",
       "data-valid": validateInput() ? 'true' : 'false'
-    }, /*#__PURE__*/React.createElement(UtteranceInput, {
+    }, /*#__PURE__*/React.createElement(UtteranceInput$1, {
       index: props.index,
       input: input,
       active: active,
@@ -845,6 +859,8 @@ const IntentUtterances = props => {
   }
 };
 
+var IntentUtterances$1 = React.memo(IntentUtterances);
+
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
   const [savedIntent, setSavedIntent] = useState(props.intent);
@@ -919,7 +935,7 @@ function IntentDetails(props) {
       }
     })), /*#__PURE__*/React.createElement("div", {
       className: "margin--24--large"
-    }, /*#__PURE__*/React.createElement(IntentUtterances, {
+    }, /*#__PURE__*/React.createElement(IntentUtterances$1, {
       utterances: utterances,
       setUtterances: setUtterances,
       entities: [entities, ...systemEntities],
