@@ -3,6 +3,7 @@ import IntentUtterances from './IntentUtterances.jsx';
 import _, { debounce } from 'lodash';
 import { useRef } from 'react';
 import { validateInput } from '../../helpers/validations.jsx';
+import useDebounce from '../../helpers/useDebounce.jsx';
 
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
@@ -29,6 +30,26 @@ function IntentDetails(props) {
       setUtterances(intent.utterances);
     }
   }, [intent]);
+  
+  const handleNew = () => {
+    let newUtteranceField = { raw: '', model: [] };
+    if (utterances[0] && utterances[0].model.length > 0) {
+      let arr = [newUtteranceField, ...utterances];
+      setUtterances(arr);
+      setStateChange(!stateChange);
+
+      let input = document.querySelectorAll('.taggable-text__input')[1];
+
+      input && input.focus();
+    }
+  }
+
+  const debouncedHandleNew = useDebounce(handleNew, 500);
+
+  useEffect(() => {
+    debouncedHandleNew;
+  }, [utterances])
+
 
   useEffect(() => {
     if (name && utterances) {

@@ -83,8 +83,6 @@ export const Utterance = React.memo(props => {
             let nodes = whitelist.nodes;
             let textNodes = nodes.filter(item => !item.tagName);
 
-            console.log(textNodes)
-
             if (whitelist.tags.length > 0 && textNodes.length < 1) {
                 return true
             } else if (textNodes.length > 0) {

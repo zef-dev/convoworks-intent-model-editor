@@ -731,7 +731,6 @@ const Utterance = React.memo(props => {
     if (whitelist && whitelist.nodes) {
       let nodes = whitelist.nodes;
       let textNodes = nodes.filter(item => !item.tagName);
-      console.log(textNodes);
 
       if (whitelist.tags.length > 0 && textNodes.length < 1) {
         return true;
@@ -812,7 +811,8 @@ const Utterance = React.memo(props => {
 });
 
 const IntentUtterances = props => {
-  const [active, setActive] = useState(0);
+  console.log(props.utterances);
+  const [active, setActive] = useState(null);
 
   const removeFromUtterances = object => {
     let arr = props.utterances.filter(item => item !== object);
@@ -821,20 +821,8 @@ const IntentUtterances = props => {
     props.setStateChange(!props.stateChange);
   };
 
-  useEffect(() => {
-    if (props.utterances[0].model.filter(item => item.type).length > 0) {
-      props.setUtterances([{
-        raw: '',
-        model: [],
-        new: true
-      }, ...props.utterances]);
-      props.setStateChange(!props.stateChange);
-    }
-  }, [props.utterances]);
-
   if (props.utterances) {
     return /*#__PURE__*/React.createElement("ul", null, props.utterances.map((item, index) => {
-      let isNew = index === 0;
       return /*#__PURE__*/React.createElement("li", {
         style: {
           display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none'
@@ -842,7 +830,7 @@ const IntentUtterances = props => {
       }, /*#__PURE__*/React.createElement(Utterance, {
         key: index,
         utterance: item,
-        new: isNew,
+        new: item.new,
         index: index,
         active: active,
         setActive: setActive,
@@ -860,6 +848,19 @@ const IntentUtterances = props => {
 };
 
 var IntentUtterances$1 = React.memo(IntentUtterances);
+
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value]);
+  return debouncedValue;
+}
 
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
@@ -880,6 +881,25 @@ function IntentDetails(props) {
       setUtterances(intent.utterances);
     }
   }, [intent]);
+
+  const handleNew = () => {
+    let newUtteranceField = {
+      raw: '',
+      model: []
+    };
+
+    if (utterances[0] && utterances[0].model.length > 0) {
+      let arr = [newUtteranceField, ...utterances];
+      setUtterances(arr);
+      setStateChange(!stateChange);
+      let input = document.querySelectorAll('.taggable-text__input')[1];
+      input && input.focus();
+    }
+  };
+
+  const debouncedHandleNew = useDebounce(handleNew, 500);
+  useEffect(() => {
+  }, [utterances]);
   useEffect(() => {
     if (name && utterances) {
       let intent = { ...intent,

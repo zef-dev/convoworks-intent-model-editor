@@ -14,7 +14,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    setIntent(data.intents[2])
+    setIntent(data.intents[1])
   }, [data])
 
   useEffect(() => {

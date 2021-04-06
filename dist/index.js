@@ -870,7 +870,6 @@ var Utterance = React__default.memo(function (props) {
       var textNodes = nodes.filter(function (item) {
         return !item.tagName;
       });
-      console.log(textNodes);
 
       if (whitelist.tags.length > 0 && textNodes.length < 1) {
         return true;
@@ -955,7 +954,9 @@ var Utterance = React__default.memo(function (props) {
 });
 
 var IntentUtterances = function IntentUtterances(props) {
-  var _useState = React.useState(0),
+  console.log(props.utterances);
+
+  var _useState = React.useState(null),
       active = _useState[0],
       setActive = _useState[1];
 
@@ -968,22 +969,8 @@ var IntentUtterances = function IntentUtterances(props) {
     props.setStateChange(!props.stateChange);
   };
 
-  React.useEffect(function () {
-    if (props.utterances[0].model.filter(function (item) {
-      return item.type;
-    }).length > 0) {
-      props.setUtterances([{
-        raw: '',
-        model: [],
-        "new": true
-      }].concat(props.utterances));
-      props.setStateChange(!props.stateChange);
-    }
-  }, [props.utterances]);
-
   if (props.utterances) {
     return /*#__PURE__*/React__default.createElement("ul", null, props.utterances.map(function (item, index) {
-      var isNew = index === 0;
       return /*#__PURE__*/React__default.createElement("li", {
         style: {
           display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none'
@@ -991,7 +978,7 @@ var IntentUtterances = function IntentUtterances(props) {
       }, /*#__PURE__*/React__default.createElement(Utterance, {
         key: index,
         utterance: item,
-        "new": isNew,
+        "new": item["new"],
         index: index,
         active: active,
         setActive: setActive,
@@ -1009,6 +996,22 @@ var IntentUtterances = function IntentUtterances(props) {
 };
 
 var IntentUtterances$1 = React__default.memo(IntentUtterances);
+
+function useDebounce(value, delay) {
+  var _useState = React.useState(value),
+      debouncedValue = _useState[0],
+      setDebouncedValue = _useState[1];
+
+  React.useEffect(function () {
+    var handler = setTimeout(function () {
+      setDebouncedValue(value);
+    }, delay);
+    return function () {
+      clearTimeout(handler);
+    };
+  }, [value]);
+  return debouncedValue;
+}
 
 function IntentDetails(props) {
   var _useState = React.useState(props.intent),
@@ -1047,6 +1050,25 @@ function IntentDetails(props) {
       setUtterances(intent.utterances);
     }
   }, [intent]);
+
+  var handleNew = function handleNew() {
+    var newUtteranceField = {
+      raw: '',
+      model: []
+    };
+
+    if (utterances[0] && utterances[0].model.length > 0) {
+      var arr = [newUtteranceField].concat(utterances);
+      setUtterances(arr);
+      setStateChange(!stateChange);
+      var input = document.querySelectorAll('.taggable-text__input')[1];
+      input && input.focus();
+    }
+  };
+
+  var debouncedHandleNew = useDebounce(handleNew, 500);
+  React.useEffect(function () {
+  }, [utterances]);
   React.useEffect(function () {
     if (name && utterances) {
       var _intent = _extends({}, _intent, {
