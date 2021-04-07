@@ -678,14 +678,14 @@
     border-color: #d9543e; }
   .convo-details input[hidden] {
     display: none; }
-  .convo-details .input, .convo-details .field {
+  .convo-details .input, .convo-details .dropdown__search, .convo-details .field {
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 0.5rem;
     transition: 0.22s;
     padding: 10px 12px; }
-    .convo-details .input:hover, .convo-details .field:hover {
+    .convo-details .input:hover, .convo-details .dropdown__search:hover, .convo-details .field:hover {
       border-color: rgba(47, 116, 234, 0.5); }
-    .convo-details .input:focus, .convo-details .field:focus {
+    .convo-details .input:focus, .convo-details .dropdown__search:focus, .convo-details .field:focus {
       border-color: #2f74ea; }
   .convo-details .input--item-name {
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -792,7 +792,6 @@
     background: #ffffff;
     box-shadow: 0 0.125rem 0.375rem 0 rgba(0, 0, 0, 0.2);
     z-index: 99;
-    transition: 0.22s;
     opacity: 0;
     visibility: hidden;
     font-size: 14px;
@@ -810,7 +809,7 @@
     width: 100%;
     height: 100%;
     padding: 16px 8px;
-    padding-top: 8px;
+    padding-top: 0;
     margin-bottom: 16px; }
     .convo-details .dropdown__items button {
       background: transparent;
@@ -837,20 +836,16 @@
     .convo-details .dropdown__selection strong {
       color: #2f74ea;
       font-weight: 500; }
-  .convo-details .editor-input.dropdown__search {
+  .convo-details .dropdown__search {
     width: 100%;
-    border: none;
-    margin-bottom: 4px;
-    border-bottom: 1px solid rgba(26, 26, 26, 0.3);
-    font-size: 0.875rem;
-    padding: 8px 0; }
-    .convo-details .editor-input.dropdown__search:focus {
+    font-size: 0.875rem; }
+    .convo-details .dropdown__search:focus {
       outline: none;
       border-bottom-color: #2f74ea; }
   .convo-details .react-autocomplete-input {
     top: 100% !important; }
     .convo-details .react-autocomplete-input li {
-      padding: 4px; }
+      padding: 4px 6px; }
       .convo-details .react-autocomplete-input li.active {
         background-color: #2f74ea; }
   .convo-details .field {
