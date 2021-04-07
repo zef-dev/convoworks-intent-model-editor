@@ -16,7 +16,7 @@ const IntentUtterances = (props) => {
 				{props.utterances.map((item, index) => {
 					let isNew = index === 0 && item.model.length === 0;
 					return (
-						<li style={{ display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none' }}>
+						<li key={index} style={{ display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none' }}>
 							<Utterance key={index} utterance={item} new={isNew} index={index} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} slotValuePairs={props.slotValuePairs} />
 						</li>
 					)

@@ -28,140 +28,6 @@ function IconTrash() {
   })));
 }
 
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-
-  return arr2;
-}
-
-function _createForOfIteratorHelperLoose(o, allowArrayLike) {
-  var it;
-
-  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
-    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-      if (it) o = it;
-      var i = 0;
-      return function () {
-        if (i >= o.length) return {
-          done: true
-        };
-        return {
-          done: false,
-          value: o[i++]
-        };
-      };
-    }
-
-    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-  }
-
-  it = o[Symbol.iterator]();
-  return it.next.bind(it);
-}
-
-var stringToColor = function stringToColor(value) {
-  return value.getHashCode().intToHSL();
-};
-
-String.prototype.getHashCode = function () {
-  var hash = 0;
-  if (this.length == 0) return hash;
-
-  for (var i = 0; i < this.length; i++) {
-    hash = this.charCodeAt(i) + ((hash << 5) - hash);
-    hash = hash & hash;
-  }
-
-  return hash;
-};
-
-Number.prototype.intToHSL = function () {
-  var shortened = this % 220;
-  return "hsl(" + shortened + ",100%, 80%)";
-};
-var getCaretCharacterOffsetWithin = function getCaretCharacterOffsetWithin(element) {
-  var caretOffset = 0;
-  var doc = element.ownerDocument || element.document;
-  var win = doc.defaultView || doc.parentWindow;
-  var sel;
-
-  if (typeof win.getSelection != "undefined") {
-    sel = win.getSelection();
-
-    if (sel.rangeCount > 0) {
-      var range = win.getSelection().getRangeAt(0);
-      var preCaretRange = range.cloneRange();
-      preCaretRange.selectNodeContents(element);
-      preCaretRange.setEnd(range.endContainer, range.endOffset);
-      caretOffset = preCaretRange.toString().length;
-    }
-  } else if ((sel = doc.selection) && sel.type != "Control") {
-    var textRange = sel.createRange();
-    var preCaretTextRange = doc.body.createTextRange();
-    preCaretTextRange.moveToElementText(element);
-    preCaretTextRange.setEndPoint("EndToEnd", textRange);
-    caretOffset = preCaretTextRange.text.length;
-  }
-
-  return caretOffset;
-};
-var setCaretPosition = function setCaretPosition(el, pos) {
-  for (var _iterator = _createForOfIteratorHelperLoose(el.childNodes), _step; !(_step = _iterator()).done;) {
-    var node = _step.value;
-
-    if (node.nodeType == 3) {
-      if (node.length >= pos) {
-        var range = document.createRange(),
-            sel = window.getSelection();
-        range.setStart(node, pos);
-        range.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(range);
-        return -1;
-      } else {
-        pos -= node.length;
-      }
-    } else {
-      pos = setCaretPosition(node, pos);
-
-      if (pos == -1) {
-        return -1;
-      }
-    }
-  }
-
-  return pos;
-};
-
 var EntityValue = function EntityValue(props) {
   var _useState = React.useState(props.item.value),
       value = _useState[0],
@@ -256,7 +122,7 @@ var EntityValue = function EntityValue(props) {
     type: "text",
     defaultValue: value,
     placeholder: "Enter value",
-    onKeyDown: function onKeyDown(e) {},
+    readonly: true,
     onChange: function onChange(e) {
       setValue(e.target.value);
     }
@@ -266,7 +132,6 @@ var EntityValue = function EntityValue(props) {
     type: "text",
     defaultValue: value,
     placeholder: "Enter value",
-    onKeyDown: function onKeyDown(e) {},
     onChange: function onChange(e) {
       setValue(e.target.value);
     }
@@ -278,6 +143,7 @@ var EntityValue = function EntityValue(props) {
     style: {
       marginLeft: '0.625rem'
     },
+    readonly: true,
     onKeyDown: function onKeyDown(e) {
       if (e.keyCode == 13) {
         handleNewSynonym(synonymInput);
@@ -465,6 +331,140 @@ function EntityDetails(props) {
   }
 }
 
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
+}
+
+function _createForOfIteratorHelperLoose(o, allowArrayLike) {
+  var it;
+
+  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
+      var i = 0;
+      return function () {
+        if (i >= o.length) return {
+          done: true
+        };
+        return {
+          done: false,
+          value: o[i++]
+        };
+      };
+    }
+
+    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
+  it = o[Symbol.iterator]();
+  return it.next.bind(it);
+}
+
+var stringToColor = function stringToColor(value) {
+  return value.getHashCode().intToHSL();
+};
+
+String.prototype.getHashCode = function () {
+  var hash = 0;
+  if (this.length == 0) return hash;
+
+  for (var i = 0; i < this.length; i++) {
+    hash = this.charCodeAt(i) + ((hash << 5) - hash);
+    hash = hash & hash;
+  }
+
+  return hash;
+};
+
+Number.prototype.intToHSL = function () {
+  var shortened = this % 220;
+  return "hsl(" + shortened + ",100%, 80%)";
+};
+var getCaretCharacterOffsetWithin = function getCaretCharacterOffsetWithin(element) {
+  var caretOffset = 0;
+  var doc = element.ownerDocument || element.document;
+  var win = doc.defaultView || doc.parentWindow;
+  var sel;
+
+  if (typeof win.getSelection != "undefined") {
+    sel = win.getSelection();
+
+    if (sel.rangeCount > 0) {
+      var range = win.getSelection().getRangeAt(0);
+      var preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(element);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      caretOffset = preCaretRange.toString().length;
+    }
+  } else if ((sel = doc.selection) && sel.type != "Control") {
+    var textRange = sel.createRange();
+    var preCaretTextRange = doc.body.createTextRange();
+    preCaretTextRange.moveToElementText(element);
+    preCaretTextRange.setEndPoint("EndToEnd", textRange);
+    caretOffset = preCaretTextRange.text.length;
+  }
+
+  return caretOffset;
+};
+var setCaretPosition = function setCaretPosition(el, pos) {
+  for (var _iterator = _createForOfIteratorHelperLoose(el.childNodes), _step; !(_step = _iterator()).done;) {
+    var node = _step.value;
+
+    if (node.nodeType == 3) {
+      if (node.length >= pos) {
+        var range = document.createRange(),
+            sel = window.getSelection();
+        range.setStart(node, pos);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        return -1;
+      } else {
+        pos -= node.length;
+      }
+    } else {
+      pos = setCaretPosition(node, pos);
+
+      if (pos == -1) {
+        return -1;
+      }
+    }
+  }
+
+  return pos;
+};
+
 var UtteranceSlotValue = React__default.memo(function (props) {
   var _useState = React.useState(true),
       valid = _useState[0],
@@ -548,9 +548,7 @@ function Dropdown(props) {
       ref: input,
       className: "dropdown__search editor-input",
       placeholder: "Filter entities"
-    }), /*#__PURE__*/React__default.createElement("div", {
-      "class": "dropdown__selection"
-    }, "Selection: ", /*#__PURE__*/React__default.createElement("strong", null, props.selection && props.selection.toString()))), /*#__PURE__*/React__default.createElement("div", {
+    })), /*#__PURE__*/React__default.createElement("div", {
       "class": "dropdown__items"
     }, entities.length && entities.flat().map(function (item, i) {
       return /*#__PURE__*/React__default.createElement("button", {
@@ -955,6 +953,7 @@ var IntentUtterances = function IntentUtterances(props) {
     return /*#__PURE__*/React__default.createElement("ul", null, props.utterances.map(function (item, index) {
       var isNew = index === 0 && item.model.length === 0;
       return /*#__PURE__*/React__default.createElement("li", {
+        key: index,
         style: {
           display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none'
         }

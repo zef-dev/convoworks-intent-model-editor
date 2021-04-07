@@ -23,25 +23,27 @@ const App = () => {
 
   return (
     <React.Fragment>
-      <nav>
-        <button onClick={() => setView('intent')}>Intent editor</button>
-        <button onClick={() => setView('entity')}>Entity editor</button>
-      </nav>
-      {view === 'intent' ? 
-      <IntentEditor
-        intent={JSON.parse(localStorage.getItem('intent'))}
-        entities={[...data.entities, {name: 'test.entity.someVal', values: []}, {name: 'test.entity.more.dots', values: []}]}
-        systemEntities={[]}
-        onUpdate={(item) => {saveIntent(item);}}
-      />
-
-      :
-
-      <EntityEditor
-        entity={data.entities[0]}
-        onUpdate={() => {console.log('update')}}
-      />
-    }
+      <form onSubmit={() => console.log('submit')}>
+        <nav>
+          <button onClick={() => setView('intent')}>Intent editor</button>
+          <button onClick={() => setView('entity')}>Entity editor</button>
+        </nav>
+        {view === 'intent' ? 
+        <IntentEditor
+          intent={JSON.parse(localStorage.getItem('intent'))}
+          entities={[...data.entities, {name: 'test.entity.someVal', values: []}, {name: 'test.entity.more.dots', values: []}]}
+          systemEntities={[]}
+          onUpdate={(item) => {saveIntent(item);}}
+        />
+  
+        :
+  
+        <EntityEditor
+          entity={data.entities[0]}
+          onUpdate={() => {console.log('update')}}
+        />
+      }
+      </form>
     </React.Fragment>
   )
 }

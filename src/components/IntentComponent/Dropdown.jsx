@@ -57,7 +57,6 @@ function Dropdown(props) {
 						className="dropdown__search editor-input"
 						placeholder="Filter entities"
 					/>
-					<div class="dropdown__selection">Selection: <strong>{props.selection && props.selection.toString()}</strong></div>
 				</header>
 				<div class="dropdown__items">
 					{entities.length && entities.flat().map((item, i) => {

@@ -24,78 +24,6 @@ function IconTrash() {
   })));
 }
 
-const stringToColor = value => {
-  return value.getHashCode().intToHSL();
-};
-
-String.prototype.getHashCode = function () {
-  var hash = 0;
-  if (this.length == 0) return hash;
-
-  for (var i = 0; i < this.length; i++) {
-    hash = this.charCodeAt(i) + ((hash << 5) - hash);
-    hash = hash & hash;
-  }
-
-  return hash;
-};
-
-Number.prototype.intToHSL = function () {
-  var shortened = this % 220;
-  return "hsl(" + shortened + ",100%, 80%)";
-};
-const getCaretCharacterOffsetWithin = element => {
-  var caretOffset = 0;
-  var doc = element.ownerDocument || element.document;
-  var win = doc.defaultView || doc.parentWindow;
-  var sel;
-
-  if (typeof win.getSelection != "undefined") {
-    sel = win.getSelection();
-
-    if (sel.rangeCount > 0) {
-      var range = win.getSelection().getRangeAt(0);
-      var preCaretRange = range.cloneRange();
-      preCaretRange.selectNodeContents(element);
-      preCaretRange.setEnd(range.endContainer, range.endOffset);
-      caretOffset = preCaretRange.toString().length;
-    }
-  } else if ((sel = doc.selection) && sel.type != "Control") {
-    var textRange = sel.createRange();
-    var preCaretTextRange = doc.body.createTextRange();
-    preCaretTextRange.moveToElementText(element);
-    preCaretTextRange.setEndPoint("EndToEnd", textRange);
-    caretOffset = preCaretTextRange.text.length;
-  }
-
-  return caretOffset;
-};
-const setCaretPosition = (el, pos) => {
-  for (var node of el.childNodes) {
-    if (node.nodeType == 3) {
-      if (node.length >= pos) {
-        var range = document.createRange(),
-            sel = window.getSelection();
-        range.setStart(node, pos);
-        range.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(range);
-        return -1;
-      } else {
-        pos -= node.length;
-      }
-    } else {
-      pos = setCaretPosition(node, pos);
-
-      if (pos == -1) {
-        return -1;
-      }
-    }
-  }
-
-  return pos;
-};
-
 const EntityValue = props => {
   const [value, setValue] = useState(props.item.value);
   const [synonyms, setSynonyms] = useState(props.item.synonyms);
@@ -178,7 +106,7 @@ const EntityValue = props => {
     type: "text",
     defaultValue: value,
     placeholder: "Enter value",
-    onKeyDown: e => {},
+    readonly: true,
     onChange: e => {
       setValue(e.target.value);
     }
@@ -188,7 +116,6 @@ const EntityValue = props => {
     type: "text",
     defaultValue: value,
     placeholder: "Enter value",
-    onKeyDown: e => {},
     onChange: e => {
       setValue(e.target.value);
     }
@@ -200,6 +127,7 @@ const EntityValue = props => {
     style: {
       marginLeft: '0.625rem'
     },
+    readonly: true,
     onKeyDown: e => {
       if (e.keyCode == 13) {
         handleNewSynonym(synonymInput);
@@ -368,6 +296,78 @@ function EntityDetails(props) {
   }
 }
 
+const stringToColor = value => {
+  return value.getHashCode().intToHSL();
+};
+
+String.prototype.getHashCode = function () {
+  var hash = 0;
+  if (this.length == 0) return hash;
+
+  for (var i = 0; i < this.length; i++) {
+    hash = this.charCodeAt(i) + ((hash << 5) - hash);
+    hash = hash & hash;
+  }
+
+  return hash;
+};
+
+Number.prototype.intToHSL = function () {
+  var shortened = this % 220;
+  return "hsl(" + shortened + ",100%, 80%)";
+};
+const getCaretCharacterOffsetWithin = element => {
+  var caretOffset = 0;
+  var doc = element.ownerDocument || element.document;
+  var win = doc.defaultView || doc.parentWindow;
+  var sel;
+
+  if (typeof win.getSelection != "undefined") {
+    sel = win.getSelection();
+
+    if (sel.rangeCount > 0) {
+      var range = win.getSelection().getRangeAt(0);
+      var preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(element);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      caretOffset = preCaretRange.toString().length;
+    }
+  } else if ((sel = doc.selection) && sel.type != "Control") {
+    var textRange = sel.createRange();
+    var preCaretTextRange = doc.body.createTextRange();
+    preCaretTextRange.moveToElementText(element);
+    preCaretTextRange.setEndPoint("EndToEnd", textRange);
+    caretOffset = preCaretTextRange.text.length;
+  }
+
+  return caretOffset;
+};
+const setCaretPosition = (el, pos) => {
+  for (var node of el.childNodes) {
+    if (node.nodeType == 3) {
+      if (node.length >= pos) {
+        var range = document.createRange(),
+            sel = window.getSelection();
+        range.setStart(node, pos);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        return -1;
+      } else {
+        pos -= node.length;
+      }
+    } else {
+      pos = setCaretPosition(node, pos);
+
+      if (pos == -1) {
+        return -1;
+      }
+    }
+  }
+
+  return pos;
+};
+
 const UtteranceSlotValue = React.memo(props => {
   const [valid, setValid] = useState(true);
 
@@ -438,9 +438,7 @@ function Dropdown(props) {
       ref: input,
       className: "dropdown__search editor-input",
       placeholder: "Filter entities"
-    }), /*#__PURE__*/React.createElement("div", {
-      class: "dropdown__selection"
-    }, "Selection: ", /*#__PURE__*/React.createElement("strong", null, props.selection && props.selection.toString()))), /*#__PURE__*/React.createElement("div", {
+    })), /*#__PURE__*/React.createElement("div", {
       class: "dropdown__items"
     }, entities.length && entities.flat().map((item, i) => {
       return /*#__PURE__*/React.createElement("button", {
@@ -806,6 +804,7 @@ const IntentUtterances = props => {
     return /*#__PURE__*/React.createElement("ul", null, props.utterances.map((item, index) => {
       let isNew = index === 0 && item.model.length === 0;
       return /*#__PURE__*/React.createElement("li", {
+        key: index,
         style: {
           display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none'
         }
