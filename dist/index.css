@@ -1183,4 +1183,5 @@
       border-bottom: 1px dashed #d9543e; }
   .convo-details input:invalid {
     border-color: #d9543e;
-    color: #d9543e; }
+    color: #d9543e;
+    box-shadow: none; }

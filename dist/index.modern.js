@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import 'react-svg';
 import trash from './trash~hOpExtCr.svg';
-import './search~kgpDVlFG.svg';
+import search from './search~bbewSuiR.svg';
 import _ from 'lodash';
 import rangy from 'rangy';
 import ContentEditable from 'react-contenteditable';
@@ -9,7 +9,6 @@ import useOnclickOutside from 'react-cool-onclickoutside';
 import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
 import sanitizeHtml from 'sanitize-html';
-import searchIcon from './search~bbewSuiR.svg';
 
 const stringToColor = value => {
   return value.getHashCode().intToHSL();
@@ -851,7 +850,6 @@ function IntentDetails(props) {
   const [name, setName] = useState('');
   const [utterances, setUtterances] = useState([]);
   const [slotValuePairs, setSlotValuePairs] = useState([]);
-  const [valid, setValid] = useState(true);
   const [searchPhrase, setSearchPhrase] = useState('');
   const searchInput = useRef(null);
   useEffect(() => {
@@ -881,7 +879,6 @@ function IntentDetails(props) {
       type: item.type,
       slot_value: item.slot_value
     }));
-    console.log(arr);
     setSlotValuePairs(arr);
   };
 
@@ -891,11 +888,12 @@ function IntentDetails(props) {
   }, [utterances]);
   useEffect(() => {
     if (name && utterances) {
+      const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
       let intent = { ...intent,
         name: name,
         utterances: utterances
       };
-      props.onUpdate(intent);
+      props.onUpdate(intent, valid);
     }
   }, [name, utterances]);
 
@@ -932,7 +930,7 @@ function IntentDetails(props) {
       className: "search-wrapper"
     }, /*#__PURE__*/React.createElement("h3", null, "Utterances"), /*#__PURE__*/React.createElement("input", {
       style: {
-        background: `url(${searchIcon}) no-repeat 12px center`,
+        background: `url(${search}) no-repeat 12px center`,
         backgroundSize: '18px',
         paddingLeft: '42px'
       },

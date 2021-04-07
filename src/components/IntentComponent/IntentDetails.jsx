@@ -19,7 +19,6 @@ function IntentDetails(props) {
 
   const [slotValuePairs, setSlotValuePairs] = useState([]);
 
-  const [valid, setValid] = useState(true);
   const [searchPhrase, setSearchPhrase] = useState('');
   const searchInput = useRef(null);
 
@@ -49,8 +48,6 @@ function IntentDetails(props) {
       slot_value: item.slot_value
     }));
 
-    console.log(arr)
-
     setSlotValuePairs(arr);
   }
 
@@ -65,14 +62,15 @@ function IntentDetails(props) {
   useEffect(() => {
     if (name && utterances) {
 
+      const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
+
       let intent = {
         ...intent,
         name: name,
         utterances: utterances
       }
 
-
-      props.onUpdate(intent);
+      props.onUpdate(intent, valid);
     }
   }, [name, utterances]);
 

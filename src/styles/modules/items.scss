@@ -466,4 +466,5 @@ input[data-valid="false"] {
 input:invalid {
     border-color: $color-alert;
     color: $color-alert;
+    box-shadow: none;
 }

@@ -4,7 +4,7 @@ var React = require('react');
 var React__default = _interopDefault(React);
 require('react-svg');
 var trash = _interopDefault(require('./trash~hOpExtCr.svg'));
-require('./search~kgpDVlFG.svg');
+var search = _interopDefault(require('./search~bbewSuiR.svg'));
 var _ = require('lodash');
 var ___default = _interopDefault(_);
 var rangy = _interopDefault(require('rangy'));
@@ -13,7 +13,6 @@ var useOnclickOutside = _interopDefault(require('react-cool-onclickoutside'));
 var TextInput = _interopDefault(require('react-autocomplete-input'));
 require('react-autocomplete-input/dist/bundle.css');
 var sanitizeHtml = _interopDefault(require('sanitize-html'));
-var searchIcon = _interopDefault(require('./search~bbewSuiR.svg'));
 
 function _extends() {
   _extends = Object.assign || function (target) {
@@ -1028,11 +1027,9 @@ function IntentDetails(props) {
       slotValuePairs = _useState5[0],
       setSlotValuePairs = _useState5[1];
 
-  var _useState6 = React.useState(true);
-
-  var _useState7 = React.useState(''),
-      searchPhrase = _useState7[0],
-      setSearchPhrase = _useState7[1];
+  var _useState6 = React.useState(''),
+      searchPhrase = _useState6[0],
+      setSearchPhrase = _useState6[1];
 
   var searchInput = React.useRef(null);
   React.useEffect(function () {
@@ -1068,7 +1065,6 @@ function IntentDetails(props) {
         slot_value: item.slot_value
       };
     });
-    console.log(arr);
     setSlotValuePairs(arr);
   };
 
@@ -1078,12 +1074,14 @@ function IntentDetails(props) {
   }, [utterances]);
   React.useEffect(function () {
     if (name && utterances) {
+      var valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
+
       var _intent = _extends({}, _intent, {
         name: name,
         utterances: utterances
       });
 
-      props.onUpdate(_intent);
+      props.onUpdate(_intent, valid);
     }
   }, [name, utterances]);
 
@@ -1122,7 +1120,7 @@ function IntentDetails(props) {
       className: "search-wrapper"
     }, /*#__PURE__*/React__default.createElement("h3", null, "Utterances"), /*#__PURE__*/React__default.createElement("input", {
       style: {
-        background: "url(" + searchIcon + ") no-repeat 12px center",
+        background: "url(" + search + ") no-repeat 12px center",
         backgroundSize: '18px',
         paddingLeft: '42px'
       },
