@@ -829,7 +829,8 @@
         border: 1px solid #2f74ea; }
   .convo-details .dropdown__header {
     padding: 1rem 0.5rem;
-    padding-bottom: 0.5rem; }
+    padding-bottom: 0.5rem;
+    position: relative; }
   .convo-details .dropdown__selection {
     font-size: 10px;
     color: rgba(0, 0, 0, 0.65); }
@@ -846,6 +847,12 @@
     .convo-details .editor-input.dropdown__search:focus {
       outline: none;
       border-bottom-color: #2f74ea; }
+  .convo-details .react-autocomplete-input {
+    top: 100% !important; }
+    .convo-details .react-autocomplete-input li {
+      padding: 4px; }
+      .convo-details .react-autocomplete-input li.active {
+        background-color: #2f74ea; }
   .convo-details .field {
     padding: 0;
     margin-bottom: 10px;

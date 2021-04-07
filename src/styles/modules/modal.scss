@@ -60,7 +60,7 @@
 .dropdown__header {
 	padding: 1rem 0.5rem;
 	padding-bottom: 0.5rem;
-
+	position: relative;
 }
 
 .dropdown__selection {
@@ -84,5 +84,17 @@
 	&:focus {
 		outline: none;
 		border-bottom-color: $color-primary;
+	}
+}
+
+.react-autocomplete-input {
+	top: 100% !important;
+	
+	li {
+		padding: 4px;
+
+		&.active {
+			background-color: $color-primary;
+		}
 	}
 }
