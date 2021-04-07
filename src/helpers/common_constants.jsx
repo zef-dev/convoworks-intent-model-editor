@@ -28,11 +28,11 @@ Number.prototype.intToHSL = function () {
 };
 
 export const generateId = (length) => {
-	var result           = '';
-	var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	var result = '';
+	var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 	var charactersLength = characters.length;
-	for ( var i = 0; i < length; i++ ) {
-		 result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	for (var i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
 	}
 	return result;
 }
@@ -87,6 +87,13 @@ export const getColor = (index) => {
 
 	return arr[index % arr.length]
 };
+
+export const preventSubmit = (event) => {
+	if (event.keyCode == 13) {
+		event.preventDefault();
+		return false;
+	}
+}
 
 // Move caret to a specific point in a DOM element
 export const setCaretPosition = (el, pos) => {

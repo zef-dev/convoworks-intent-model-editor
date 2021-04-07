@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
+import { preventSubmit } from '../../helpers/common_constants';
 
 function Dropdown(props) {
 	const [term, setTerm] = useState('');
 	const [entities, setEntities] = useState(props.entities);
-	const [allEntities, setAllEntities] = useState(props.entities);
 	const [entitiesNames, setEntitiesNames] = useState([]);
 	const input = useRef();
+	
 
 	const modalRef = useOnclickOutside(() => {
 		props.setSelection(null);
@@ -50,6 +51,7 @@ function Dropdown(props) {
 						options={entitiesNames}
 						spaceRemovers={[]}
 						matchAny={true}
+						onKeyDown={(e) => preventSubmit(e)}
 						onChange={(e) => {
 							filterEntities(e);
 						}}

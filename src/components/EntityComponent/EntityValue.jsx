@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { preventSubmit } from '../../helpers/common_constants';
 import { IconTrash } from '../Icons/Icons';
 
 const EntityValue = (props) => {
@@ -104,7 +105,7 @@ const EntityValue = (props) => {
 						type="text"
 						defaultValue={value}
 						placeholder="Enter value"
-						readonly
+						onKeyDown={(e) => preventSubmit(e)}
 						onChange={(e) => {
 							setValue(e.target.value);
 						}}
@@ -113,11 +114,11 @@ const EntityValue = (props) => {
 					:
 
 					<input
-						readOnly
 						className="editor-input"
 						type="text"
 						defaultValue={value}
 						placeholder="Enter value"
+						onKeyDown={(e) => preventSubmit(e)}
 						onChange={(e) => {
 							setValue(e.target.value);
 						}}
@@ -130,7 +131,7 @@ const EntityValue = (props) => {
 					className="editor-input"
 					type="text"
 					style={{ marginLeft: '0.625rem' }}
-					readonly
+					onKeyDown={(e) => preventSubmit(e)}
 					onKeyDown={(e) => {
 						if (e.keyCode == 13) {
 							handleNewSynonym(synonymInput);

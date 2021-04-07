@@ -6,6 +6,7 @@ import { validateInput } from '../../helpers/validations.jsx';
 import useDebounce from '../../helpers/useDebounce.jsx';
 
 import searchIcon from '/../../assets/icons/search.svg';
+import { preventSubmit } from '../../helpers/common_constants.jsx';
 
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
@@ -93,9 +94,9 @@ function IntentDetails(props) {
               <input
                 type="text"
                 defaultValue={name ? name : ''}
-                readonly
                 placeholder="Intent name"
                 className="input input--item-name"
+						    onKeyDown={(e) => preventSubmit(e)}
                 onChange={e => {
                   let message =
                     'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
@@ -113,9 +114,15 @@ function IntentDetails(props) {
             <div className="margin--50--large">
               <div className="search-wrapper">
                 <h3>Utterances</h3>
-                <input style={{background: `url(${searchIcon}) no-repeat 12px center`, backgroundSize: '18px', paddingLeft: '42px'}} ref={searchInput} readonly className="input input--search" type="text" placeholder="Search utterances" onChange={(e) => {
-                  handleSearch();
-                }} />
+                <input
+                  style={{ background: `url(${searchIcon}) no-repeat 12px center`, backgroundSize: '18px', paddingLeft: '42px' }}
+                  className="input input--search"
+                  type="text" placeholder="Search utterances"
+                  onChange={() => {
+                    handleSearch();
+                  }}
+                  onKeyDown={(e) => preventSubmit(e)}
+                />
               </div>
               <div className="margin--24--large">
                 <IntentUtterances

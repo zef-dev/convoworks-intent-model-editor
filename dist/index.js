@@ -4,7 +4,7 @@ var React = require('react');
 var React__default = _interopDefault(React);
 require('react-svg');
 var trash = _interopDefault(require('./trash~hOpExtCr.svg'));
-var search = _interopDefault(require('./search~kgpDVlFG.svg'));
+require('./search~kgpDVlFG.svg');
 var _ = require('lodash');
 var ___default = _interopDefault(_);
 var rangy = _interopDefault(require('rangy'));
@@ -13,6 +13,147 @@ var useOnclickOutside = _interopDefault(require('react-cool-onclickoutside'));
 var TextInput = _interopDefault(require('react-autocomplete-input'));
 require('react-autocomplete-input/dist/bundle.css');
 var sanitizeHtml = _interopDefault(require('sanitize-html'));
+var searchIcon = _interopDefault(require('./search~bbewSuiR.svg'));
+
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
+}
+
+function _createForOfIteratorHelperLoose(o, allowArrayLike) {
+  var it;
+
+  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
+      var i = 0;
+      return function () {
+        if (i >= o.length) return {
+          done: true
+        };
+        return {
+          done: false,
+          value: o[i++]
+        };
+      };
+    }
+
+    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
+  it = o[Symbol.iterator]();
+  return it.next.bind(it);
+}
+
+var stringToColor = function stringToColor(value) {
+  return value.getHashCode().intToHSL();
+};
+
+String.prototype.getHashCode = function () {
+  var hash = 0;
+  if (this.length == 0) return hash;
+
+  for (var i = 0; i < this.length; i++) {
+    hash = this.charCodeAt(i) + ((hash << 5) - hash);
+    hash = hash & hash;
+  }
+
+  return hash;
+};
+
+Number.prototype.intToHSL = function () {
+  var shortened = this % 220;
+  return "hsl(" + shortened + ",100%, 80%)";
+};
+var getCaretCharacterOffsetWithin = function getCaretCharacterOffsetWithin(element) {
+  var caretOffset = 0;
+  var doc = element.ownerDocument || element.document;
+  var win = doc.defaultView || doc.parentWindow;
+  var sel;
+
+  if (typeof win.getSelection != "undefined") {
+    sel = win.getSelection();
+
+    if (sel.rangeCount > 0) {
+      var range = win.getSelection().getRangeAt(0);
+      var preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(element);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      caretOffset = preCaretRange.toString().length;
+    }
+  } else if ((sel = doc.selection) && sel.type != "Control") {
+    var textRange = sel.createRange();
+    var preCaretTextRange = doc.body.createTextRange();
+    preCaretTextRange.moveToElementText(element);
+    preCaretTextRange.setEndPoint("EndToEnd", textRange);
+    caretOffset = preCaretTextRange.text.length;
+  }
+
+  return caretOffset;
+};
+var preventSubmit = function preventSubmit(event) {
+  if (event.keyCode == 13) {
+    event.preventDefault();
+    return false;
+  }
+};
+var setCaretPosition = function setCaretPosition(el, pos) {
+  for (var _iterator = _createForOfIteratorHelperLoose(el.childNodes), _step; !(_step = _iterator()).done;) {
+    var node = _step.value;
+
+    if (node.nodeType == 3) {
+      if (node.length >= pos) {
+        var range = document.createRange(),
+            sel = window.getSelection();
+        range.setStart(node, pos);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        return -1;
+      } else {
+        pos -= node.length;
+      }
+    } else {
+      pos = setCaretPosition(node, pos);
+
+      if (pos == -1) {
+        return -1;
+      }
+    }
+  }
+
+  return pos;
+};
 
 var IconTrash = function IconTrash() {
   return /*#__PURE__*/React__default.createElement("img", {
@@ -21,6 +162,8 @@ var IconTrash = function IconTrash() {
 };
 
 var EntityValue = function EntityValue(props) {
+  var _React$createElement;
+
   var _useState = React.useState(props.item.value),
       value = _useState[0],
       setValue = _useState[1];
@@ -114,36 +257,39 @@ var EntityValue = function EntityValue(props) {
     type: "text",
     defaultValue: value,
     placeholder: "Enter value",
-    readonly: true,
+    onKeyDown: function onKeyDown(e) {
+      return preventSubmit(e);
+    },
     onChange: function onChange(e) {
       setValue(e.target.value);
     }
   }) : /*#__PURE__*/React__default.createElement("input", {
-    readOnly: true,
     className: "editor-input",
     type: "text",
     defaultValue: value,
     placeholder: "Enter value",
+    onKeyDown: function onKeyDown(e) {
+      return preventSubmit(e);
+    },
     onChange: function onChange(e) {
       setValue(e.target.value);
     }
   })), /*#__PURE__*/React__default.createElement("div", {
     className: "field__synonyms"
-  }, makeSynonyms(synonyms, active), /*#__PURE__*/React__default.createElement("input", {
+  }, makeSynonyms(synonyms, active), /*#__PURE__*/React__default.createElement("input", (_React$createElement = {
     className: "editor-input",
     type: "text",
     style: {
       marginLeft: '0.625rem'
     },
-    readonly: true,
     onKeyDown: function onKeyDown(e) {
-      if (e.keyCode == 13) {
-        handleNewSynonym(synonymInput);
-      }
-    },
-    ref: synonymInput,
-    placeholder: "Enter synonym"
-  })), /*#__PURE__*/React__default.createElement("div", {
+      return preventSubmit(e);
+    }
+  }, _React$createElement["onKeyDown"] = function onKeyDown(e) {
+    if (e.keyCode == 13) {
+      handleNewSynonym(synonymInput);
+    }
+  }, _React$createElement.ref = synonymInput, _React$createElement.placeholder = "Enter synonym", _React$createElement))), /*#__PURE__*/React__default.createElement("div", {
     className: "field__actions"
   }, /*#__PURE__*/React__default.createElement("button", {
     className: "btn--remove btn--remove--main",
@@ -274,22 +420,21 @@ function EntityDetails(props) {
       className: "margin--30--large"
     }, /*#__PURE__*/React__default.createElement("h3", {
       className: "margin--10--large"
-    }, "Entity name"), /*#__PURE__*/React__default.createElement("form", {
-      onSubmit: function onSubmit(e) {
-        e.preventDefault();
-      }
-    }, /*#__PURE__*/React__default.createElement("input", {
+    }, "Entity name"), /*#__PURE__*/React__default.createElement("input", {
       type: "text",
       defaultValue: name ? name : '',
       placeholder: "Entity name",
       className: "editor-input input--item-name",
+      onKeyDown: function onKeyDown(e) {
+        return preventSubmit(e);
+      },
       onChange: function onChange(e) {
         var message = 'Entity names shall begin with alphabetic characters from a to Z. The entity name may contain multiple underscores per word. Entity names shall not contain any numbers at all or soecial characters other than undersocres.';
         var validate = validateInput(e.target, e.target.value, '^[A-Za-z](_*[A-Za-z])*_*$', message);
         setValid(validate);
         setName(e.target.value);
       }
-    }))), /*#__PURE__*/React__default.createElement("div", {
+    })), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--50--large"
     }, /*#__PURE__*/React__default.createElement("h3", {
       className: "font--18--large margin--10--large"
@@ -299,163 +444,30 @@ function EntityDetails(props) {
       values: values,
       setValues: setValues,
       removeValue: removeValue
-    }), /*#__PURE__*/React__default.createElement("form", {
-      onSubmit: function onSubmit(e) {
-        e.preventDefault();
-
-        if (newValue) {
-          addNewValue();
-          setNewValue(null);
-          valueInput.current.value = '';
-        }
-      }
-    }, /*#__PURE__*/React__default.createElement("input", {
+    }), /*#__PURE__*/React__default.createElement("input", {
       type: "text",
       className: "editor-input input--add-field",
       placeholder: "Enter reference value",
+      onKeyDown: function onKeyDown(e) {
+        preventSubmit(e);
+
+        if (e.keyCode === 13) {
+          if (newValue) {
+            addNewValue();
+            setNewValue(null);
+            valueInput.current.value = '';
+          }
+        }
+      },
       onChange: function onChange(e) {
         return setNewValue(e.target.value);
       },
       ref: valueInput
-    })))))));
+    }))))));
   } else {
     return null;
   }
 }
-
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-
-  return arr2;
-}
-
-function _createForOfIteratorHelperLoose(o, allowArrayLike) {
-  var it;
-
-  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
-    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-      if (it) o = it;
-      var i = 0;
-      return function () {
-        if (i >= o.length) return {
-          done: true
-        };
-        return {
-          done: false,
-          value: o[i++]
-        };
-      };
-    }
-
-    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-  }
-
-  it = o[Symbol.iterator]();
-  return it.next.bind(it);
-}
-
-var stringToColor = function stringToColor(value) {
-  return value.getHashCode().intToHSL();
-};
-
-String.prototype.getHashCode = function () {
-  var hash = 0;
-  if (this.length == 0) return hash;
-
-  for (var i = 0; i < this.length; i++) {
-    hash = this.charCodeAt(i) + ((hash << 5) - hash);
-    hash = hash & hash;
-  }
-
-  return hash;
-};
-
-Number.prototype.intToHSL = function () {
-  var shortened = this % 220;
-  return "hsl(" + shortened + ",100%, 80%)";
-};
-var getCaretCharacterOffsetWithin = function getCaretCharacterOffsetWithin(element) {
-  var caretOffset = 0;
-  var doc = element.ownerDocument || element.document;
-  var win = doc.defaultView || doc.parentWindow;
-  var sel;
-
-  if (typeof win.getSelection != "undefined") {
-    sel = win.getSelection();
-
-    if (sel.rangeCount > 0) {
-      var range = win.getSelection().getRangeAt(0);
-      var preCaretRange = range.cloneRange();
-      preCaretRange.selectNodeContents(element);
-      preCaretRange.setEnd(range.endContainer, range.endOffset);
-      caretOffset = preCaretRange.toString().length;
-    }
-  } else if ((sel = doc.selection) && sel.type != "Control") {
-    var textRange = sel.createRange();
-    var preCaretTextRange = doc.body.createTextRange();
-    preCaretTextRange.moveToElementText(element);
-    preCaretTextRange.setEndPoint("EndToEnd", textRange);
-    caretOffset = preCaretTextRange.text.length;
-  }
-
-  return caretOffset;
-};
-var setCaretPosition = function setCaretPosition(el, pos) {
-  for (var _iterator = _createForOfIteratorHelperLoose(el.childNodes), _step; !(_step = _iterator()).done;) {
-    var node = _step.value;
-
-    if (node.nodeType == 3) {
-      if (node.length >= pos) {
-        var range = document.createRange(),
-            sel = window.getSelection();
-        range.setStart(node, pos);
-        range.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(range);
-        return -1;
-      } else {
-        pos -= node.length;
-      }
-    } else {
-      pos = setCaretPosition(node, pos);
-
-      if (pos == -1) {
-        return -1;
-      }
-    }
-  }
-
-  return pos;
-};
 
 var UtteranceSlotValue = React__default.memo(function (props) {
   var _useState = React.useState(true),
@@ -474,6 +486,9 @@ var UtteranceSlotValue = React__default.memo(function (props) {
     "data-valid": valid,
     pattern: "^[A-Za-z](_*[A-Za-z])*_*$",
     value: props.slotValue,
+    onKeyDown: function onKeyDown(e) {
+      return preventSubmit(e);
+    },
     onChange: function onChange(e) {
       props.target.dataset.slotValue = e.target.value;
       props.updateRaw();
@@ -489,11 +504,9 @@ function Dropdown(props) {
   var _useState2 = React.useState(props.entities),
       entities = _useState2[0];
 
-  var _useState3 = React.useState(props.entities);
-
-  var _useState4 = React.useState([]),
-      entitiesNames = _useState4[0],
-      setEntitiesNames = _useState4[1];
+  var _useState3 = React.useState([]),
+      entitiesNames = _useState3[0],
+      setEntitiesNames = _useState3[1];
 
   var input = React.useRef();
   var modalRef = useOnclickOutside(function () {
@@ -534,6 +547,9 @@ function Dropdown(props) {
       options: entitiesNames,
       spaceRemovers: [],
       matchAny: true,
+      onKeyDown: function onKeyDown(e) {
+        return preventSubmit(e);
+      },
       onChange: function onChange(e) {
         filterEntities(e);
       },
@@ -1090,9 +1106,11 @@ function IntentDetails(props) {
     }, "Intent name"), /*#__PURE__*/React__default.createElement("input", {
       type: "text",
       defaultValue: name ? name : '',
-      readonly: true,
       placeholder: "Intent name",
       className: "input input--item-name",
+      onKeyDown: function onKeyDown(e) {
+        return preventSubmit(e);
+      },
       onChange: function onChange(e) {
         var message = 'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
         validateInput(e.target, e.target.value, '^[A-Za-z](_?[A-Za-z])*_?$', message);
@@ -1104,17 +1122,18 @@ function IntentDetails(props) {
       className: "search-wrapper"
     }, /*#__PURE__*/React__default.createElement("h3", null, "Utterances"), /*#__PURE__*/React__default.createElement("input", {
       style: {
-        background: "url(" + search + ") no-repeat 12px center",
+        background: "url(" + searchIcon + ") no-repeat 12px center",
         backgroundSize: '18px',
         paddingLeft: '42px'
       },
-      ref: searchInput,
-      readonly: true,
       className: "input input--search",
       type: "text",
       placeholder: "Search utterances",
-      onChange: function onChange(e) {
+      onChange: function onChange() {
         handleSearch();
+      },
+      onKeyDown: function onKeyDown(e) {
+        return preventSubmit(e);
       }
     })), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--24--large"

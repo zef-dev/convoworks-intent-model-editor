@@ -23,7 +23,6 @@ const App = () => {
 
   return (
     <React.Fragment>
-      <form onSubmit={() => console.log('submit')}>
         <nav>
           <button onClick={() => setView('intent')}>Intent editor</button>
           <button onClick={() => setView('entity')}>Entity editor</button>
@@ -43,7 +42,6 @@ const App = () => {
           onUpdate={() => {console.log('update')}}
         />
       }
-      </form>
     </React.Fragment>
   )
 }
