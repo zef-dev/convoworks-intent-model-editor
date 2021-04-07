@@ -699,7 +699,7 @@ var UtteranceInput = function UtteranceInput(props) {
       var oRange = s.getRangeAt(0);
       var oRect = oRange.getBoundingClientRect();
       setDropdownState({
-        position: oRect.x,
+        position: oRect.x / 2,
         active: props.selection !== null
       });
     } else {

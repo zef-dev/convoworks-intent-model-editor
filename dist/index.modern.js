@@ -571,7 +571,7 @@ const UtteranceInput = props => {
       let oRange = s.getRangeAt(0);
       let oRect = oRange.getBoundingClientRect();
       setDropdownState({
-        position: oRect.x,
+        position: oRect.x / 2,
         active: props.selection !== null
       });
     } else {
