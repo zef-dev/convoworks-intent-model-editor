@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { IconTrash } from '../../assets/icon_trash.jsx';
+import { IconTrash } from '../Icons/Icons';
 
 const EntityValue = (props) => {
 	const [value, setValue] = useState(props.item.value);

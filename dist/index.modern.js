@@ -1,4 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
+import 'react-svg';
+import trash from './trash~hOpExtCr.svg';
+import search from './search~kgpDVlFG.svg';
 import _ from 'lodash';
 import rangy from 'rangy';
 import ContentEditable from 'react-contenteditable';
@@ -7,22 +10,11 @@ import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
 import sanitizeHtml from 'sanitize-html';
 
-function IconTrash() {
-  return /*#__PURE__*/React.createElement("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    width: "16",
-    height: "16",
-    viewBox: "0 0 16 16"
-  }, /*#__PURE__*/React.createElement("g", {
-    fill: "none",
-    "fill-rule": "evenodd",
-    stroke: "#1A1A1A",
-    "stroke-linecap": "round",
-    "stroke-linejoin": "round"
-  }, /*#__PURE__*/React.createElement("path", {
-    d: "M2.4 6.5v7c0 1.105.835 2 1.867 2h7.466c1.032 0 1.867-.895 1.867-2v-7M1.467 3.5h13.066M6.133 3.5v-3h3.734v3M8 7.5v5M10.8 7.5v5M5.2 7.5v5"
-  })));
-}
+const IconTrash = () => {
+  return /*#__PURE__*/React.createElement("img", {
+    src: trash
+  });
+};
 
 const EntityValue = props => {
   const [value, setValue] = useState(props.item.value);
@@ -753,6 +745,7 @@ const Utterance = React.memo(props => {
     }), /*#__PURE__*/React.createElement("div", {
       className: "field__actions"
     }, !props.new && /*#__PURE__*/React.createElement("button", {
+      type: "button",
       onClick: () => {
         props.removeFromUtterances(props.utterance);
         document.querySelectorAll('.taggable-text__input')[0].focus();
@@ -932,6 +925,11 @@ function IntentDetails(props) {
     }, /*#__PURE__*/React.createElement("div", {
       className: "search-wrapper"
     }, /*#__PURE__*/React.createElement("h3", null, "Utterances"), /*#__PURE__*/React.createElement("input", {
+      style: {
+        background: `url(${search}) no-repeat 12px center`,
+        backgroundSize: '18px',
+        paddingLeft: '42px'
+      },
       ref: searchInput,
       readonly: true,
       className: "input input--search",

@@ -5,6 +5,8 @@ import { useRef } from 'react';
 import { validateInput } from '../../helpers/validations.jsx';
 import useDebounce from '../../helpers/useDebounce.jsx';
 
+import searchIcon from '/../../assets/icons/search.svg';
+
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
   const entities = props.entities;
@@ -111,7 +113,7 @@ function IntentDetails(props) {
             <div className="margin--50--large">
               <div className="search-wrapper">
                 <h3>Utterances</h3>
-                <input ref={searchInput} readonly className="input input--search" type="text" placeholder="Search utterances" onChange={(e) => {
+                <input style={{background: `url(${searchIcon}) no-repeat 12px center`, backgroundSize: '18px', paddingLeft: '42px'}} ref={searchInput} readonly className="input input--search" type="text" placeholder="Search utterances" onChange={(e) => {
                   handleSearch();
                 }} />
               </div>

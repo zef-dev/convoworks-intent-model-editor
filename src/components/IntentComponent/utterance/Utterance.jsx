@@ -1,9 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react'
 import _ from 'lodash'
 import { stringToColor } from '../../../helpers/common_constants'
-import { IconTrash } from '../../../assets/icon_trash'
 import UtteranceSlotValue from './UtteranceSlotValue'
 import UtteranceInput from './UtteranceInput'
+import { IconTrash } from '../../Icons/Icons'
 
 export const Utterance = React.memo(props => {
 
@@ -112,7 +112,7 @@ export const Utterance = React.memo(props => {
                             <UtteranceInput index={props.index} input={input} active={active} setActive={props.setActive} raw={raw} setRaw={setRaw} entities={props.entities} selection={selection} setSelection={setSelection} slotValuePairs={props.slotValuePairs} />
                             <div className="field__actions">
                                 {!props.new &&
-                                    <button onClick={() => {
+                                    <button type="button" onClick={() => {
                                         props.removeFromUtterances(props.utterance);
                                         document.querySelectorAll('.taggable-text__input')[0].focus();
                                     }}>
