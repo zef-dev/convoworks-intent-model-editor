@@ -467,4 +467,8 @@ input:invalid {
     border-color: $color-alert;
     color: $color-alert;
     box-shadow: none;
+
+    &:focus {
+        border-color: $color-alert;
+    }
 }

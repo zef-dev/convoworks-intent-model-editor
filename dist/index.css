@@ -1185,3 +1185,5 @@
     border-color: #d9543e;
     color: #d9543e;
     box-shadow: none; }
+    .convo-details input:invalid:focus {
+      border-color: #d9543e; }
