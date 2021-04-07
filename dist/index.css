@@ -78,7 +78,8 @@
   /*------------------------------------*\
 # HIDE AND SHOW
 \*------------------------------------*/
-  /* Modules */ }
+  /* Modules */
+  /* defaults */ }
   .convo-details ul {
     padding: 0;
     margin: 0; }
@@ -663,7 +664,7 @@
     border: none;
     outline: none;
     background: transparent;
-    font-size: 0.875rem; }
+    font-size: 14px; }
     .convo-details input::-moz-placeholder {
       opacity: 1;
       color: rgba(0, 0, 0, 0.36); }
@@ -673,31 +674,46 @@
     .convo-details input::placeholder {
       opacity: 1;
       color: rgba(0, 0, 0, 0.36); }
-  .convo-details input--alert {
+  .convo-details input[data-valid="false"], .convo-details input--alert {
     border-color: #d9543e; }
-  .convo-details input.input--item-name {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 0.875rem 0.75rem;
-    font-size: 0.875rem;
-    height: 2.5rem;
-    width: 100%; }
   .convo-details input[hidden] {
     display: none; }
-  .convo-details input.input--add-field {
-    height: 2.5rem;
-    margin-bottom: 1.25rem;
+  .convo-details .input, .convo-details .field {
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 0.5rem;
     transition: 0.22s;
-    font-size: 0.875rem;
+    padding: 10px 12px; }
+    .convo-details .input:hover, .convo-details .field:hover {
+      border-color: rgba(47, 116, 234, 0.5); }
+    .convo-details .input:focus, .convo-details .field:focus {
+      border-color: #2f74ea; }
+  .convo-details .input--item-name {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 14px 12px;
+    font-size: 14px;
+    height: 2.5rem;
+    width: 100%; }
+  .convo-details .input--add-field {
+    height: 2.5rem;
+    margin-bottom: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    transition: 0.22s;
+    font-size: 14px;
     color: rgba(26, 26, 26, 0.85);
     background: transparent;
     width: 100%;
-    padding: 0.5rem 0.75rem; }
-    .convo-details input.input--add-field:hover, .convo-details input.input--add-field:focus, .convo-details input.input--add-field:active {
+    padding: 8px 12px; }
+    .convo-details .input--add-field:hover, .convo-details .input--add-field:focus, .convo-details .input--add-field:active {
       border-color: #2f74ea; }
+  .convo-details .input--search {
+    width: 44.44%;
+    font-size: 16px;
+    display: flex;
+    margin-left: auto;
+    text-align: left; }
   .convo-details .search-wrapper {
     display: flex;
     justify-content: space-between;
@@ -705,16 +721,6 @@
     margin-bottom: 32px; }
     .convo-details .search-wrapper * {
       margin: 0; }
-  .convo-details .input--search {
-    width: 50%;
-    font-size: 16px;
-    padding: 12px 0;
-    display: flex;
-    margin-left: auto;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.36);
-    text-align: right; }
-  .convo-details input[data-valid="false"] {
-    border-color: #d9543e; }
   .convo-details .select {
     position: relative;
     padding: 0;
@@ -724,19 +730,19 @@
     top: 100%;
     left: 0;
     right: 0;
-    transform: translateY(0.625rem);
+    transform: translateY(10px);
     background: #ffffff;
     text-align: left;
     border: 1px solid rgba(0, 0, 0, 0.1);
     z-index: 10;
-    width: 18.75rem;
+    width: 300px;
     height: 30vh;
     border-radius: 0.5rem;
     overflow: hidden;
-    box-shadow: 0.25rem 0.25rem 0.625rem 0 rgba(0, 0, 0, 0.14);
-    font-size: 0.875rem; }
+    box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.14);
+    font-size: 14px; }
     .convo-details .select__list li {
-      padding: 0.625rem;
+      padding: 10px;
       cursor: pointer;
       transition: 0.22s; }
       .convo-details .select__list li:hover {
@@ -808,7 +814,7 @@
     margin-bottom: 16px; }
     .convo-details .dropdown__items button {
       background: transparent;
-      border: none;
+      border: 1px solid transparent;
       outline: none;
       text-align: left;
       padding: 4px 0;
@@ -820,7 +826,7 @@
       .convo-details .dropdown__items button:hover {
         color: #2f74ea; }
       .convo-details .dropdown__items button:focus, .convo-details .dropdown__items button:active {
-        outline: 1px solid #2f74ea; }
+        border: 1px solid #2f74ea; }
   .convo-details .dropdown__header {
     padding: 1rem 0.5rem;
     padding-bottom: 0.5rem; }
@@ -841,14 +847,12 @@
       outline: none;
       border-bottom-color: #2f74ea; }
   .convo-details .field {
+    padding: 0;
     margin-bottom: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
-    transition: 0.22s; }
+    position: relative; }
     .convo-details .field:hover {
       border-color: rgba(47, 116, 234, 0.5); }
       .convo-details .field:hover .btn--remove--main {
@@ -1128,7 +1132,8 @@
     outline: none;
     line-height: 1.25;
     padding: 10px 12px;
-    border-bottom: 1px solid transparent; }
+    border-bottom: 1px solid transparent;
+    border-radius: 0.5rem; }
     .convo-details .taggable-text__input:focus {
       outline: none;
       background: rgba(47, 116, 234, 0.065); }

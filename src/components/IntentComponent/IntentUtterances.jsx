@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Utterance } from './utterance/Utterance.jsx'
 
 const IntentUtterances = (props) => {
-
-	console.log(props.utterances)
 	const [active, setActive] = useState(null);
 	const removeFromUtterances = (object) => {
 		let arr = props.utterances.filter(item => item !== object);
@@ -16,9 +14,10 @@ const IntentUtterances = (props) => {
 		return (
 			<ul>
 				{props.utterances.map((item, index) => {
+					let isNew = index === 0 && item.model.length === 0;
 					return (
 						<li style={{ display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none' }}>
-							<Utterance key={index} utterance={item} new={item.new} index={index} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} />
+							<Utterance key={index} utterance={item} new={isNew} index={index} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} />
 						</li>
 					)
 				})}

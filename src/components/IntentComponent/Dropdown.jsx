@@ -65,6 +65,7 @@ function Dropdown(props) {
 							<button
 								style={{display: item.name.toLowerCase().includes(term.toLocaleLowerCase().trim()) ? 'block' : 'none'}}
 								key={i}
+								type="button"
 								onClick={() => {
 									props.tagSelection(item.name, item.name)
 								}}

@@ -37,7 +37,7 @@
 
 	button {
 		background: transparent;
-		border: none;
+		border: 1px solid transparent;
 		outline: none;
 		text-align: left;
 		padding: 4px 0;
@@ -52,7 +52,7 @@
 		}
 
 		&:focus, &:active {
-			outline: 1px solid $color-primary;
+			border: 1px solid $color-primary;
 		}
 	}
 }

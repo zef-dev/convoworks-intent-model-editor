@@ -19,7 +19,7 @@ export const Utterance = React.memo(props => {
             return ({
                 type: item.dataset.type,
                 slot_value: item.dataset.slotValue,
-                text: item.textContent,
+                text: item.textContent.trim(),
                 color: item.dataset.color,
                 target: item
             })
@@ -35,9 +35,9 @@ export const Utterance = React.memo(props => {
             if (props.utterance.model.length) {
                 str = props.utterance.model.map(item => {
                     if (item.type) {
-                        return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text}</mark>`
+                        return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text.trim()}</mark>`
                     } else {
-                        return item.text
+                        return item.text.trim()
                     }
                 }).join(' ');
             }
@@ -58,11 +58,11 @@ export const Utterance = React.memo(props => {
                 if (item.dataset) {
                     return ({
                         type: item.dataset.type,
-                        text: item.textContent.trim(),
+                        text: item.textContent,
                         slot_value: item.dataset.slotValue
                     })
                 } else {
-                    return ({ text: item.textContent.trim() }
+                    return ({ text: item.textContent }
                     )
                 }
             }).filter(item => item.text.length)
@@ -121,7 +121,7 @@ export const Utterance = React.memo(props => {
                             </div>
                         </div>
                     </div>
-                    {!props.new && whitelist &&
+                    {!props.new && whitelist && whitelist.tags.length > 0 && 
                         <ul className="model-list" style={{ display: active ? 'block' : 'none' }}>
                             <header className="model-list__header">
                                 <strong>Parameter name</strong>
@@ -132,7 +132,7 @@ export const Utterance = React.memo(props => {
                                 return (
                                     <li className="model-list__item">
                                         <UtteranceSlotValue key={index} index={index} target={item.target} slotValue={item.slot_value} whitelist={whitelist} updateRaw={updateRaw} />
-                                        <div><button className="mark" type="button" style={{ background: item.color }} onClick={() => setTimeout(() => { setSelection(item.target) }, 220)}>{item.type}</button></div>
+                                        <div><button className="mark" type="button" style={{ background: item.color }} onClick={() => setTimeout(() => { setSelection(item.target) }, 220)}>@{item.type}</button></div>
                                         <div>{item.text}</div>
                                     </li>
                                 )

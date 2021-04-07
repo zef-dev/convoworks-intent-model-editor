@@ -1,13 +1,12 @@
 .field {
+    @extend .input;
+    padding: 0;
     margin-bottom: 10px;
-    border: $border--gray-lighter;
-    border-radius: $input-radius;
     //overflow: hidden;
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: relative;
-    transition: $transition-time;
 
     &:hover {
         border-color: rgba($color-primary, 0.5);
@@ -409,6 +408,7 @@
     line-height: 1.25;
     padding: 10px 12px;
     border-bottom: 1px solid transparent;
+    border-radius: $input-radius;
 
     &:focus {
         outline: none;

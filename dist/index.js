@@ -591,6 +591,7 @@ function Dropdown(props) {
           display: item.name.toLowerCase().includes(term.toLocaleLowerCase().trim()) ? 'block' : 'none'
         },
         key: i,
+        type: "button",
         onClick: function onClick() {
           props.tagSelection(item.name, item.name);
         }
@@ -796,7 +797,7 @@ var Utterance = React__default.memo(function (props) {
       return {
         type: item.dataset.type,
         slot_value: item.dataset.slotValue,
-        text: item.textContent,
+        text: item.textContent.trim(),
         color: item.dataset.color,
         target: item
       };
@@ -815,9 +816,9 @@ var Utterance = React__default.memo(function (props) {
       if (props.utterance.model.length) {
         str = props.utterance.model.map(function (item) {
           if (item.type) {
-            return "<mark data-type=\"" + item.type + "\" data-slot-value=\"" + item.slot_value + "\" data-text=\"" + item.text + "\" data-color=\"" + stringToColor(item.text) + "\" style=\"background:" + stringToColor(item.text) + "\">" + item.text + "</mark>";
+            return "<mark data-type=\"" + item.type + "\" data-slot-value=\"" + item.slot_value + "\" data-text=\"" + item.text + "\" data-color=\"" + stringToColor(item.text) + "\" style=\"background:" + stringToColor(item.text) + "\">" + item.text.trim() + "</mark>";
           } else {
-            return item.text;
+            return item.text.trim();
           }
         }).join(' ');
       }
@@ -835,12 +836,12 @@ var Utterance = React__default.memo(function (props) {
         if (item.dataset) {
           return {
             type: item.dataset.type,
-            text: item.textContent.trim(),
+            text: item.textContent,
             slot_value: item.dataset.slotValue
           };
         } else {
           return {
-            text: item.textContent.trim()
+            text: item.textContent
           };
         }
       }).filter(function (item) {
@@ -918,7 +919,7 @@ var Utterance = React__default.memo(function (props) {
         props.removeFromUtterances(props.utterance);
         document.querySelectorAll('.taggable-text__input')[0].focus();
       }
-    }, /*#__PURE__*/React__default.createElement(IconTrash, null))))), !props["new"] && whitelist && /*#__PURE__*/React__default.createElement("ul", {
+    }, /*#__PURE__*/React__default.createElement(IconTrash, null))))), !props["new"] && whitelist && whitelist.tags.length > 0 && /*#__PURE__*/React__default.createElement("ul", {
       className: "model-list",
       style: {
         display: active ? 'block' : 'none'
@@ -946,7 +947,7 @@ var Utterance = React__default.memo(function (props) {
             setSelection(item.target);
           }, 220);
         }
-      }, item.type)), /*#__PURE__*/React__default.createElement("div", null, item.text));
+      }, "@", item.type)), /*#__PURE__*/React__default.createElement("div", null, item.text));
     }))));
   } else {
     return null;
@@ -954,8 +955,6 @@ var Utterance = React__default.memo(function (props) {
 });
 
 var IntentUtterances = function IntentUtterances(props) {
-  console.log(props.utterances);
-
   var _useState = React.useState(null),
       active = _useState[0],
       setActive = _useState[1];
@@ -971,6 +970,7 @@ var IntentUtterances = function IntentUtterances(props) {
 
   if (props.utterances) {
     return /*#__PURE__*/React__default.createElement("ul", null, props.utterances.map(function (item, index) {
+      var isNew = index === 0 && item.model.length === 0;
       return /*#__PURE__*/React__default.createElement("li", {
         style: {
           display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none'
@@ -978,7 +978,7 @@ var IntentUtterances = function IntentUtterances(props) {
       }, /*#__PURE__*/React__default.createElement(Utterance, {
         key: index,
         utterance: item,
-        "new": item["new"],
+        "new": isNew,
         index: index,
         active: active,
         setActive: setActive,
@@ -1066,7 +1066,7 @@ function IntentDetails(props) {
     }
   };
 
-  var debouncedHandleNew = useDebounce(handleNew, 500);
+  var debouncedHandleNew = useDebounce(handleNew, 300);
   React.useEffect(function () {
   }, [utterances]);
   React.useEffect(function () {
@@ -1096,28 +1096,25 @@ function IntentDetails(props) {
       className: "margin--30--large"
     }, /*#__PURE__*/React__default.createElement("h3", {
       className: "margin--10--large"
-    }, "Intent name"), /*#__PURE__*/React__default.createElement("form", {
-      onSubmit: function onSubmit(e) {
-        e.preventDefault();
-      }
-    }, /*#__PURE__*/React__default.createElement("input", {
+    }, "Intent name"), /*#__PURE__*/React__default.createElement("input", {
       type: "text",
       defaultValue: name ? name : '',
+      readonly: true,
       placeholder: "Intent name",
-      className: "editor-input input--item-name",
+      className: "input input--item-name",
       onChange: function onChange(e) {
         var message = 'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
         validateInput(e.target, e.target.value, '^[A-Za-z](_?[A-Za-z])*_?$', message);
         setName(e.target.value);
-      },
-      required: true
-    }))), /*#__PURE__*/React__default.createElement("div", {
+      }
+    })), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--50--large"
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "search-wrapper"
     }, /*#__PURE__*/React__default.createElement("h3", null, "Utterances"), /*#__PURE__*/React__default.createElement("input", {
       ref: searchInput,
-      className: "editor-input input--search",
+      readonly: true,
+      className: "input input--search",
       type: "text",
       placeholder: "Search utterances",
       onChange: function onChange(e) {

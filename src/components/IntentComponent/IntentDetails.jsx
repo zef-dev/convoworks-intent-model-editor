@@ -30,7 +30,7 @@ function IntentDetails(props) {
       setUtterances(intent.utterances);
     }
   }, [intent]);
-  
+
   const handleNew = () => {
     let newUtteranceField = { raw: '', model: [] };
     if (utterances[0] && utterances[0].model.length > 0) {
@@ -39,12 +39,11 @@ function IntentDetails(props) {
       setStateChange(!stateChange);
 
       let input = document.querySelectorAll('.taggable-text__input')[1];
-
       input && input.focus();
     }
   }
 
-  const debouncedHandleNew = useDebounce(handleNew, 500);
+  const debouncedHandleNew = useDebounce(handleNew, 300);
 
   useEffect(() => {
     debouncedHandleNew;
@@ -80,36 +79,30 @@ function IntentDetails(props) {
             {/* Entity name value */}
             <div className="margin--30--large">
               <h3 className="margin--10--large">Intent name</h3>
-              <form
-                onSubmit={e => {
-                  e.preventDefault();
+              <input
+                type="text"
+                defaultValue={name ? name : ''}
+                readonly
+                placeholder="Intent name"
+                className="input input--item-name"
+                onChange={e => {
+                  let message =
+                    'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
+                  validateInput(
+                    e.target,
+                    e.target.value,
+                    '^[A-Za-z](_?[A-Za-z])*_?$',
+                    message
+                  );
+                  setName(e.target.value);
                 }}
-              >
-                <input
-                  type="text"
-                  defaultValue={name ? name : ''}
-                  placeholder="Intent name"
-                  className="editor-input input--item-name"
-                  onChange={e => {
-                    let message =
-                      'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
-                    validateInput(
-                      e.target,
-                      e.target.value,
-                      '^[A-Za-z](_?[A-Za-z])*_?$',
-                      message
-                    );
-                    setName(e.target.value);
-                  }}
-                  required
-                />
-              </form>
+              />
             </div>
             {/* Entity words */}
             <div className="margin--50--large">
               <div className="search-wrapper">
                 <h3>Utterances</h3>
-                <input ref={searchInput} className="editor-input input--search" type="text" placeholder="Search utterances" onChange={(e) => {
+                <input ref={searchInput} readonly className="input input--search" type="text" placeholder="Search utterances" onChange={(e) => {
                   handleSearch();
                 }} />
               </div>
