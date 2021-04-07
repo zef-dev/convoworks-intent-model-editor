@@ -1,35 +1,38 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { IconTrash } from '../../assets/icon_trash.jsx';
+import { preventSubmit } from '../../helpers/common_constants.jsx';
 
 const EntityValue = (props) => {
-	const [ value, setValue ] = useState(props.item.value);
-	const [ synonyms, setSynonyms ] = useState(props.item.synonyms);
-	const [ newSynonym, setNewSynonym ] = useState('');
-	const [ remove, setRemove ] = useState(false);
+	const [value, setValue] = useState(props.item.value);
+	const [synonyms, setSynonyms] = useState(props.item.synonyms);
+	const [newSynonym, setNewSynonym] = useState('');
+	const [remove, setRemove] = useState(false);
 	const synonymInput = useRef(null);
+
+	let active = props.activeValue === props.index;
 
 	useEffect(
 		() => {
-			props.handleUpdate([ ...props.values ], props.index, {
+			props.handleUpdate([...props.values], props.index, {
 				value: value,
 				synonyms: synonyms
 			});
 		},
-		[ value, synonyms ]
+		[value, synonyms]
 	);
 
 	useEffect(
 		() => {
 			if (newSynonym) {
 				if (synonyms) {
-					setSynonyms([ ...synonyms, newSynonym ]);
+					setSynonyms([...synonyms, newSynonym]);
 				} else {
 					setSynonyms(newSynonym);
 				}
 			}
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		},
-		[ newSynonym ]
+		[newSynonym]
 	);
 
 	const handleNewSynonym = (target) => {
@@ -43,7 +46,7 @@ const EntityValue = (props) => {
 
 	// synonyms
 	const removeSynonym = (value) => {
-		let arr = [ ...synonyms ];
+		let arr = [...synonyms];
 		let index = arr.indexOf(value);
 
 		if (index !== -1) {
@@ -52,32 +55,27 @@ const EntityValue = (props) => {
 		}
 	};
 
-	const makeSynonyms = (items, active) => {
+	const makeSynonyms = (items, isActive) => {
 		if (items) {
 			return (
 				items &&
 				items.map((item, i) => {
-					if (item && !active) {
-						return (
-							<div className="synonym" key={i}>
-								{item}
-							</div>
-						);
-					} else {
+					if (item) {
 						return (
 							<div key={i} className="synonym">
 								{item}
-								<button
-									type="button"
-									className="synonym__remove"
-									onClick={() => {
-										removeSynonym(item);
-									}}
-								>
-									&#10005;
-								</button>
-							</div>
-						);
+								{isActive &&
+									<button
+										type="button"
+										className="synonym__remove"
+										onClick={() => {
+											removeSynonym(item);
+										}}
+									>
+										&#10005;
+									</button>
+								}
+							</div>)
 					}
 				})
 			);
@@ -93,93 +91,74 @@ const EntityValue = (props) => {
 		}, 220);
 	};
 
-	if (props.activeValue !== props.index) {
-		return (
-			<li
-				className={`item item--entity ${remove ? 'item--remove' : ''}`}
-				onClick={() => {
-					props.setActiveValue(props.index);
-				}}
-			>
-				<div className="item__inner">
-					<div className="grid">
-						<div className="cell cell--3--small">
-							<div className="item__value item__value--primary">{value}</div>
-						</div>
-						<div className="cell cell--9--small">
-							<div className="item__values">{makeSynonyms(synonyms, false)}</div>
-						</div>
-					</div>
-				</div>
-				<div className="item__buttons">
-					<button
-						className="btn--remove btn--remove--main"
-						type="button"
-						onClick={(e) => {
-							handleRemove(e);
+	return (
+		<li
+			className={`field field--${active ? 'active' : 'inactive'} field--entity ${remove ? 'field--remove' : ''}`}
+			onClick={() => {
+				props.setActiveValue(props.index);
+			}}
+		>
+			<div class="field__value">
+				{active ?
+					<input
+						className="editor-input"
+						type="text"
+						defaultValue={value}
+						placeholder="Enter value"
+						onKeyDown={(e) => {
+							//preventSubmit(e);
 						}}
-					>
-						<IconTrash />
-					</button>
-				</div>
-			</li>
-		);
-	} else {
-		return (
-			<li className={`item item--entity item--active ${remove ? 'item--remove' : ''}`}>
-				<div className="item__inner">
-					<div className="grid">
-						<div className="cell cell--3--small">
-							<div className="item__value item__value--primary">
-								<input
-									data-input="true"
-									className="editor-input"
-									type="text"
-									defaultValue={value}
-									placeholder="Enter value"
-									onChange={(e) => {
-										setValue(e.target.value);
-									}}
-								/>
-							</div>
-						</div>
-						<div className="cell cell--9--small">
-							<div className="item__values">
-								{makeSynonyms(synonyms, true)}
-								<form
-									onSubmit={(e) => {
-										e.preventDefault();
-										handleNewSynonym(synonymInput);
-									}}
-								>
-									<input
-										className="editor-input"
-										type="text"
-										style={{ marginLeft: '0.625rem' }}
-										ref={synonymInput}
-										placeholder="Enter synonym"
-										onChange={(e) => {}}
-									/>
-									<input className="editor-input" type="submit" hidden={true} />
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="item__buttons">
-					<button
-						className="btn--remove btn--remove--main"
-						type="button"
-						onClick={(e) => {
-							handleRemove(e);
+						onChange={(e) => {
+							setValue(e.target.value);
 						}}
-					>
-						<IconTrash />
-					</button>
-				</div>
-			</li>
-		);
-	}
+					/>
+
+					:
+
+					<input
+						readOnly
+						className="editor-input"
+						type="text"
+						defaultValue={value}
+						placeholder="Enter value"
+						onKeyDown={(e) => {
+							//preventSubmit(e);
+						}}
+						onChange={(e) => {
+							setValue(e.target.value);
+						}}
+					/>
+				}
+			</div>
+			<div className="field__synonyms">
+				{makeSynonyms(synonyms, active)}
+				<input
+					className="editor-input"
+					type="text"
+					style={{ marginLeft: '0.625rem' }}
+					onKeyDown={(e) => {
+						if (e.keyCode == 13) {
+							handleNewSynonym(synonymInput);
+						}
+						// preventSubmit(e);
+					}}
+					ref={synonymInput}
+					placeholder="Enter synonym"
+				/>
+			</div>
+			<div className="field__actions">
+				<button
+					className="btn--remove btn--remove--main"
+					type="button"
+					onClick={(e) => {
+						handleRemove(e);
+					}}
+				>
+					<IconTrash />
+				</button>
+			</div>
+		</li>
+	);
 };
 
 export default EntityValue;

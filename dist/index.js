@@ -28,6 +28,140 @@ function IconTrash() {
   })));
 }
 
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
+}
+
+function _createForOfIteratorHelperLoose(o, allowArrayLike) {
+  var it;
+
+  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
+      var i = 0;
+      return function () {
+        if (i >= o.length) return {
+          done: true
+        };
+        return {
+          done: false,
+          value: o[i++]
+        };
+      };
+    }
+
+    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
+  it = o[Symbol.iterator]();
+  return it.next.bind(it);
+}
+
+var stringToColor = function stringToColor(value) {
+  return value.getHashCode().intToHSL();
+};
+
+String.prototype.getHashCode = function () {
+  var hash = 0;
+  if (this.length == 0) return hash;
+
+  for (var i = 0; i < this.length; i++) {
+    hash = this.charCodeAt(i) + ((hash << 5) - hash);
+    hash = hash & hash;
+  }
+
+  return hash;
+};
+
+Number.prototype.intToHSL = function () {
+  var shortened = this % 220;
+  return "hsl(" + shortened + ",100%, 80%)";
+};
+var getCaretCharacterOffsetWithin = function getCaretCharacterOffsetWithin(element) {
+  var caretOffset = 0;
+  var doc = element.ownerDocument || element.document;
+  var win = doc.defaultView || doc.parentWindow;
+  var sel;
+
+  if (typeof win.getSelection != "undefined") {
+    sel = win.getSelection();
+
+    if (sel.rangeCount > 0) {
+      var range = win.getSelection().getRangeAt(0);
+      var preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(element);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      caretOffset = preCaretRange.toString().length;
+    }
+  } else if ((sel = doc.selection) && sel.type != "Control") {
+    var textRange = sel.createRange();
+    var preCaretTextRange = doc.body.createTextRange();
+    preCaretTextRange.moveToElementText(element);
+    preCaretTextRange.setEndPoint("EndToEnd", textRange);
+    caretOffset = preCaretTextRange.text.length;
+  }
+
+  return caretOffset;
+};
+var setCaretPosition = function setCaretPosition(el, pos) {
+  for (var _iterator = _createForOfIteratorHelperLoose(el.childNodes), _step; !(_step = _iterator()).done;) {
+    var node = _step.value;
+
+    if (node.nodeType == 3) {
+      if (node.length >= pos) {
+        var range = document.createRange(),
+            sel = window.getSelection();
+        range.setStart(node, pos);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        return -1;
+      } else {
+        pos -= node.length;
+      }
+    } else {
+      pos = setCaretPosition(node, pos);
+
+      if (pos == -1) {
+        return -1;
+      }
+    }
+  }
+
+  return pos;
+};
+
 var EntityValue = function EntityValue(props) {
   var _useState = React.useState(props.item.value),
       value = _useState[0],
@@ -46,6 +180,7 @@ var EntityValue = function EntityValue(props) {
       setRemove = _useState4[1];
 
   var synonymInput = React.useRef(null);
+  var active = props.activeValue === props.index;
   React.useEffect(function () {
     props.handleUpdate([].concat(props.values), props.index, {
       value: value,
@@ -81,19 +216,14 @@ var EntityValue = function EntityValue(props) {
     }
   };
 
-  var makeSynonyms = function makeSynonyms(items, active) {
+  var makeSynonyms = function makeSynonyms(items, isActive) {
     if (items) {
       return items && items.map(function (item, i) {
-        if (item && !active) {
-          return /*#__PURE__*/React__default.createElement("div", {
-            className: "synonym",
-            key: i
-          }, item);
-        } else {
+        if (item) {
           return /*#__PURE__*/React__default.createElement("div", {
             key: i,
             className: "synonym"
-          }, item, /*#__PURE__*/React__default.createElement("button", {
+          }, item, isActive && /*#__PURE__*/React__default.createElement("button", {
             type: "button",
             className: "synonym__remove",
             onClick: function onClick() {
@@ -114,85 +244,56 @@ var EntityValue = function EntityValue(props) {
     }, 220);
   };
 
-  if (props.activeValue !== props.index) {
-    return /*#__PURE__*/React__default.createElement("li", {
-      className: "item item--entity " + (remove ? 'item--remove' : ''),
-      onClick: function onClick() {
-        props.setActiveValue(props.index);
-      }
-    }, /*#__PURE__*/React__default.createElement("div", {
-      className: "item__inner"
-    }, /*#__PURE__*/React__default.createElement("div", {
-      className: "grid"
-    }, /*#__PURE__*/React__default.createElement("div", {
-      className: "cell cell--3--small"
-    }, /*#__PURE__*/React__default.createElement("div", {
-      className: "item__value item__value--primary"
-    }, value)), /*#__PURE__*/React__default.createElement("div", {
-      className: "cell cell--9--small"
-    }, /*#__PURE__*/React__default.createElement("div", {
-      className: "item__values"
-    }, makeSynonyms(synonyms, false))))), /*#__PURE__*/React__default.createElement("div", {
-      className: "item__buttons"
-    }, /*#__PURE__*/React__default.createElement("button", {
-      className: "btn--remove btn--remove--main",
-      type: "button",
-      onClick: function onClick(e) {
-        handleRemove(e);
-      }
-    }, /*#__PURE__*/React__default.createElement(IconTrash, null))));
-  } else {
-    return /*#__PURE__*/React__default.createElement("li", {
-      className: "item item--entity item--active " + (remove ? 'item--remove' : '')
-    }, /*#__PURE__*/React__default.createElement("div", {
-      className: "item__inner"
-    }, /*#__PURE__*/React__default.createElement("div", {
-      className: "grid"
-    }, /*#__PURE__*/React__default.createElement("div", {
-      className: "cell cell--3--small"
-    }, /*#__PURE__*/React__default.createElement("div", {
-      className: "item__value item__value--primary"
-    }, /*#__PURE__*/React__default.createElement("input", {
-      "data-input": "true",
-      className: "editor-input",
-      type: "text",
-      defaultValue: value,
-      placeholder: "Enter value",
-      onChange: function onChange(e) {
-        setValue(e.target.value);
-      }
-    }))), /*#__PURE__*/React__default.createElement("div", {
-      className: "cell cell--9--small"
-    }, /*#__PURE__*/React__default.createElement("div", {
-      className: "item__values"
-    }, makeSynonyms(synonyms, true), /*#__PURE__*/React__default.createElement("form", {
-      onSubmit: function onSubmit(e) {
-        e.preventDefault();
+  return /*#__PURE__*/React__default.createElement("li", {
+    className: "field field--" + (active ? 'active' : 'inactive') + " field--entity " + (remove ? 'field--remove' : ''),
+    onClick: function onClick() {
+      props.setActiveValue(props.index);
+    }
+  }, /*#__PURE__*/React__default.createElement("div", {
+    "class": "field__value"
+  }, active ? /*#__PURE__*/React__default.createElement("input", {
+    className: "editor-input",
+    type: "text",
+    defaultValue: value,
+    placeholder: "Enter value",
+    onKeyDown: function onKeyDown(e) {},
+    onChange: function onChange(e) {
+      setValue(e.target.value);
+    }
+  }) : /*#__PURE__*/React__default.createElement("input", {
+    readOnly: true,
+    className: "editor-input",
+    type: "text",
+    defaultValue: value,
+    placeholder: "Enter value",
+    onKeyDown: function onKeyDown(e) {},
+    onChange: function onChange(e) {
+      setValue(e.target.value);
+    }
+  })), /*#__PURE__*/React__default.createElement("div", {
+    className: "field__synonyms"
+  }, makeSynonyms(synonyms, active), /*#__PURE__*/React__default.createElement("input", {
+    className: "editor-input",
+    type: "text",
+    style: {
+      marginLeft: '0.625rem'
+    },
+    onKeyDown: function onKeyDown(e) {
+      if (e.keyCode == 13) {
         handleNewSynonym(synonymInput);
       }
-    }, /*#__PURE__*/React__default.createElement("input", {
-      className: "editor-input",
-      type: "text",
-      style: {
-        marginLeft: '0.625rem'
-      },
-      ref: synonymInput,
-      placeholder: "Enter synonym",
-      onChange: function onChange(e) {}
-    }), /*#__PURE__*/React__default.createElement("input", {
-      className: "editor-input",
-      type: "submit",
-      hidden: true
-    })))))), /*#__PURE__*/React__default.createElement("div", {
-      className: "item__buttons"
-    }, /*#__PURE__*/React__default.createElement("button", {
-      className: "btn--remove btn--remove--main",
-      type: "button",
-      onClick: function onClick(e) {
-        handleRemove(e);
-      }
-    }, /*#__PURE__*/React__default.createElement(IconTrash, null))));
-  }
+    },
+    ref: synonymInput,
+    placeholder: "Enter synonym"
+  })), /*#__PURE__*/React__default.createElement("div", {
+    className: "field__actions"
+  }, /*#__PURE__*/React__default.createElement("button", {
+    className: "btn--remove btn--remove--main",
+    type: "button",
+    onClick: function onClick(e) {
+      handleRemove(e);
+    }
+  }, /*#__PURE__*/React__default.createElement(IconTrash, null))));
 };
 
 function EntityValues(props) {
@@ -363,140 +464,6 @@ function EntityDetails(props) {
     return null;
   }
 }
-
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-
-  return arr2;
-}
-
-function _createForOfIteratorHelperLoose(o, allowArrayLike) {
-  var it;
-
-  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
-    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-      if (it) o = it;
-      var i = 0;
-      return function () {
-        if (i >= o.length) return {
-          done: true
-        };
-        return {
-          done: false,
-          value: o[i++]
-        };
-      };
-    }
-
-    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-  }
-
-  it = o[Symbol.iterator]();
-  return it.next.bind(it);
-}
-
-var stringToColor = function stringToColor(value) {
-  return value.getHashCode().intToHSL();
-};
-
-String.prototype.getHashCode = function () {
-  var hash = 0;
-  if (this.length == 0) return hash;
-
-  for (var i = 0; i < this.length; i++) {
-    hash = this.charCodeAt(i) + ((hash << 5) - hash);
-    hash = hash & hash;
-  }
-
-  return hash;
-};
-
-Number.prototype.intToHSL = function () {
-  var shortened = this % 220;
-  return "hsl(" + shortened + ",100%, 80%)";
-};
-var getCaretCharacterOffsetWithin = function getCaretCharacterOffsetWithin(element) {
-  var caretOffset = 0;
-  var doc = element.ownerDocument || element.document;
-  var win = doc.defaultView || doc.parentWindow;
-  var sel;
-
-  if (typeof win.getSelection != "undefined") {
-    sel = win.getSelection();
-
-    if (sel.rangeCount > 0) {
-      var range = win.getSelection().getRangeAt(0);
-      var preCaretRange = range.cloneRange();
-      preCaretRange.selectNodeContents(element);
-      preCaretRange.setEnd(range.endContainer, range.endOffset);
-      caretOffset = preCaretRange.toString().length;
-    }
-  } else if ((sel = doc.selection) && sel.type != "Control") {
-    var textRange = sel.createRange();
-    var preCaretTextRange = doc.body.createTextRange();
-    preCaretTextRange.moveToElementText(element);
-    preCaretTextRange.setEndPoint("EndToEnd", textRange);
-    caretOffset = preCaretTextRange.text.length;
-  }
-
-  return caretOffset;
-};
-var setCaretPosition = function setCaretPosition(el, pos) {
-  for (var _iterator = _createForOfIteratorHelperLoose(el.childNodes), _step; !(_step = _iterator()).done;) {
-    var node = _step.value;
-
-    if (node.nodeType == 3) {
-      if (node.length >= pos) {
-        var range = document.createRange(),
-            sel = window.getSelection();
-        range.setStart(node, pos);
-        range.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(range);
-        return -1;
-      } else {
-        pos -= node.length;
-      }
-    } else {
-      pos = setCaretPosition(node, pos);
-
-      if (pos == -1) {
-        return -1;
-      }
-    }
-  }
-
-  return pos;
-};
 
 var UtteranceSlotValue = React__default.memo(function (props) {
   var _useState = React.useState(true),

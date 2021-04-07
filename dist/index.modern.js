@@ -24,12 +24,85 @@ function IconTrash() {
   })));
 }
 
+const stringToColor = value => {
+  return value.getHashCode().intToHSL();
+};
+
+String.prototype.getHashCode = function () {
+  var hash = 0;
+  if (this.length == 0) return hash;
+
+  for (var i = 0; i < this.length; i++) {
+    hash = this.charCodeAt(i) + ((hash << 5) - hash);
+    hash = hash & hash;
+  }
+
+  return hash;
+};
+
+Number.prototype.intToHSL = function () {
+  var shortened = this % 220;
+  return "hsl(" + shortened + ",100%, 80%)";
+};
+const getCaretCharacterOffsetWithin = element => {
+  var caretOffset = 0;
+  var doc = element.ownerDocument || element.document;
+  var win = doc.defaultView || doc.parentWindow;
+  var sel;
+
+  if (typeof win.getSelection != "undefined") {
+    sel = win.getSelection();
+
+    if (sel.rangeCount > 0) {
+      var range = win.getSelection().getRangeAt(0);
+      var preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(element);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      caretOffset = preCaretRange.toString().length;
+    }
+  } else if ((sel = doc.selection) && sel.type != "Control") {
+    var textRange = sel.createRange();
+    var preCaretTextRange = doc.body.createTextRange();
+    preCaretTextRange.moveToElementText(element);
+    preCaretTextRange.setEndPoint("EndToEnd", textRange);
+    caretOffset = preCaretTextRange.text.length;
+  }
+
+  return caretOffset;
+};
+const setCaretPosition = (el, pos) => {
+  for (var node of el.childNodes) {
+    if (node.nodeType == 3) {
+      if (node.length >= pos) {
+        var range = document.createRange(),
+            sel = window.getSelection();
+        range.setStart(node, pos);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        return -1;
+      } else {
+        pos -= node.length;
+      }
+    } else {
+      pos = setCaretPosition(node, pos);
+
+      if (pos == -1) {
+        return -1;
+      }
+    }
+  }
+
+  return pos;
+};
+
 const EntityValue = props => {
   const [value, setValue] = useState(props.item.value);
   const [synonyms, setSynonyms] = useState(props.item.synonyms);
   const [newSynonym, setNewSynonym] = useState('');
   const [remove, setRemove] = useState(false);
   const synonymInput = useRef(null);
+  let active = props.activeValue === props.index;
   useEffect(() => {
     props.handleUpdate([...props.values], props.index, {
       value: value,
@@ -65,19 +138,14 @@ const EntityValue = props => {
     }
   };
 
-  const makeSynonyms = (items, active) => {
+  const makeSynonyms = (items, isActive) => {
     if (items) {
       return items && items.map((item, i) => {
-        if (item && !active) {
-          return /*#__PURE__*/React.createElement("div", {
-            className: "synonym",
-            key: i
-          }, item);
-        } else {
+        if (item) {
           return /*#__PURE__*/React.createElement("div", {
             key: i,
             className: "synonym"
-          }, item, /*#__PURE__*/React.createElement("button", {
+          }, item, isActive && /*#__PURE__*/React.createElement("button", {
             type: "button",
             className: "synonym__remove",
             onClick: () => {
@@ -98,85 +166,56 @@ const EntityValue = props => {
     }, 220);
   };
 
-  if (props.activeValue !== props.index) {
-    return /*#__PURE__*/React.createElement("li", {
-      className: `item item--entity ${remove ? 'item--remove' : ''}`,
-      onClick: () => {
-        props.setActiveValue(props.index);
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "item__inner"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "grid"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "cell cell--3--small"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "item__value item__value--primary"
-    }, value)), /*#__PURE__*/React.createElement("div", {
-      className: "cell cell--9--small"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "item__values"
-    }, makeSynonyms(synonyms, false))))), /*#__PURE__*/React.createElement("div", {
-      className: "item__buttons"
-    }, /*#__PURE__*/React.createElement("button", {
-      className: "btn--remove btn--remove--main",
-      type: "button",
-      onClick: e => {
-        handleRemove(e);
-      }
-    }, /*#__PURE__*/React.createElement(IconTrash, null))));
-  } else {
-    return /*#__PURE__*/React.createElement("li", {
-      className: `item item--entity item--active ${remove ? 'item--remove' : ''}`
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "item__inner"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "grid"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "cell cell--3--small"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "item__value item__value--primary"
-    }, /*#__PURE__*/React.createElement("input", {
-      "data-input": "true",
-      className: "editor-input",
-      type: "text",
-      defaultValue: value,
-      placeholder: "Enter value",
-      onChange: e => {
-        setValue(e.target.value);
-      }
-    }))), /*#__PURE__*/React.createElement("div", {
-      className: "cell cell--9--small"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "item__values"
-    }, makeSynonyms(synonyms, true), /*#__PURE__*/React.createElement("form", {
-      onSubmit: e => {
-        e.preventDefault();
+  return /*#__PURE__*/React.createElement("li", {
+    className: `field field--${active ? 'active' : 'inactive'} field--entity ${remove ? 'field--remove' : ''}`,
+    onClick: () => {
+      props.setActiveValue(props.index);
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    class: "field__value"
+  }, active ? /*#__PURE__*/React.createElement("input", {
+    className: "editor-input",
+    type: "text",
+    defaultValue: value,
+    placeholder: "Enter value",
+    onKeyDown: e => {},
+    onChange: e => {
+      setValue(e.target.value);
+    }
+  }) : /*#__PURE__*/React.createElement("input", {
+    readOnly: true,
+    className: "editor-input",
+    type: "text",
+    defaultValue: value,
+    placeholder: "Enter value",
+    onKeyDown: e => {},
+    onChange: e => {
+      setValue(e.target.value);
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "field__synonyms"
+  }, makeSynonyms(synonyms, active), /*#__PURE__*/React.createElement("input", {
+    className: "editor-input",
+    type: "text",
+    style: {
+      marginLeft: '0.625rem'
+    },
+    onKeyDown: e => {
+      if (e.keyCode == 13) {
         handleNewSynonym(synonymInput);
       }
-    }, /*#__PURE__*/React.createElement("input", {
-      className: "editor-input",
-      type: "text",
-      style: {
-        marginLeft: '0.625rem'
-      },
-      ref: synonymInput,
-      placeholder: "Enter synonym",
-      onChange: e => {}
-    }), /*#__PURE__*/React.createElement("input", {
-      className: "editor-input",
-      type: "submit",
-      hidden: true
-    })))))), /*#__PURE__*/React.createElement("div", {
-      className: "item__buttons"
-    }, /*#__PURE__*/React.createElement("button", {
-      className: "btn--remove btn--remove--main",
-      type: "button",
-      onClick: e => {
-        handleRemove(e);
-      }
-    }, /*#__PURE__*/React.createElement(IconTrash, null))));
-  }
+    },
+    ref: synonymInput,
+    placeholder: "Enter synonym"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "field__actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn--remove btn--remove--main",
+    type: "button",
+    onClick: e => {
+      handleRemove(e);
+    }
+  }, /*#__PURE__*/React.createElement(IconTrash, null))));
 };
 
 function EntityValues(props) {
@@ -328,78 +367,6 @@ function EntityDetails(props) {
     return null;
   }
 }
-
-const stringToColor = value => {
-  return value.getHashCode().intToHSL();
-};
-
-String.prototype.getHashCode = function () {
-  var hash = 0;
-  if (this.length == 0) return hash;
-
-  for (var i = 0; i < this.length; i++) {
-    hash = this.charCodeAt(i) + ((hash << 5) - hash);
-    hash = hash & hash;
-  }
-
-  return hash;
-};
-
-Number.prototype.intToHSL = function () {
-  var shortened = this % 220;
-  return "hsl(" + shortened + ",100%, 80%)";
-};
-const getCaretCharacterOffsetWithin = element => {
-  var caretOffset = 0;
-  var doc = element.ownerDocument || element.document;
-  var win = doc.defaultView || doc.parentWindow;
-  var sel;
-
-  if (typeof win.getSelection != "undefined") {
-    sel = win.getSelection();
-
-    if (sel.rangeCount > 0) {
-      var range = win.getSelection().getRangeAt(0);
-      var preCaretRange = range.cloneRange();
-      preCaretRange.selectNodeContents(element);
-      preCaretRange.setEnd(range.endContainer, range.endOffset);
-      caretOffset = preCaretRange.toString().length;
-    }
-  } else if ((sel = doc.selection) && sel.type != "Control") {
-    var textRange = sel.createRange();
-    var preCaretTextRange = doc.body.createTextRange();
-    preCaretTextRange.moveToElementText(element);
-    preCaretTextRange.setEndPoint("EndToEnd", textRange);
-    caretOffset = preCaretTextRange.text.length;
-  }
-
-  return caretOffset;
-};
-const setCaretPosition = (el, pos) => {
-  for (var node of el.childNodes) {
-    if (node.nodeType == 3) {
-      if (node.length >= pos) {
-        var range = document.createRange(),
-            sel = window.getSelection();
-        range.setStart(node, pos);
-        range.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(range);
-        return -1;
-      } else {
-        pos -= node.length;
-      }
-    } else {
-      pos = setCaretPosition(node, pos);
-
-      if (pos == -1) {
-        return -1;
-      }
-    }
-  }
-
-  return pos;
-};
 
 const UtteranceSlotValue = React.memo(props => {
   const [valid, setValid] = useState(true);
