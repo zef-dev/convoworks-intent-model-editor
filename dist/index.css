@@ -853,24 +853,21 @@
     justify-content: space-between;
     align-items: center;
     position: relative; }
+    .convo-details .field .field__actions button {
+      opacity: 0; }
     .convo-details .field:hover {
       border-color: rgba(47, 116, 234, 0.5); }
-      .convo-details .field:hover .btn--remove--main {
-        opacity: 0.4;
+      .convo-details .field:hover .field__actions button {
+        opacity: 1;
         visibility: visible; }
     .convo-details .field--active:hover {
       border-color: #2f74ea; }
-      .convo-details .field--active:hover .btn--remove--main {
-        opacity: 0.85; }
-    .convo-details .field--active .btn--remove--main {
+    .convo-details .field--active .field__actions button {
       opacity: 0.85;
       visibility: visible; }
     .convo-details .field--active .field__error {
       visibility: visible;
       opacity: 1; }
-    .convo-details .field--remove {
-      border-color: #d9543e;
-      color: #d9543e; }
     .convo-details .field .btn--remove:hover {
       opacity: 1; }
     .convo-details .field mark,
@@ -883,10 +880,6 @@
       padding: 0;
       transition: 0.22s;
       cursor: pointer; }
-      .convo-details .field mark.active,
-      .convo-details .field .mark.active {
-        box-shadow: 0px 0px 0px 2px rgba(47, 116, 234, 0.85);
-        background: transparent !important; }
       .convo-details .field mark:focus,
       .convo-details .field .mark:focus {
         outline: 2px solid #2f74ea; }
@@ -1132,8 +1125,7 @@
     outline: none;
     line-height: 1.25;
     padding: 10px 12px;
-    border-bottom: 1px solid transparent;
-    border-radius: 0.5rem; }
+    border-bottom: 1px solid transparent; }
     .convo-details .taggable-text__input:focus {
       outline: none;
       background: rgba(47, 116, 234, 0.065); }
@@ -1181,7 +1173,7 @@
     color: #d9543e; }
   .convo-details .field--active [data-valid="false"] .taggable-text__input {
     color: #d9543e;
-    border-bottom: 1px dashed #d9543e; }
+    background: rgba(217, 84, 62, 0.05); }
   .convo-details input[data-valid="false"] {
     color: #d9543e;
     border-bottom: 1px dashed #d9543e; }

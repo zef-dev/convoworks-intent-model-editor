@@ -593,7 +593,7 @@ function Dropdown(props) {
         key: i,
         type: "button",
         onClick: function onClick() {
-          props.tagSelection(item.name, item.name);
+          props.tagSelection(item.name);
         }
       }, "@", item.name);
     })));
@@ -626,10 +626,25 @@ var UtteranceInput = function UtteranceInput(props) {
     return mark;
   }
 
-  var tagSelection = function tagSelection(type, slot_value) {
+  var tagSelection = function tagSelection(type) {
     if (props.selection) {
       if (!props.selection.tagName) {
-        var mark = createNode(type, slot_value, props.selection.toString());
+        var getSlotValue = function getSlotValue(type) {
+          var existingSlotValue = props.slotValuePairs.find(function (item) {
+            return item.type === type;
+          });
+          console.log('is there --->', existingSlotValue);
+
+          if (existingSlotValue) {
+            return existingSlotValue.slot_value;
+          } else {
+            var arr = type.split('.');
+            var str = arr[arr.length - 1];
+            return str;
+          }
+        };
+
+        var mark = createNode(type, getSlotValue(type), props.selection.toString());
 
         if (mark) {
           props.selection.getRangeAt(0).extractContents();
@@ -911,7 +926,8 @@ var Utterance = React__default.memo(function (props) {
       setRaw: setRaw,
       entities: props.entities,
       selection: selection,
-      setSelection: setSelection
+      setSelection: setSelection,
+      slotValuePairs: props.slotValuePairs
     }), /*#__PURE__*/React__default.createElement("div", {
       className: "field__actions"
     }, !props["new"] && /*#__PURE__*/React__default.createElement("button", {
@@ -987,7 +1003,8 @@ var IntentUtterances = function IntentUtterances(props) {
         utterances: props.utterances,
         setUtterances: props.setUtterances,
         stateChange: props.stateChange,
-        setStateChange: props.setStateChange
+        setStateChange: props.setStateChange,
+        slotValuePairs: props.slotValuePairs
       }));
     }));
   } else {
@@ -1017,32 +1034,31 @@ function IntentDetails(props) {
   var _useState = React.useState(props.intent),
       intent = _useState[0];
 
-  var _useState2 = React.useState(props.intent);
-
   var entities = props.entities;
   var systemEntities = props.systemEntities;
 
-  var _useState3 = React.useState(false),
-      stateChange = _useState3[0],
-      setStateChange = _useState3[1];
+  var _useState2 = React.useState(false),
+      stateChange = _useState2[0],
+      setStateChange = _useState2[1];
 
-  var _useState4 = React.useState(''),
-      name = _useState4[0],
-      setName = _useState4[1];
+  var _useState3 = React.useState(''),
+      name = _useState3[0],
+      setName = _useState3[1];
+
+  var _useState4 = React.useState([]),
+      utterances = _useState4[0],
+      setUtterances = _useState4[1];
 
   var _useState5 = React.useState([]),
-      utterances = _useState5[0],
-      setUtterances = _useState5[1];
+      slotValuePairs = _useState5[0],
+      setSlotValuePairs = _useState5[1];
 
-  var _useState6 = React.useState(null);
+  var _useState6 = React.useState(true);
 
-  var _useState7 = React.useState(true);
+  var _useState7 = React.useState(''),
+      searchPhrase = _useState7[0],
+      setSearchPhrase = _useState7[1];
 
-  var _useState8 = React.useState(''),
-      searchPhrase = _useState8[0],
-      setSearchPhrase = _useState8[1];
-
-  var newExpressionInput = React.useRef(null);
   var searchInput = React.useRef(null);
   React.useEffect(function () {
     if (intent) {
@@ -1066,8 +1082,24 @@ function IntentDetails(props) {
     }
   };
 
+  var setInitialSlotValuePairs = function setInitialSlotValuePairs() {
+    var arr = utterances.map(function (item) {
+      return item.model;
+    }).flat().filter(function (item) {
+      return item.slot_value;
+    }).map(function (item) {
+      return {
+        type: item.type,
+        slot_value: item.slot_value
+      };
+    });
+    console.log(arr);
+    setSlotValuePairs(arr);
+  };
+
   var debouncedHandleNew = useDebounce(handleNew, 300);
   React.useEffect(function () {
+    setInitialSlotValuePairs();
   }, [utterances]);
   React.useEffect(function () {
     if (name && utterances) {
@@ -1128,7 +1160,8 @@ function IntentDetails(props) {
       entities: [entities].concat(systemEntities),
       stateChange: stateChange,
       setStateChange: setStateChange,
-      searchPhrase: searchPhrase
+      searchPhrase: searchPhrase,
+      slotValuePairs: slotValuePairs
     }))))));
   } else {
     return null;

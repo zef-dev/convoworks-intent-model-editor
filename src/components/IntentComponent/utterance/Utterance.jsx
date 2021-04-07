@@ -109,7 +109,7 @@ export const Utterance = React.memo(props => {
                         className='field__main'
                     >
                         <div className='field__input' data-valid={validateInput() ? 'true' : 'false'}>
-                            <UtteranceInput index={props.index} input={input} active={active} setActive={props.setActive} raw={raw} setRaw={setRaw} entities={props.entities} selection={selection} setSelection={setSelection} />
+                            <UtteranceInput index={props.index} input={input} active={active} setActive={props.setActive} raw={raw} setRaw={setRaw} entities={props.entities} selection={selection} setSelection={setSelection} slotValuePairs={props.slotValuePairs} />
                             <div className="field__actions">
                                 {!props.new &&
                                     <button onClick={() => {

@@ -67,7 +67,7 @@ function Dropdown(props) {
 								key={i}
 								type="button"
 								onClick={() => {
-									props.tagSelection(item.name, item.name)
+									props.tagSelection(item.name)
 								}}
 							>
 								@

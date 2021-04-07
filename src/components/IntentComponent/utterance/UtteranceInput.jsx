@@ -16,6 +16,7 @@ const UtteranceInput = (props) => {
   const cursorPosition = useRef(null);
 
   function createNode(type, slot_value, text) {
+
     let mark = document.createElement('mark');
     let newTextNode = document.createTextNode(text);
 
@@ -30,10 +31,23 @@ const UtteranceInput = (props) => {
     return mark;
   }
 
-  const tagSelection = (type, slot_value) => {
+  const tagSelection = (type) => {
     if (props.selection) {
       if (!props.selection.tagName) {
-        let mark = createNode(type, slot_value, props.selection.toString());
+
+        const getSlotValue = (type) => {
+          let existingSlotValue = props.slotValuePairs.find(item => item.type === type);
+          console.log('is there --->', existingSlotValue);
+          if (existingSlotValue) {
+            return existingSlotValue.slot_value
+          } else {
+            let arr = type.split('.');
+            let str = arr[arr.length - 1];
+            return str;
+          }
+        }
+      
+        let mark = createNode(type, getSlotValue(type), props.selection.toString());
         if (mark) {
           props.selection.getRangeAt(0).extractContents();
           props.selection.getRangeAt(0).insertNode(mark);

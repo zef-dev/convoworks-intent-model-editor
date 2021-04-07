@@ -7,20 +7,17 @@ import useDebounce from '../../helpers/useDebounce.jsx';
 
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
-  const [savedIntent, setSavedIntent] = useState(props.intent);
   const entities = props.entities;
   const systemEntities = props.systemEntities;
   const [stateChange, setStateChange] = useState(false);
 
   const [name, setName] = useState('');
   const [utterances, setUtterances] = useState([]);
-  const [newExpression, setNewExpression] = useState(null);
+
+  const [slotValuePairs, setSlotValuePairs] = useState([]);
 
   const [valid, setValid] = useState(true);
   const [searchPhrase, setSearchPhrase] = useState('');
-
-  const newExpressionInput = useRef(null);
-
   const searchInput = useRef(null);
 
   // check if data is passed in props
@@ -43,10 +40,22 @@ function IntentDetails(props) {
     }
   }
 
+  const setInitialSlotValuePairs = () => {
+    let arr = utterances.map(item => item.model).flat().filter(item => item.slot_value).map(item => ({
+      type: item.type,
+      slot_value: item.slot_value
+    }));
+
+    console.log(arr)
+
+    setSlotValuePairs(arr);
+  }
+
   const debouncedHandleNew = useDebounce(handleNew, 300);
 
   useEffect(() => {
     debouncedHandleNew;
+    setInitialSlotValuePairs();
   }, [utterances])
 
 
@@ -114,6 +123,7 @@ function IntentDetails(props) {
                   stateChange={stateChange}
                   setStateChange={setStateChange}
                   searchPhrase={searchPhrase}
+                  slotValuePairs={slotValuePairs}
                 />
               </div>
             </div>

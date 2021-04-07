@@ -483,7 +483,7 @@ function Dropdown(props) {
         key: i,
         type: "button",
         onClick: () => {
-          props.tagSelection(item.name, item.name);
+          props.tagSelection(item.name);
         }
       }, "@", item.name);
     })));
@@ -513,10 +513,23 @@ const UtteranceInput = props => {
     return mark;
   }
 
-  const tagSelection = (type, slot_value) => {
+  const tagSelection = type => {
     if (props.selection) {
       if (!props.selection.tagName) {
-        let mark = createNode(type, slot_value, props.selection.toString());
+        const getSlotValue = type => {
+          let existingSlotValue = props.slotValuePairs.find(item => item.type === type);
+          console.log('is there --->', existingSlotValue);
+
+          if (existingSlotValue) {
+            return existingSlotValue.slot_value;
+          } else {
+            let arr = type.split('.');
+            let str = arr[arr.length - 1];
+            return str;
+          }
+        };
+
+        let mark = createNode(type, getSlotValue(type), props.selection.toString());
 
         if (mark) {
           props.selection.getRangeAt(0).extractContents();
@@ -770,7 +783,8 @@ const Utterance = React.memo(props => {
       setRaw: setRaw,
       entities: props.entities,
       selection: selection,
-      setSelection: setSelection
+      setSelection: setSelection,
+      slotValuePairs: props.slotValuePairs
     }), /*#__PURE__*/React.createElement("div", {
       className: "field__actions"
     }, !props.new && /*#__PURE__*/React.createElement("button", {
@@ -840,7 +854,8 @@ const IntentUtterances = props => {
         utterances: props.utterances,
         setUtterances: props.setUtterances,
         stateChange: props.stateChange,
-        setStateChange: props.setStateChange
+        setStateChange: props.setStateChange,
+        slotValuePairs: props.slotValuePairs
       }));
     }));
   } else {
@@ -865,16 +880,14 @@ function useDebounce(value, delay) {
 
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
-  const [savedIntent, setSavedIntent] = useState(props.intent);
   const entities = props.entities;
   const systemEntities = props.systemEntities;
   const [stateChange, setStateChange] = useState(false);
   const [name, setName] = useState('');
   const [utterances, setUtterances] = useState([]);
-  const [newExpression, setNewExpression] = useState(null);
+  const [slotValuePairs, setSlotValuePairs] = useState([]);
   const [valid, setValid] = useState(true);
   const [searchPhrase, setSearchPhrase] = useState('');
-  const newExpressionInput = useRef(null);
   const searchInput = useRef(null);
   useEffect(() => {
     if (intent) {
@@ -898,8 +911,18 @@ function IntentDetails(props) {
     }
   };
 
+  const setInitialSlotValuePairs = () => {
+    let arr = utterances.map(item => item.model).flat().filter(item => item.slot_value).map(item => ({
+      type: item.type,
+      slot_value: item.slot_value
+    }));
+    console.log(arr);
+    setSlotValuePairs(arr);
+  };
+
   const debouncedHandleNew = useDebounce(handleNew, 300);
   useEffect(() => {
+    setInitialSlotValuePairs();
   }, [utterances]);
   useEffect(() => {
     if (name && utterances) {
@@ -959,7 +982,8 @@ function IntentDetails(props) {
       entities: [entities, ...systemEntities],
       stateChange: stateChange,
       setStateChange: setStateChange,
-      searchPhrase: searchPhrase
+      searchPhrase: searchPhrase,
+      slotValuePairs: slotValuePairs
     }))))));
   } else {
     return null;
