@@ -30,7 +30,7 @@ const App = () => {
       {view === 'intent' ? 
       <IntentEditor
         intent={JSON.parse(localStorage.getItem('intent'))}
-        entities={data.entities}
+        entities={[...data.entities, {name: 'test.entity.someVal', values: []}, {name: 'test.entity.more.dots', values: []}]}
         systemEntities={[]}
         onUpdate={(item) => {saveIntent(item);}}
       />
