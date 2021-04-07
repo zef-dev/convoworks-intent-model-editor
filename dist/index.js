@@ -161,8 +161,6 @@ var IconTrash = function IconTrash() {
 };
 
 var EntityValue = function EntityValue(props) {
-  var _React$createElement;
-
   var _useState = React.useState(props.item.value),
       value = _useState[0],
       setValue = _useState[1];
@@ -275,20 +273,22 @@ var EntityValue = function EntityValue(props) {
     }
   })), /*#__PURE__*/React__default.createElement("div", {
     className: "field__synonyms"
-  }, makeSynonyms(synonyms, active), /*#__PURE__*/React__default.createElement("input", (_React$createElement = {
+  }, makeSynonyms(synonyms, active), /*#__PURE__*/React__default.createElement("input", {
     className: "editor-input",
     type: "text",
     style: {
       marginLeft: '0.625rem'
     },
     onKeyDown: function onKeyDown(e) {
-      return preventSubmit(e);
-    }
-  }, _React$createElement["onKeyDown"] = function onKeyDown(e) {
-    if (e.keyCode == 13) {
-      handleNewSynonym(synonymInput);
-    }
-  }, _React$createElement.ref = synonymInput, _React$createElement.placeholder = "Enter synonym", _React$createElement))), /*#__PURE__*/React__default.createElement("div", {
+      preventSubmit(e);
+
+      if (e.keyCode == 13) {
+        handleNewSynonym(synonymInput);
+      }
+    },
+    ref: synonymInput,
+    placeholder: "Enter synonym"
+  })), /*#__PURE__*/React__default.createElement("div", {
     className: "field__actions"
   }, /*#__PURE__*/React__default.createElement("button", {
     className: "btn--remove btn--remove--main",

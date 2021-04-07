@@ -131,8 +131,8 @@ const EntityValue = (props) => {
 					className="editor-input"
 					type="text"
 					style={{ marginLeft: '0.625rem' }}
-					onKeyDown={(e) => preventSubmit(e)}
 					onKeyDown={(e) => {
+						preventSubmit(e);
 						if (e.keyCode == 13) {
 							handleNewSynonym(synonymInput);
 						}
