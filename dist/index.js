@@ -248,7 +248,7 @@ var EntityValue = function EntityValue(props) {
       props.setActiveValue(props.index);
     }
   }, /*#__PURE__*/React__default.createElement("div", {
-    "class": "field__value"
+    className: "field__value"
   }, active ? /*#__PURE__*/React__default.createElement("input", {
     className: "editor-input",
     type: "text",
@@ -535,7 +535,7 @@ function Dropdown(props) {
       left: props.dropdownState.position
     };
     return /*#__PURE__*/React__default.createElement("div", {
-      "class": "dropdown",
+      className: "dropdown",
       ref: modalRef,
       style: dropdownStyles
     }, /*#__PURE__*/React__default.createElement("header", {
@@ -556,7 +556,7 @@ function Dropdown(props) {
       className: "dropdown__search editor-input",
       placeholder: "Filter entities"
     })), /*#__PURE__*/React__default.createElement("div", {
-      "class": "dropdown__items"
+      className: "dropdown__items"
     }, entities.length && entities.flat().map(function (item, i) {
       return /*#__PURE__*/React__default.createElement("button", {
         style: {
@@ -716,7 +716,7 @@ var UtteranceInput = function UtteranceInput(props) {
     }
   });
   return /*#__PURE__*/React__default.createElement("div", {
-    "class": "taggable-text"
+    className: "taggable-text"
   }, /*#__PURE__*/React__default.createElement(ContentEditable, {
     "data-placeholder": "Enter reference value",
     innerRef: input,
@@ -883,7 +883,7 @@ var Utterance = React__default.memo(function (props) {
     return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
       ref: wrapper,
       "data-field-valid": "" + valid,
-      "class": "field field--intent " + (active ? 'field--active' : '')
+      className: "field field--intent " + (active ? 'field--active' : '')
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "field__main"
     }, /*#__PURE__*/React__default.createElement("div", {

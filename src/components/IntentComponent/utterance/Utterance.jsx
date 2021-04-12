@@ -104,7 +104,7 @@ export const Utterance = React.memo(props => {
     if (props) {
         return (
             <React.Fragment>
-                <div ref={wrapper} data-field-valid={`${valid}`} class={`field field--intent ${active ? 'field--active' : ''}`}>
+                <div ref={wrapper} data-field-valid={`${valid}`} className={`field field--intent ${active ? 'field--active' : ''}`}>
                     <div
                         className='field__main'
                     >

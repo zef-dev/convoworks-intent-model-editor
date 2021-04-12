@@ -151,7 +151,7 @@ const UtteranceInput = (props) => {
   });
 
   return (
-    <div class='taggable-text'>
+    <div className='taggable-text'>
       <ContentEditable
         data-placeholder="Enter reference value"
         innerRef={input}

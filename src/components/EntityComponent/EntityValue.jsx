@@ -98,7 +98,7 @@ const EntityValue = (props) => {
 				props.setActiveValue(props.index);
 			}}
 		>
-			<div class="field__value">
+			<div className="field__value">
 				{active ?
 					<input
 						className="editor-input"

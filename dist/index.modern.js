@@ -170,7 +170,7 @@ const EntityValue = props => {
       props.setActiveValue(props.index);
     }
   }, /*#__PURE__*/React.createElement("div", {
-    class: "field__value"
+    className: "field__value"
   }, active ? /*#__PURE__*/React.createElement("input", {
     className: "editor-input",
     type: "text",
@@ -418,7 +418,7 @@ function Dropdown(props) {
       left: props.dropdownState.position
     };
     return /*#__PURE__*/React.createElement("div", {
-      class: "dropdown",
+      className: "dropdown",
       ref: modalRef,
       style: dropdownStyles
     }, /*#__PURE__*/React.createElement("header", {
@@ -437,7 +437,7 @@ function Dropdown(props) {
       className: "dropdown__search editor-input",
       placeholder: "Filter entities"
     })), /*#__PURE__*/React.createElement("div", {
-      class: "dropdown__items"
+      className: "dropdown__items"
     }, entities.length && entities.flat().map((item, i) => {
       return /*#__PURE__*/React.createElement("button", {
         style: {
@@ -589,7 +589,7 @@ const UtteranceInput = props => {
     }
   });
   return /*#__PURE__*/React.createElement("div", {
-    class: "taggable-text"
+    className: "taggable-text"
   }, /*#__PURE__*/React.createElement(ContentEditable, {
     "data-placeholder": "Enter reference value",
     innerRef: input,
@@ -731,7 +731,7 @@ const Utterance = React.memo(props => {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       ref: wrapper,
       "data-field-valid": `${valid}`,
-      class: `field field--intent ${active ? 'field--active' : ''}`
+      className: `field field--intent ${active ? 'field--active' : ''}`
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__main"
     }, /*#__PURE__*/React.createElement("div", {

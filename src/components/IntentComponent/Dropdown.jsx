@@ -43,7 +43,7 @@ function Dropdown(props) {
 		}
 
 		return (
-			<div class="dropdown" ref={modalRef} style={dropdownStyles}>
+			<div className="dropdown" ref={modalRef} style={dropdownStyles}>
 				<header className="dropdown__header">
 					<TextInput
 						Component="input"
@@ -60,7 +60,7 @@ function Dropdown(props) {
 						placeholder="Filter entities"
 					/>
 				</header>
-				<div class="dropdown__items">
+				<div className="dropdown__items">
 					{entities.length && entities.flat().map((item, i) => {
 						return (
 							<button
