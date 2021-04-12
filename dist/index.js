@@ -917,7 +917,8 @@ var Utterance = React__default.memo(function (props) {
       className: "model-list__header"
     }, /*#__PURE__*/React__default.createElement("strong", null, "Parameter name"), /*#__PURE__*/React__default.createElement("strong", null, "Entity"), /*#__PURE__*/React__default.createElement("strong", null, "Resolved value")), whitelist.tags && whitelist.tags.map(function (item, index) {
       return /*#__PURE__*/React__default.createElement("li", {
-        className: "model-list__item"
+        className: "model-list__item",
+        key: index
       }, /*#__PURE__*/React__default.createElement(UtteranceSlotValue, {
         key: index,
         index: index,

@@ -765,7 +765,8 @@ const Utterance = React.memo(props => {
       className: "model-list__header"
     }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.tags && whitelist.tags.map((item, index) => {
       return /*#__PURE__*/React.createElement("li", {
-        className: "model-list__item"
+        className: "model-list__item",
+        key: index
       }, /*#__PURE__*/React.createElement(UtteranceSlotValue, {
         key: index,
         index: index,

@@ -130,7 +130,7 @@ export const Utterance = React.memo(props => {
                             </header>
                             {whitelist.tags && whitelist.tags.map((item, index) => {
                                 return (
-                                    <li className="model-list__item">
+                                    <li className="model-list__item" key={index}>
                                         <UtteranceSlotValue key={index} index={index} target={item.target} slotValue={item.slot_value} whitelist={whitelist} updateRaw={updateRaw} />
                                         <div><button className="mark" type="button" style={{ background: item.color }} onClick={() => setTimeout(() => { setSelection(item.target) }, 220)}>{item.type[0] === '@' ? '' : '@'}{item.type}</button></div>
                                         <div>{item.text}</div>
