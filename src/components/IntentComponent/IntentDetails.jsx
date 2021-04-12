@@ -26,12 +26,18 @@ function IntentDetails(props) {
   useEffect(() => {
     if (intent) {
       setName(intent.name);
-      setUtterances(intent.utterances);
+
+      if (intent.utterances.length) {
+        setUtterances(intent.utterances);
+      } else {
+        setUtterances([{ raw: '', model: [] }])
+      }
     }
   }, [intent]);
 
   const handleNew = () => {
     let newUtteranceField = { raw: '', model: [] };
+
     if (utterances[0] && utterances[0].model.length > 0) {
       let arr = [newUtteranceField, ...utterances];
       setUtterances(arr);
@@ -56,7 +62,7 @@ function IntentDetails(props) {
   useEffect(() => {
     debouncedHandleNew;
     setInitialSlotValuePairs();
-  }, [utterances])
+  }, [utterances]);
 
 
   useEffect(() => {
@@ -81,7 +87,7 @@ function IntentDetails(props) {
     }
   }
 
-  if (utterances.length) {
+  if (intent) {
     return (
       <div className="convo-details">
         <section className="layout--editor-content">
@@ -94,7 +100,7 @@ function IntentDetails(props) {
                 defaultValue={name ? name : ''}
                 placeholder="Intent name"
                 className="input input--item-name"
-						    onKeyDown={(e) => preventSubmit(e)}
+                onKeyDown={(e) => preventSubmit(e)}
                 onChange={e => {
                   let message =
                     'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';

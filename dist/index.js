@@ -936,7 +936,7 @@ var Utterance = React__default.memo(function (props) {
             setSelection(item.target);
           }, 220);
         }
-      }, "@", item.type)), /*#__PURE__*/React__default.createElement("div", null, item.text));
+      }, item.type[0] === '@' ? '' : '@', item.type)), /*#__PURE__*/React__default.createElement("div", null, item.text));
     }))));
   } else {
     return null;
@@ -1035,7 +1035,15 @@ function IntentDetails(props) {
   React.useEffect(function () {
     if (intent) {
       setName(intent.name);
-      setUtterances(intent.utterances);
+
+      if (intent.utterances.length) {
+        setUtterances(intent.utterances);
+      } else {
+        setUtterances([{
+          raw: '',
+          model: []
+        }]);
+      }
     }
   }, [intent]);
 
@@ -1092,7 +1100,7 @@ function IntentDetails(props) {
     }
   };
 
-  if (utterances.length) {
+  if (intent) {
     return /*#__PURE__*/React__default.createElement("div", {
       className: "convo-details"
     }, /*#__PURE__*/React__default.createElement("section", {

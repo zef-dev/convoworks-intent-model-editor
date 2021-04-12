@@ -14,7 +14,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    setIntent(data.intents[1])
+    setIntent({name: '', utterances: []})
   }, [data])
 
   useEffect(() => {

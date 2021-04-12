@@ -782,7 +782,7 @@ const Utterance = React.memo(props => {
         onClick: () => setTimeout(() => {
           setSelection(item.target);
         }, 220)
-      }, "@", item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
+      }, item.type[0] === '@' ? '' : '@', item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
     }))));
   } else {
     return null;
@@ -856,7 +856,15 @@ function IntentDetails(props) {
   useEffect(() => {
     if (intent) {
       setName(intent.name);
-      setUtterances(intent.utterances);
+
+      if (intent.utterances.length) {
+        setUtterances(intent.utterances);
+      } else {
+        setUtterances([{
+          raw: '',
+          model: []
+        }]);
+      }
     }
   }, [intent]);
 
@@ -905,7 +913,7 @@ function IntentDetails(props) {
     }
   };
 
-  if (utterances.length) {
+  if (intent) {
     return /*#__PURE__*/React.createElement("div", {
       className: "convo-details"
     }, /*#__PURE__*/React.createElement("section", {
