@@ -400,6 +400,11 @@
     line-height: 1.25;
     padding: 10px 12px;
     border-bottom: 1px solid transparent;
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
 
     &:focus {
         outline: none;
@@ -458,7 +463,8 @@ input[data-valid="false"] {
     color: $color-alert;
     border-bottom: 1px dashed $color-alert;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         border-bottom: 1px dashed $color-alert;
     }
 }

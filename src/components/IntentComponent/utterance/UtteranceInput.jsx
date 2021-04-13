@@ -12,6 +12,8 @@ const UtteranceInput = (props) => {
     active: false
   });
 
+  const [keyPress, setKeyPress] = useState('');
+
   const input = props.input;
   const cursorPosition = useRef(null);
 
@@ -46,7 +48,7 @@ const UtteranceInput = (props) => {
             return str;
           }
         }
-      
+
         let mark = createNode(type, getSlotValue(type), props.selection.toString());
         if (mark) {
           props.selection.getRangeAt(0).extractContents();
@@ -134,7 +136,7 @@ const UtteranceInput = (props) => {
       let oRect = oRange.getBoundingClientRect();
 
       setDropdownState({
-        position: oRect.x/2,
+        position: oRect.x / 2,
         active: props.selection !== null
       })
     } else {
@@ -150,6 +152,12 @@ const UtteranceInput = (props) => {
     }
   });
 
+  useEffect(() => {
+    if (keyPress === 13) {
+      props.handleNew();
+      setKeyPress('');
+    }
+  }, [keyPress])
   return (
     <div className='taggable-text'>
       <ContentEditable
@@ -164,7 +172,7 @@ const UtteranceInput = (props) => {
         }}
 
         onChange={(e) => {
-          props.setRaw(e.target.value)
+          props.setRaw(e.target.value);
           cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
         }}
         onMouseUp={() => {
@@ -174,10 +182,8 @@ const UtteranceInput = (props) => {
 
         onKeyDown={(e) => {
           if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
+            setKeyPress(e.keyCode);
             e.preventDefault();
-            if (e.keyCode === 13) {
-              document.querySelectorAll('.taggable-text__input')[0].focus();
-            }
           }
         }}
         onKeyUp={(e) => {

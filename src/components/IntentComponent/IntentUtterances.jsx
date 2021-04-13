@@ -10,14 +10,30 @@ const IntentUtterances = (props) => {
 		props.setStateChange(!props.stateChange)
 	}
 
+
+	const handleNew = () => {
+		if (props.utterances[0].model.length > 0) {
+
+			let newUtteranceField = { raw: '', model: [] };
+			let arr = [newUtteranceField, ...props.utterances];
+
+			props.setUtterances(arr);
+			props.setStateChange(!props.stateChange);
+		}
+
+		setTimeout(() => {
+			let input = document.querySelectorAll('.taggable-text__input')[0];
+			input && input.focus();
+		}, 100);
+	}
+
 	if (props.utterances) {
 		return (
 			<ul>
 				{props.utterances.map((item, index) => {
-					let isNew = index === 0 && item.model.length === 0;
 					return (
 						<li key={index} style={{ display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none' }}>
-							<Utterance key={index} utterance={item} new={isNew} index={index} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} slotValuePairs={props.slotValuePairs} />
+							<Utterance key={index} utterances={props.utterances} utterance={item} index={index} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} slotValuePairs={props.slotValuePairs} handleNew={handleNew} />
 						</li>
 					)
 				})}

@@ -460,6 +460,7 @@ const UtteranceInput = props => {
     position: 0,
     active: false
   });
+  const [keyPress, setKeyPress] = useState('');
   const input = props.input;
   const cursorPosition = useRef(null);
 
@@ -588,6 +589,12 @@ const UtteranceInput = props => {
       return !frame.text.trim();
     }
   });
+  useEffect(() => {
+    if (keyPress === 13) {
+      props.handleNew();
+      setKeyPress('');
+    }
+  }, [keyPress]);
   return /*#__PURE__*/React.createElement("div", {
     className: "taggable-text"
   }, /*#__PURE__*/React.createElement(ContentEditable, {
@@ -610,11 +617,8 @@ const UtteranceInput = props => {
     },
     onKeyDown: e => {
       if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
+        setKeyPress(e.keyCode);
         e.preventDefault();
-
-        if (e.keyCode === 13) {
-          document.querySelectorAll('.taggable-text__input')[0].focus();
-        }
       }
     },
     onKeyUp: e => {
@@ -742,15 +746,17 @@ const Utterance = React.memo(props => {
       input: input,
       active: active,
       setActive: props.setActive,
+      utterances: props.utterances,
       raw: raw,
       setRaw: setRaw,
       entities: props.entities,
       selection: selection,
       setSelection: setSelection,
-      slotValuePairs: props.slotValuePairs
+      slotValuePairs: props.slotValuePairs,
+      handleNew: props.handleNew
     }), /*#__PURE__*/React.createElement("div", {
       className: "field__actions"
-    }, !props.new && /*#__PURE__*/React.createElement("button", {
+    }, props.index !== 0 && props.utterances.length > 1 && /*#__PURE__*/React.createElement("button", {
       type: "button",
       onClick: () => {
         props.removeFromUtterances(props.utterance);
@@ -800,9 +806,25 @@ const IntentUtterances = props => {
     props.setStateChange(!props.stateChange);
   };
 
+  const handleNew = () => {
+    if (props.utterances[0].model.length > 0) {
+      let newUtteranceField = {
+        raw: '',
+        model: []
+      };
+      let arr = [newUtteranceField, ...props.utterances];
+      props.setUtterances(arr);
+      props.setStateChange(!props.stateChange);
+    }
+
+    setTimeout(() => {
+      let input = document.querySelectorAll('.taggable-text__input')[0];
+      input && input.focus();
+    }, 100);
+  };
+
   if (props.utterances) {
     return /*#__PURE__*/React.createElement("ul", null, props.utterances.map((item, index) => {
-      let isNew = index === 0 && item.model.length === 0;
       return /*#__PURE__*/React.createElement("li", {
         key: index,
         style: {
@@ -810,8 +832,8 @@ const IntentUtterances = props => {
         }
       }, /*#__PURE__*/React.createElement(Utterance, {
         key: index,
+        utterances: props.utterances,
         utterance: item,
-        new: isNew,
         index: index,
         active: active,
         setActive: setActive,
@@ -821,7 +843,8 @@ const IntentUtterances = props => {
         setUtterances: props.setUtterances,
         stateChange: props.stateChange,
         setStateChange: props.setStateChange,
-        slotValuePairs: props.slotValuePairs
+        slotValuePairs: props.slotValuePairs,
+        handleNew: handleNew
       }));
     }));
   } else {
@@ -830,19 +853,6 @@ const IntentUtterances = props => {
 };
 
 var IntentUtterances$1 = React.memo(IntentUtterances);
-
-function useDebounce(value, delay) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value]);
-  return debouncedValue;
-}
 
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
@@ -869,21 +879,6 @@ function IntentDetails(props) {
     }
   }, [intent]);
 
-  const handleNew = () => {
-    let newUtteranceField = {
-      raw: '',
-      model: []
-    };
-
-    if (utterances[0] && utterances[0].model.length > 0) {
-      let arr = [newUtteranceField, ...utterances];
-      setUtterances(arr);
-      setStateChange(!stateChange);
-      let input = document.querySelectorAll('.taggable-text__input')[1];
-      input && input.focus();
-    }
-  };
-
   const setInitialSlotValuePairs = () => {
     let arr = utterances.map(item => item.model).flat().filter(item => item.slot_value).map(item => ({
       type: item.type,
@@ -892,8 +887,8 @@ function IntentDetails(props) {
     setSlotValuePairs(arr);
   };
 
-  const debouncedHandleNew = useDebounce(handleNew, 300);
   useEffect(() => {
+    console.log(utterances);
     setInitialSlotValuePairs();
   }, [utterances]);
   useEffect(() => {

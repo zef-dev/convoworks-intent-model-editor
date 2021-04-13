@@ -35,18 +35,6 @@ function IntentDetails(props) {
     }
   }, [intent]);
 
-  const handleNew = () => {
-    let newUtteranceField = { raw: '', model: [] };
-
-    if (utterances[0] && utterances[0].model.length > 0) {
-      let arr = [newUtteranceField, ...utterances];
-      setUtterances(arr);
-      setStateChange(!stateChange);
-
-      let input = document.querySelectorAll('.taggable-text__input')[1];
-      input && input.focus();
-    }
-  }
 
   const setInitialSlotValuePairs = () => {
     let arr = utterances.map(item => item.model).flat().filter(item => item.slot_value).map(item => ({
@@ -57,10 +45,8 @@ function IntentDetails(props) {
     setSlotValuePairs(arr);
   }
 
-  const debouncedHandleNew = useDebounce(handleNew, 300);
-
   useEffect(() => {
-    debouncedHandleNew;
+    console.log(utterances)
     setInitialSlotValuePairs();
   }, [utterances]);
 

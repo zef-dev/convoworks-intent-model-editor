@@ -109,9 +109,9 @@ export const Utterance = React.memo(props => {
                         className='field__main'
                     >
                         <div className='field__input' data-valid={validateInput() ? 'true' : 'false'}>
-                            <UtteranceInput index={props.index} input={input} active={active} setActive={props.setActive} raw={raw} setRaw={setRaw} entities={props.entities} selection={selection} setSelection={setSelection} slotValuePairs={props.slotValuePairs} />
+                            <UtteranceInput index={props.index} input={input} active={active} setActive={props.setActive} utterances={props.utterances} raw={raw} setRaw={setRaw} entities={props.entities} selection={selection} setSelection={setSelection} slotValuePairs={props.slotValuePairs} handleNew={props.handleNew} />
                             <div className="field__actions">
-                                {!props.new &&
+                                {props.index !== 0 && props.utterances.length > 1 &&
                                     <button type="button" onClick={() => {
                                         props.removeFromUtterances(props.utterance);
                                         document.querySelectorAll('.taggable-text__input')[0].focus();
@@ -121,7 +121,7 @@ export const Utterance = React.memo(props => {
                             </div>
                         </div>
                     </div>
-                    {!props.new && whitelist && whitelist.tags.length > 0 && 
+                    {!props.new && whitelist && whitelist.tags.length > 0 &&
                         <ul className="model-list" style={{ display: active ? 'block' : 'none' }}>
                             <header className="model-list__header">
                                 <strong>Parameter name</strong>

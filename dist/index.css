@@ -1127,7 +1127,17 @@
     outline: none;
     line-height: 1.25;
     padding: 10px 12px;
-    border-bottom: 1px solid transparent; }
+    border-bottom: 1px solid transparent;
+    white-space: pre-wrap;
+    /* css-3 */
+    white-space: -moz-pre-wrap;
+    /* Mozilla, since 1999 */
+    white-space: -pre-wrap;
+    /* Opera 4-6 */
+    white-space: -o-pre-wrap;
+    /* Opera 7 */
+    word-wrap: break-word;
+    /* Internet Explorer 5.5+ */ }
     .convo-details .taggable-text__input:focus {
       outline: none;
       background: rgba(47, 116, 234, 0.065); }

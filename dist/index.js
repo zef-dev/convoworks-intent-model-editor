@@ -582,6 +582,10 @@ var UtteranceInput = function UtteranceInput(props) {
       dropdownState = _useState[0],
       setDropdownState = _useState[1];
 
+  var _useState2 = React.useState(''),
+      keyPress = _useState2[0],
+      setKeyPress = _useState2[1];
+
   var input = props.input;
   var cursorPosition = React.useRef(null);
 
@@ -715,6 +719,12 @@ var UtteranceInput = function UtteranceInput(props) {
       return !frame.text.trim();
     }
   });
+  React.useEffect(function () {
+    if (keyPress === 13) {
+      props.handleNew();
+      setKeyPress('');
+    }
+  }, [keyPress]);
   return /*#__PURE__*/React__default.createElement("div", {
     className: "taggable-text"
   }, /*#__PURE__*/React__default.createElement(ContentEditable, {
@@ -737,11 +747,8 @@ var UtteranceInput = function UtteranceInput(props) {
     },
     onKeyDown: function onKeyDown(e) {
       if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
+        setKeyPress(e.keyCode);
         e.preventDefault();
-
-        if (e.keyCode === 13) {
-          document.querySelectorAll('.taggable-text__input')[0].focus();
-        }
       }
     },
     onKeyUp: function onKeyUp(e) {
@@ -894,15 +901,17 @@ var Utterance = React__default.memo(function (props) {
       input: input,
       active: active,
       setActive: props.setActive,
+      utterances: props.utterances,
       raw: raw,
       setRaw: setRaw,
       entities: props.entities,
       selection: selection,
       setSelection: setSelection,
-      slotValuePairs: props.slotValuePairs
+      slotValuePairs: props.slotValuePairs,
+      handleNew: props.handleNew
     }), /*#__PURE__*/React__default.createElement("div", {
       className: "field__actions"
-    }, !props["new"] && /*#__PURE__*/React__default.createElement("button", {
+    }, props.index !== 0 && props.utterances.length > 1 && /*#__PURE__*/React__default.createElement("button", {
       type: "button",
       onClick: function onClick() {
         props.removeFromUtterances(props.utterance);
@@ -958,29 +967,42 @@ var IntentUtterances = function IntentUtterances(props) {
     props.setStateChange(!props.stateChange);
   };
 
+  var handleNew = function handleNew() {
+    if (props.utterances[0].model.length > 0) {
+      var newUtteranceField = {
+        raw: '',
+        model: []
+      };
+      var arr = [newUtteranceField].concat(props.utterances);
+      props.setUtterances(arr);
+      props.setStateChange(!props.stateChange);
+    }
+
+    setTimeout(function () {
+      var input = document.querySelectorAll('.taggable-text__input')[0];
+      input && input.focus();
+    }, 100);
+  };
+
   if (props.utterances) {
     return /*#__PURE__*/React__default.createElement("ul", null, props.utterances.map(function (item, index) {
-      var isNew = index === 0 && item.model.length === 0;
+      var _React$createElement;
+
       return /*#__PURE__*/React__default.createElement("li", {
         key: index,
         style: {
           display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none'
         }
-      }, /*#__PURE__*/React__default.createElement(Utterance, {
+      }, /*#__PURE__*/React__default.createElement(Utterance, (_React$createElement = {
         key: index,
+        utterances: props.utterances,
         utterance: item,
-        "new": isNew,
         index: index,
         active: active,
         setActive: setActive,
         entities: props.entities,
-        removeFromUtterances: removeFromUtterances,
-        utterances: props.utterances,
-        setUtterances: props.setUtterances,
-        stateChange: props.stateChange,
-        setStateChange: props.setStateChange,
-        slotValuePairs: props.slotValuePairs
-      }));
+        removeFromUtterances: removeFromUtterances
+      }, _React$createElement["utterances"] = props.utterances, _React$createElement.setUtterances = props.setUtterances, _React$createElement.stateChange = props.stateChange, _React$createElement.setStateChange = props.setStateChange, _React$createElement.slotValuePairs = props.slotValuePairs, _React$createElement.handleNew = handleNew, _React$createElement)));
     }));
   } else {
     return null;
@@ -988,22 +1010,6 @@ var IntentUtterances = function IntentUtterances(props) {
 };
 
 var IntentUtterances$1 = React__default.memo(IntentUtterances);
-
-function useDebounce(value, delay) {
-  var _useState = React.useState(value),
-      debouncedValue = _useState[0],
-      setDebouncedValue = _useState[1];
-
-  React.useEffect(function () {
-    var handler = setTimeout(function () {
-      setDebouncedValue(value);
-    }, delay);
-    return function () {
-      clearTimeout(handler);
-    };
-  }, [value]);
-  return debouncedValue;
-}
 
 function IntentDetails(props) {
   var _useState = React.useState(props.intent),
@@ -1048,21 +1054,6 @@ function IntentDetails(props) {
     }
   }, [intent]);
 
-  var handleNew = function handleNew() {
-    var newUtteranceField = {
-      raw: '',
-      model: []
-    };
-
-    if (utterances[0] && utterances[0].model.length > 0) {
-      var arr = [newUtteranceField].concat(utterances);
-      setUtterances(arr);
-      setStateChange(!stateChange);
-      var input = document.querySelectorAll('.taggable-text__input')[1];
-      input && input.focus();
-    }
-  };
-
   var setInitialSlotValuePairs = function setInitialSlotValuePairs() {
     var arr = utterances.map(function (item) {
       return item.model;
@@ -1077,8 +1068,8 @@ function IntentDetails(props) {
     setSlotValuePairs(arr);
   };
 
-  var debouncedHandleNew = useDebounce(handleNew, 300);
   React.useEffect(function () {
+    console.log(utterances);
     setInitialSlotValuePairs();
   }, [utterances]);
   React.useEffect(function () {
