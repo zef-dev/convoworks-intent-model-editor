@@ -420,6 +420,11 @@
     content: attr(data-placeholder);
     color: #888;
     font-style: italic;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height:100%;
+    padding: inherit;
 }
 
 @keyframes popIn {

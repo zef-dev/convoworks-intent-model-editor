@@ -1146,7 +1146,12 @@
   .convo-details [data-placeholder]:empty:before {
     content: attr(data-placeholder);
     color: #888;
-    font-style: italic; }
+    font-style: italic;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    padding: inherit; }
 
 @-webkit-keyframes popIn {
   from {
