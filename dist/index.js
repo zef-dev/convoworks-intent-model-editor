@@ -2,8 +2,8 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var React = require('react');
 var React__default = _interopDefault(React);
-var reactSvg = require('react-svg');
-var trash = _interopDefault(require('./trash~hOpExtCr.svg'));
+require('react-svg');
+var trash = _interopDefault(require('./trash~TrmsSIBc.png'));
 require('./search~bbewSuiR.svg');
 var _ = require('lodash');
 var ___default = _interopDefault(_);
@@ -156,8 +156,10 @@ var setCaretPosition = function setCaretPosition(el, pos) {
 };
 
 var IconTrash = function IconTrash() {
-  return /*#__PURE__*/React__default.createElement(reactSvg.ReactSVG, {
-    src: trash
+  return /*#__PURE__*/React__default.createElement("img", {
+    src: trash,
+    alt: "Remove",
+    "aria-label": "Remove"
   });
 };
 
@@ -1084,11 +1086,8 @@ function IntentDetails(props) {
     }
   }, [name, utterances]);
 
-  var handleSearch = function handleSearch() {
-    if (searchInput.current) {
-      var term = searchInput.current.value.toLowerCase().trim();
-      setSearchPhrase(term);
-    }
+  var handleSearch = function handleSearch(term) {
+    setSearchPhrase(term);
   };
 
   if (intent) {
@@ -1126,8 +1125,8 @@ function IntentDetails(props) {
       className: "input input--search",
       type: "text",
       placeholder: "Search utterances",
-      onChange: function onChange() {
-        handleSearch();
+      onChange: function onChange(e) {
+        handleSearch(e.target.value);
       },
       onKeyDown: function onKeyDown(e) {
         return preventSubmit(e);

@@ -65,11 +65,8 @@ function IntentDetails(props) {
     }
   }, [name, utterances]);
 
-  const handleSearch = () => {
-    if (searchInput.current) {
-      let term = searchInput.current.value.toLowerCase().trim();
-      setSearchPhrase(term);
-    }
+  const handleSearch = (term) => {
+    setSearchPhrase(term);
   }
 
   if (intent) {
@@ -107,8 +104,8 @@ function IntentDetails(props) {
                   style={{ background: `url(${searchIcon}) no-repeat 12px center`, backgroundSize: '18px', paddingLeft: '42px' }}
                   className="input input--search"
                   type="text" placeholder="Search utterances"
-                  onChange={() => {
-                    handleSearch();
+                  onChange={(e) => {
+                    handleSearch(e.target.value);
                   }}
                   onKeyDown={(e) => preventSubmit(e)}
                 />

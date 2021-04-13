@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ReactSVG } from 'react-svg';
-import trash from './trash~hOpExtCr.svg';
+import 'react-svg';
+import trash from './trash~TrmsSIBc.png';
 import './search~bbewSuiR.svg';
 import _ from 'lodash';
 import rangy from 'rangy';
@@ -90,8 +90,10 @@ const setCaretPosition = (el, pos) => {
 };
 
 const IconTrash = () => {
-  return /*#__PURE__*/React.createElement(ReactSVG, {
-    src: trash
+  return /*#__PURE__*/React.createElement("img", {
+    src: trash,
+    alt: "Remove",
+    "aria-label": "Remove"
   });
 };
 
@@ -901,11 +903,8 @@ function IntentDetails(props) {
     }
   }, [name, utterances]);
 
-  const handleSearch = () => {
-    if (searchInput.current) {
-      let term = searchInput.current.value.toLowerCase().trim();
-      setSearchPhrase(term);
-    }
+  const handleSearch = term => {
+    setSearchPhrase(term);
   };
 
   if (intent) {
@@ -941,8 +940,8 @@ function IntentDetails(props) {
       className: "input input--search",
       type: "text",
       placeholder: "Search utterances",
-      onChange: () => {
-        handleSearch();
+      onChange: e => {
+        handleSearch(e.target.value);
       },
       onKeyDown: e => preventSubmit(e)
     })), /*#__PURE__*/React.createElement("div", {
