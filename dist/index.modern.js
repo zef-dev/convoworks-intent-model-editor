@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import 'react-svg';
-import trash from './trash~TrmsSIBc.png';
+import trash from './trash~rNPtoTmK.png';
 import './search~bbewSuiR.svg';
 import _ from 'lodash';
 import rangy from 'rangy';
@@ -93,7 +93,8 @@ const IconTrash = () => {
   return /*#__PURE__*/React.createElement("img", {
     src: trash,
     alt: "Remove",
-    "aria-label": "Remove"
+    "aria-label": "Remove",
+    width: "32"
   });
 };
 

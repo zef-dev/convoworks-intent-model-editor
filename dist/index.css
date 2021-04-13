@@ -1044,6 +1044,8 @@
       align-items: center;
       cursor: pointer;
       transition: 0.22s; }
+      .convo-details .field__actions button img {
+        width: 18px; }
       .convo-details .field__actions button:focus, .convo-details .field__actions button:hover {
         outline: none; }
         .convo-details .field__actions button:focus svg g, .convo-details .field__actions button:hover svg g {

@@ -3,7 +3,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var React = require('react');
 var React__default = _interopDefault(React);
 require('react-svg');
-var trash = _interopDefault(require('./trash~TrmsSIBc.png'));
+var trash = _interopDefault(require('./trash~rNPtoTmK.png'));
 require('./search~bbewSuiR.svg');
 var _ = require('lodash');
 var ___default = _interopDefault(_);
@@ -159,7 +159,8 @@ var IconTrash = function IconTrash() {
   return /*#__PURE__*/React__default.createElement("img", {
     src: trash,
     alt: "Remove",
-    "aria-label": "Remove"
+    "aria-label": "Remove",
+    width: "32"
   });
 };
 

@@ -5,7 +5,7 @@ import trash from '/../../assets/icons/trash.png';
 import search from '/../../assets/icons/search.svg';
 
 export const IconTrash = () => {
-  return <img src={trash} alt="Remove" aria-label="Remove" />
+  return <img src={trash} alt="Remove" aria-label="Remove" width="32" />
 }
 
 export const  IconRemove = () => {

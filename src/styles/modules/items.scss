@@ -291,6 +291,10 @@
         cursor: pointer;
         transition: $transition-time;
 
+        img {
+            width: 18px;
+        }
+
         &:focus,
         &:hover {
             outline: none;
