@@ -39,7 +39,6 @@ const UtteranceInput = (props) => {
 
         const getSlotValue = (type) => {
           let existingSlotValue = props.slotValuePairs.find(item => item.type === type);
-          console.log('is there --->', existingSlotValue);
           if (existingSlotValue) {
             return existingSlotValue.slot_value
           } else {

@@ -58,11 +58,11 @@ export const Utterance = React.memo(props => {
                 if (item.dataset) {
                     return ({
                         type: item.dataset.type,
-                        text: item.textContent,
+                        text: item.textContent.trim(),
                         slot_value: item.dataset.slotValue
                     })
                 } else {
-                    return ({ text: item.textContent }
+                    return ({ text: item.textContent.trim() }
                     )
                 }
             }).filter(item => item.text.length)

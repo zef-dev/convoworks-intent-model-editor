@@ -482,7 +482,6 @@ const UtteranceInput = props => {
       if (!props.selection.tagName) {
         const getSlotValue = type => {
           let existingSlotValue = props.slotValuePairs.find(item => item.type === type);
-          console.log('is there --->', existingSlotValue);
 
           if (existingSlotValue) {
             return existingSlotValue.slot_value;
@@ -685,12 +684,12 @@ const Utterance = React.memo(props => {
         if (item.dataset) {
           return {
             type: item.dataset.type,
-            text: item.textContent,
+            text: item.textContent.trim(),
             slot_value: item.dataset.slotValue
           };
         } else {
           return {
-            text: item.textContent
+            text: item.textContent.trim()
           };
         }
       }).filter(item => item.text.length);
@@ -888,7 +887,6 @@ function IntentDetails(props) {
   };
 
   useEffect(() => {
-    console.log(utterances);
     setInitialSlotValuePairs();
   }, [utterances]);
   useEffect(() => {

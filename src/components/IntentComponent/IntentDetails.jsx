@@ -46,7 +46,6 @@ function IntentDetails(props) {
   }
 
   useEffect(() => {
-    console.log(utterances)
     setInitialSlotValuePairs();
   }, [utterances]);
 

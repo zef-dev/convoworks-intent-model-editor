@@ -609,7 +609,6 @@ var UtteranceInput = function UtteranceInput(props) {
           var existingSlotValue = props.slotValuePairs.find(function (item) {
             return item.type === type;
           });
-          console.log('is there --->', existingSlotValue);
 
           if (existingSlotValue) {
             return existingSlotValue.slot_value;
@@ -830,12 +829,12 @@ var Utterance = React__default.memo(function (props) {
         if (item.dataset) {
           return {
             type: item.dataset.type,
-            text: item.textContent,
+            text: item.textContent.trim(),
             slot_value: item.dataset.slotValue
           };
         } else {
           return {
-            text: item.textContent
+            text: item.textContent.trim()
           };
         }
       }).filter(function (item) {
@@ -1069,7 +1068,6 @@ function IntentDetails(props) {
   };
 
   React.useEffect(function () {
-    console.log(utterances);
     setInitialSlotValuePairs();
   }, [utterances]);
   React.useEffect(function () {

@@ -32,7 +32,7 @@ const App = () => {
           intent={JSON.parse(localStorage.getItem('intent'))}
           entities={[...data.entities, {name: 'test.entity.someVal', values: []}, {name: 'test.entity.more.dots', values: []}]}
           systemEntities={[]}
-          onUpdate={(item, valid) => {valid && saveIntent(item);}}
+          onUpdate={(item, valid) => {saveIntent(item);}}
         />
   
         :
