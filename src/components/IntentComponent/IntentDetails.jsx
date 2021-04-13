@@ -5,7 +5,7 @@ import { useRef } from 'react';
 import { validateInput } from '../../helpers/validations.jsx';
 import useDebounce from '../../helpers/useDebounce.jsx';
 
-import searchIcon from '/../../assets/icons/search.svg';
+import searchIcon from '/../../assets/icons/search.png';
 import { preventSubmit } from '../../helpers/common_constants.jsx';
 
 function IntentDetails(props) {

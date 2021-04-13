@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import 'react-svg';
+import { ReactSVG } from 'react-svg';
 import trash from './trash~hOpExtCr.svg';
-import search from './search~bbewSuiR.svg';
+import './search~bbewSuiR.svg';
 import _ from 'lodash';
 import rangy from 'rangy';
 import ContentEditable from 'react-contenteditable';
@@ -9,6 +9,7 @@ import useOnclickOutside from 'react-cool-onclickoutside';
 import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
 import sanitizeHtml from 'sanitize-html';
+import searchIcon from './search~stxdIziK.png';
 
 const stringToColor = value => {
   return value.getHashCode().intToHSL();
@@ -89,7 +90,7 @@ const setCaretPosition = (el, pos) => {
 };
 
 const IconTrash = () => {
-  return /*#__PURE__*/React.createElement("img", {
+  return /*#__PURE__*/React.createElement(ReactSVG, {
     src: trash
   });
 };
@@ -933,7 +934,7 @@ function IntentDetails(props) {
       className: "search-wrapper"
     }, /*#__PURE__*/React.createElement("h3", null, "Utterances"), /*#__PURE__*/React.createElement("input", {
       style: {
-        background: `url(${search}) no-repeat 12px center`,
+        background: `url(${searchIcon}) no-repeat 12px center`,
         backgroundSize: '18px',
         paddingLeft: '42px'
       },

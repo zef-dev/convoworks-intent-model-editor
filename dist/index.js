@@ -2,9 +2,9 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var React = require('react');
 var React__default = _interopDefault(React);
-require('react-svg');
+var reactSvg = require('react-svg');
 var trash = _interopDefault(require('./trash~hOpExtCr.svg'));
-var search = _interopDefault(require('./search~bbewSuiR.svg'));
+require('./search~bbewSuiR.svg');
 var _ = require('lodash');
 var ___default = _interopDefault(_);
 var rangy = _interopDefault(require('rangy'));
@@ -13,6 +13,7 @@ var useOnclickOutside = _interopDefault(require('react-cool-onclickoutside'));
 var TextInput = _interopDefault(require('react-autocomplete-input'));
 require('react-autocomplete-input/dist/bundle.css');
 var sanitizeHtml = _interopDefault(require('sanitize-html'));
+var searchIcon = _interopDefault(require('./search~stxdIziK.png'));
 
 function _extends() {
   _extends = Object.assign || function (target) {
@@ -155,7 +156,7 @@ var setCaretPosition = function setCaretPosition(el, pos) {
 };
 
 var IconTrash = function IconTrash() {
-  return /*#__PURE__*/React__default.createElement("img", {
+  return /*#__PURE__*/React__default.createElement(reactSvg.ReactSVG, {
     src: trash
   });
 };
@@ -1118,7 +1119,7 @@ function IntentDetails(props) {
       className: "search-wrapper"
     }, /*#__PURE__*/React__default.createElement("h3", null, "Utterances"), /*#__PURE__*/React__default.createElement("input", {
       style: {
-        background: "url(" + search + ") no-repeat 12px center",
+        background: "url(" + searchIcon + ") no-repeat 12px center",
         backgroundSize: '18px',
         paddingLeft: '42px'
       },

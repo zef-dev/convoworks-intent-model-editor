@@ -5,7 +5,7 @@ import trash from '/../../assets/icons/trash.svg';
 import search from '/../../assets/icons/search.svg';
 
 export const IconTrash = () => {
-  return <img src={trash} />
+  return <ReactSVG src={trash} />
 }
 
 export const  IconRemove = () => {
