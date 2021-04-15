@@ -1,11 +1,10 @@
 import React from 'react';
 import { ReactSVG } from 'react-svg';
+import { iconTrash } from '../../helpers/image_paths';
 
-import trash from '/../../assets/icons/trash.png';
-import search from '/../../assets/icons/search.svg';
 
 export const IconTrash = () => {
-  return <img src={trash} alt="Remove" aria-label="Remove" width="32" />
+  return <img src={iconTrash} alt="Remove" aria-label="Remove" width="32" />
 }
 
 export const  IconRemove = () => {

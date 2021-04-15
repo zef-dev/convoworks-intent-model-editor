@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import IntentUtterances from './IntentUtterances.jsx';
-import _, { debounce } from 'lodash';
+import _ from 'lodash';
 import { useRef } from 'react';
 import { validateInput } from '../../helpers/validations.jsx';
-import useDebounce from '../../helpers/useDebounce.jsx';
 
-import searchIcon from '/../../assets/icons/search.png';
 import { preventSubmit } from '../../helpers/common_constants.jsx';
+import { iconSearch } from '../../helpers/image_paths.jsx';
 
 function IntentDetails(props) {
   const [intent, setIntent] = useState(props.intent);
@@ -20,7 +19,6 @@ function IntentDetails(props) {
   const [slotValuePairs, setSlotValuePairs] = useState([]);
 
   const [searchPhrase, setSearchPhrase] = useState('');
-  const searchInput = useRef(null);
 
   // check if data is passed in props
   useEffect(() => {
@@ -101,7 +99,7 @@ function IntentDetails(props) {
               <div className="search-wrapper">
                 <h3>Utterances</h3>
                 <input
-                  style={{ background: `url(${searchIcon}) no-repeat 12px center`, backgroundSize: '18px', paddingLeft: '42px' }}
+                  style={{ background: `url(${iconSearch}) no-repeat 12px center`, backgroundSize: '18px', paddingLeft: '42px' }}
                   className="input input--search"
                   type="text" placeholder="Search utterances"
                   onChange={(e) => {

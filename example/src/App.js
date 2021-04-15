@@ -1,8 +1,7 @@
 import React, {useState, useEffect} from 'react'
 
-import { IntentEditor } from 'convoworks-intent-model-editor'
-import { EntityEditor } from 'convoworks-intent-model-editor'
-import 'convoworks-intent-model-editor/dist/index.css'
+import { IntentEditor, EntityEditor } from '@zef-dev/convoworks-intent-model-editor'
+import '@zef-dev/convoworks-intent-model-editor/dist/index.css'
 import data from './guess-the-number-game.json'
 
 const App = () => {
