@@ -24,15 +24,18 @@ function IntentDetails(props) {
   useEffect(() => {
     if (intent) {
       setName(intent.name);
-
       if (intent.utterances.length) {
-        setUtterances(intent.utterances);
+        /* add new field if only one utterance is present */
+        if (intent.utterances[0]?.model.length > 0) {
+          setUtterances([{raw: '', model: []}, ...intent.utterances]);
+        } else {
+          setUtterances(intent.utterances);
+        }
       } else {
         setUtterances([{ raw: '', model: [] }])
       }
     }
   }, [intent]);
-
 
   const setInitialSlotValuePairs = () => {
     let arr = utterances.map(item => item.model).flat().filter(item => item.slot_value).map(item => ({
