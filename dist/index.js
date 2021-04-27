@@ -1040,22 +1040,17 @@ function IntentDetails(props) {
       searchPhrase = _useState6[0],
       setSearchPhrase = _useState6[1];
 
-  console.log(props.intent);
   React.useEffect(function () {
     if (intent) {
       setName(intent.name);
 
       if (intent.utterances.length) {
-        var _intent$utterances$;
-
-        if (((_intent$utterances$ = intent.utterances[0]) === null || _intent$utterances$ === void 0 ? void 0 : _intent$utterances$.model.length) > 0) {
-          setUtterances([{
-            raw: '',
-            model: []
-          }].concat(intent.utterances));
-        } else {
-          setUtterances(intent.utterances);
-        }
+        setUtterances([{
+          raw: '',
+          model: []
+        }].concat(intent.utterances.filter(function (item) {
+          return item.model.length > 0;
+        })));
       } else {
         setUtterances([{
           raw: '',
@@ -1093,7 +1088,6 @@ function IntentDetails(props) {
         })
       });
 
-      console.log(_intent);
       props.onUpdate(_intent, valid);
     }
   }, [name, utterances]);

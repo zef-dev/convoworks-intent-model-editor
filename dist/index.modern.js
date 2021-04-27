@@ -858,7 +858,7 @@ const IntentUtterances = props => {
 var IntentUtterances$1 = React.memo(IntentUtterances);
 
 function IntentDetails(props) {
-  const [intent, setIntent] = useState(props.intent);
+  const [intent] = useState(props.intent);
   const entities = props.entities;
   const systemEntities = props.systemEntities;
   const [stateChange, setStateChange] = useState(false);
@@ -866,22 +866,15 @@ function IntentDetails(props) {
   const [utterances, setUtterances] = useState([]);
   const [slotValuePairs, setSlotValuePairs] = useState([]);
   const [searchPhrase, setSearchPhrase] = useState('');
-  console.log(props.intent);
   useEffect(() => {
     if (intent) {
       setName(intent.name);
 
       if (intent.utterances.length) {
-        var _intent$utterances$;
-
-        if (((_intent$utterances$ = intent.utterances[0]) === null || _intent$utterances$ === void 0 ? void 0 : _intent$utterances$.model.length) > 0) {
-          setUtterances([{
-            raw: '',
-            model: []
-          }, ...intent.utterances]);
-        } else {
-          setUtterances(intent.utterances);
-        }
+        setUtterances([{
+          raw: '',
+          model: []
+        }, ...intent.utterances.filter(item => item.model.length > 0)]);
       } else {
         setUtterances([{
           raw: '',
@@ -909,7 +902,6 @@ function IntentDetails(props) {
         name: name,
         utterances: utterances.filter(item => item.model.length)
       };
-      console.log(intent);
       props.onUpdate(intent, valid);
     }
   }, [name, utterances]);

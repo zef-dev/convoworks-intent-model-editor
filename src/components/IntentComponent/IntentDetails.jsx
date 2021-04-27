@@ -8,7 +8,8 @@ import { preventSubmit } from '../../helpers/common_constants.jsx';
 import { iconSearch } from '../../helpers/image_paths.jsx';
 
 function IntentDetails(props) {
-  const [intent, setIntent] = useState(props.intent);
+
+  const [intent] = useState(props.intent);
   const entities = props.entities;
   const systemEntities = props.systemEntities;
   const [stateChange, setStateChange] = useState(false);
@@ -20,19 +21,14 @@ function IntentDetails(props) {
 
   const [searchPhrase, setSearchPhrase] = useState('');
 
-  console.log(props.intent)
-
+  
   // check if data is passed in props
   useEffect(() => {
     if (intent) {
       setName(intent.name);
       if (intent.utterances.length) {
         /* add new field if only one utterance is present */
-        if (intent.utterances[0]?.model.length > 0) {
-          setUtterances([{raw: '', model: []}, ...intent.utterances]);
-        } else {
-          setUtterances(intent.utterances);
-        }
+        setUtterances([{raw: '', model: []}, ...intent.utterances.filter(item => item.model.length > 0)]);
       } else {
         setUtterances([{ raw: '', model: [] }])
       }
@@ -64,8 +60,6 @@ function IntentDetails(props) {
         utterances: utterances.filter(item => item.model.length)
       }
 
-      console.log(intent);
-      
       props.onUpdate(intent, valid);
     }
   }, [name, utterances]);
