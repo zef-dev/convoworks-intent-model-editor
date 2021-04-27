@@ -27,9 +27,9 @@ function IntentDetails(props) {
       if (intent.utterances.length) {
         /* add new field if only one utterance is present */
         if (intent.utterances[0]?.model.length > 0) {
-          setUtterances([{raw: '', model: []}, ...intent.utterances]);
+          setUtterances([{raw: '', model: []}, ...intent.utterances.filter(item => item.model.length)]);
         } else {
-          setUtterances(intent.utterances);
+          setUtterances(intent.utterances.filter(item => item.model.length));
         }
       } else {
         setUtterances([{ raw: '', model: [] }])
@@ -56,13 +56,13 @@ function IntentDetails(props) {
 
       const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
 
-      let intent = {
+      let updatedIntent = {
         ...intent,
         name: name,
         utterances: utterances.filter(item => item.model.length)
       }
-      
-      props.onUpdate(intent, valid);
+
+      props.onUpdate(updatedIntent, valid);
     }
   }, [name, utterances]);
 

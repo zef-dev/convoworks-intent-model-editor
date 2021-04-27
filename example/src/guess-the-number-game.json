@@ -79,16 +79,13 @@
                     ]
                 },
                 {
-                    "raw": "Is your number 42",
+                    "raw": "",
                     "model": [
-                        {
-                            "text": "Is your number"
-                        },
-                        {
-                            "text": "42",
-                            "type": "@convo-core.number",
-                            "slot_value": "guess"
-                        }
+                    ]
+                },
+                {
+                    "raw": "",
+                    "model": [
                     ]
                 },
                 {

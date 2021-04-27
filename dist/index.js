@@ -1051,9 +1051,13 @@ function IntentDetails(props) {
           setUtterances([{
             raw: '',
             model: []
-          }].concat(intent.utterances));
+          }].concat(intent.utterances.filter(function (item) {
+            return item.model.length;
+          })));
         } else {
-          setUtterances(intent.utterances);
+          setUtterances(intent.utterances.filter(function (item) {
+            return item.model.length;
+          }));
         }
       } else {
         setUtterances([{
@@ -1085,14 +1089,14 @@ function IntentDetails(props) {
     if (name && utterances) {
       var valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
 
-      var _intent = _extends({}, _intent, {
+      var updatedIntent = _extends({}, intent, {
         name: name,
         utterances: utterances.filter(function (item) {
           return item.model.length;
         })
       });
 
-      props.onUpdate(_intent, valid);
+      props.onUpdate(updatedIntent, valid);
     }
   }, [name, utterances]);
 

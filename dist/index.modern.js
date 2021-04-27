@@ -877,9 +877,9 @@ function IntentDetails(props) {
           setUtterances([{
             raw: '',
             model: []
-          }, ...intent.utterances]);
+          }, ...intent.utterances.filter(item => item.model.length)]);
         } else {
-          setUtterances(intent.utterances);
+          setUtterances(intent.utterances.filter(item => item.model.length));
         }
       } else {
         setUtterances([{
@@ -904,11 +904,11 @@ function IntentDetails(props) {
   useEffect(() => {
     if (name && utterances) {
       const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
-      let intent = { ...intent,
+      let updatedIntent = { ...intent,
         name: name,
         utterances: utterances.filter(item => item.model.length)
       };
-      props.onUpdate(intent, valid);
+      props.onUpdate(updatedIntent, valid);
     }
   }, [name, utterances]);
 
