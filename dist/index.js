@@ -1092,7 +1092,6 @@ function IntentDetails(props) {
         })
       });
 
-      console.log(_intent);
       props.onUpdate(_intent, valid);
     }
   }, [name, utterances]);

@@ -908,7 +908,6 @@ function IntentDetails(props) {
         name: name,
         utterances: utterances.filter(item => item.model.length)
       };
-      console.log(intent);
       props.onUpdate(intent, valid);
     }
   }, [name, utterances]);
