@@ -1087,9 +1087,12 @@ function IntentDetails(props) {
 
       var _intent = _extends({}, _intent, {
         name: name,
-        utterances: utterances
+        utterances: utterances.filter(function (item) {
+          return item.model.length;
+        })
       });
 
+      console.log(_intent);
       props.onUpdate(_intent, valid);
     }
   }, [name, utterances]);

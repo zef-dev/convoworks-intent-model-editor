@@ -59,9 +59,11 @@ function IntentDetails(props) {
       let intent = {
         ...intent,
         name: name,
-        utterances: utterances
+        utterances: utterances.filter(item => item.model.length)
       }
 
+      console.log(intent);
+      
       props.onUpdate(intent, valid);
     }
   }, [name, utterances]);

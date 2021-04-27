@@ -906,8 +906,9 @@ function IntentDetails(props) {
       const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
       let intent = { ...intent,
         name: name,
-        utterances: utterances
+        utterances: utterances.filter(item => item.model.length)
       };
+      console.log(intent);
       props.onUpdate(intent, valid);
     }
   }, [name, utterances]);
