@@ -1040,6 +1040,7 @@ function IntentDetails(props) {
       searchPhrase = _useState6[0],
       setSearchPhrase = _useState6[1];
 
+  console.log(props.intent);
   React.useEffect(function () {
     if (intent) {
       setName(intent.name);
@@ -1051,13 +1052,9 @@ function IntentDetails(props) {
           setUtterances([{
             raw: '',
             model: []
-          }].concat(intent.utterances.filter(function (item) {
-            return item.model.length;
-          })));
+          }].concat(intent.utterances));
         } else {
-          setUtterances(intent.utterances.filter(function (item) {
-            return item.model.length;
-          }));
+          setUtterances(intent.utterances);
         }
       } else {
         setUtterances([{
@@ -1089,14 +1086,15 @@ function IntentDetails(props) {
     if (name && utterances) {
       var valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
 
-      var updatedIntent = _extends({}, intent, {
+      var _intent = _extends({}, _intent, {
         name: name,
         utterances: utterances.filter(function (item) {
           return item.model.length;
         })
       });
 
-      props.onUpdate(updatedIntent, valid);
+      console.log(_intent);
+      props.onUpdate(_intent, valid);
     }
   }, [name, utterances]);
 

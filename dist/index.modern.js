@@ -866,6 +866,7 @@ function IntentDetails(props) {
   const [utterances, setUtterances] = useState([]);
   const [slotValuePairs, setSlotValuePairs] = useState([]);
   const [searchPhrase, setSearchPhrase] = useState('');
+  console.log(props.intent);
   useEffect(() => {
     if (intent) {
       setName(intent.name);
@@ -877,9 +878,9 @@ function IntentDetails(props) {
           setUtterances([{
             raw: '',
             model: []
-          }, ...intent.utterances.filter(item => item.model.length)]);
+          }, ...intent.utterances]);
         } else {
-          setUtterances(intent.utterances.filter(item => item.model.length));
+          setUtterances(intent.utterances);
         }
       } else {
         setUtterances([{
@@ -904,11 +905,12 @@ function IntentDetails(props) {
   useEffect(() => {
     if (name && utterances) {
       const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
-      let updatedIntent = { ...intent,
+      let intent = { ...intent,
         name: name,
         utterances: utterances.filter(item => item.model.length)
       };
-      props.onUpdate(updatedIntent, valid);
+      console.log(intent);
+      props.onUpdate(intent, valid);
     }
   }, [name, utterances]);
 

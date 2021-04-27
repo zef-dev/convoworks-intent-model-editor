@@ -20,6 +20,8 @@ function IntentDetails(props) {
 
   const [searchPhrase, setSearchPhrase] = useState('');
 
+  console.log(props.intent)
+
   // check if data is passed in props
   useEffect(() => {
     if (intent) {
@@ -27,9 +29,9 @@ function IntentDetails(props) {
       if (intent.utterances.length) {
         /* add new field if only one utterance is present */
         if (intent.utterances[0]?.model.length > 0) {
-          setUtterances([{raw: '', model: []}, ...intent.utterances.filter(item => item.model.length)]);
+          setUtterances([{raw: '', model: []}, ...intent.utterances]);
         } else {
-          setUtterances(intent.utterances.filter(item => item.model.length));
+          setUtterances(intent.utterances);
         }
       } else {
         setUtterances([{ raw: '', model: [] }])
@@ -56,13 +58,15 @@ function IntentDetails(props) {
 
       const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
 
-      let updatedIntent = {
+      let intent = {
         ...intent,
         name: name,
         utterances: utterances.filter(item => item.model.length)
       }
 
-      props.onUpdate(updatedIntent, valid);
+      console.log(intent);
+      
+      props.onUpdate(intent, valid);
     }
   }, [name, utterances]);
 
