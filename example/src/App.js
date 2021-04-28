@@ -8,41 +8,37 @@ const App = () => {
   const [view, setView] = useState('intent');
   const [intent, setIntent] = useState(null);
 
-  const saveIntent = (item) => {
-    localStorage.setItem('intent', JSON.stringify(item));
-  }
-
   useEffect(() => {
     setIntent(data.intents[0])
   }, [data])
 
-  useEffect(() => {
-    saveIntent(intent);
-  }, [intent])
-
-  return (
-    <React.Fragment>
-        <nav>
-          <button onClick={() => setView('intent')}>Intent editor</button>
-          <button onClick={() => setView('entity')}>Entity editor</button>
-        </nav>
-        {view === 'intent' ? 
-        <IntentEditor
-          intent={JSON.parse(localStorage.getItem('intent'))}
-          entities={[...data.entities, {name: 'test.entity.someVal', values: []}, {name: 'test.entity.more.dots', values: []}]}
-          systemEntities={[]}
-          onUpdate={(item, valid) => {saveIntent(item);}}
-        />
-  
-        :
-  
-        <EntityEditor
-          entity={data.entities[0]}
-          onUpdate={() => {console.log('update')}}
-        />
-      }
-    </React.Fragment>
-  )
+  if (intent) {
+    return (
+      <React.Fragment>
+          <nav>
+            <button onClick={() => setView('intent')}>Intent editor</button>
+            <button onClick={() => setView('entity')}>Entity editor</button>
+          </nav>
+          {view === 'intent' ? 
+          <IntentEditor
+            intent={intent}
+            entities={[...data.entities, {name: 'test.entity.someVal', values: []}, {name: 'test.entity.more.dots', values: []}]}
+            systemEntities={[]}
+            onUpdate={(item, valid) => {console.log(item, valid)}}
+          />
+    
+          :
+    
+          <EntityEditor
+            entity={data.entities[0]}
+            onUpdate={() => {console.log('update')}}
+          />
+        }
+      </React.Fragment>
+    )
+  } else {
+    return null
+  }
 }
 
 export default App

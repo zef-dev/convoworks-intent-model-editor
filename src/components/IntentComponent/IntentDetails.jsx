@@ -54,13 +54,13 @@ function IntentDetails(props) {
 
       const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
 
-      let intent = {
+      let updatedIntent = {
         ...intent,
         name: name,
         utterances: utterances.filter(item => item.model.length)
       }
 
-      props.onUpdate(intent, valid);
+      props.onUpdate(updatedIntent, valid);
     }
   }, [name, utterances]);
 
