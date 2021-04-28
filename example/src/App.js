@@ -9,7 +9,7 @@ const App = () => {
   const [intent, setIntent] = useState(null);
 
   useEffect(() => {
-    setIntent(data.intents[0])
+    setIntent(data.intents[1])
   }, [data])
 
   if (intent) {

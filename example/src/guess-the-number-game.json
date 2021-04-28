@@ -317,7 +317,6 @@
         },
         {
             "name": "NumberIsCorrectResponse",
-            "type": "custom",
             "utterances": [
                 {
                     "raw": "42 is correct answer",
