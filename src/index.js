@@ -4,7 +4,7 @@ import IntentDetails from './components/IntentComponent/IntentDetails'
 import './styles.scss'
 
 export const IntentEditor = (props) => {
-  return <IntentDetails intent={props.intent} entities={props.entities} systemEntities={props.systemEntities} onUpdate={props.onUpdate} />
+  return <IntentDetails intents={props.intents} intent={props.intent} entities={props.entities} systemEntities={props.systemEntities} onUpdate={props.onUpdate} />
 }
 
 export const EntityEditor = (props) => {

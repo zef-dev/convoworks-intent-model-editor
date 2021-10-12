@@ -47,28 +47,24 @@ function _arrayLikeToArray(arr, len) {
 }
 
 function _createForOfIteratorHelperLoose(o, allowArrayLike) {
-  var it;
+  var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
+  if (it) return (it = it.call(o)).next.bind(it);
 
-  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
-    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-      if (it) o = it;
-      var i = 0;
-      return function () {
-        if (i >= o.length) return {
-          done: true
-        };
-        return {
-          done: false,
-          value: o[i++]
-        };
+  if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+    if (it) o = it;
+    var i = 0;
+    return function () {
+      if (i >= o.length) return {
+        done: true
       };
-    }
-
-    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+      return {
+        done: false,
+        value: o[i++]
+      };
+    };
   }
 
-  it = o[Symbol.iterator]();
-  return it.next.bind(it);
+  throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
 var stringToColor = function stringToColor(value) {
@@ -350,6 +346,10 @@ var validateInput = function validateInput(elem, term, regex, message) {
   }
 
   elem.reportValidity();
+  return reg.test(term);
+};
+var simpleValidateInput = function simpleValidateInput(term, regex) {
+  var reg = new RegExp(regex);
   return reg.test(term);
 };
 
@@ -1095,6 +1095,25 @@ function IntentDetails(props) {
     setSearchPhrase(term);
   };
 
+  var handleNameChange = function handleNameChange(e) {
+    var message = 'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
+    var isTextValid = simpleValidateInput(e.target.value, '^[A-Za-z](_?[A-Za-z])*_?$');
+    var doesSameIntentNameExist = props.intents.filter(function (item) {
+      return item.name === e.target.value && item !== intent;
+    }).length > 0;
+
+    if (!isTextValid) {
+      e.target.setCustomValidity(message);
+    } else if (doesSameIntentNameExist) {
+      e.target.setCustomValidity('Intent name must be unique');
+    } else {
+      e.target.setCustomValidity('');
+    }
+
+    e.target.reportValidity();
+    setName(e.target.value);
+  };
+
   if (intent) {
     return /*#__PURE__*/React__default.createElement("div", {
       className: "convo-details"
@@ -1113,9 +1132,7 @@ function IntentDetails(props) {
         return preventSubmit(e);
       },
       onChange: function onChange(e) {
-        var message = 'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
-        validateInput(e.target, e.target.value, '^[A-Za-z](_?[A-Za-z])*_?$', message);
-        setName(e.target.value);
+        return handleNameChange(e);
       }
     })), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--50--large"
@@ -1154,6 +1171,7 @@ function IntentDetails(props) {
 
 var IntentEditor = function IntentEditor(props) {
   return /*#__PURE__*/React__default.createElement(IntentDetails, {
+    intents: props.intents,
     intent: props.intent,
     entities: props.entities,
     systemEntities: props.systemEntities,

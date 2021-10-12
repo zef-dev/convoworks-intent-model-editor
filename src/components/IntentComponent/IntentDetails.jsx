@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import IntentUtterances from './IntentUtterances.jsx';
 import _ from 'lodash';
-import { useRef } from 'react';
-import { validateInput } from '../../helpers/validations.jsx';
+import { simpleValidateInput, validateInput } from '../../helpers/validations.jsx';
 
 import { preventSubmit } from '../../helpers/common_constants.jsx';
 import { iconSearch } from '../../helpers/image_paths.jsx';
@@ -13,22 +12,18 @@ function IntentDetails(props) {
   const entities = props.entities;
   const systemEntities = props.systemEntities;
   const [stateChange, setStateChange] = useState(false);
-
   const [name, setName] = useState('');
   const [utterances, setUtterances] = useState([]);
-
   const [slotValuePairs, setSlotValuePairs] = useState([]);
-
   const [searchPhrase, setSearchPhrase] = useState('');
 
-  
   // check if data is passed in props
   useEffect(() => {
     if (intent) {
       setName(intent.name);
       if (intent.utterances.length) {
         /* add new field if only one utterance is present */
-        setUtterances([{raw: '', model: []}, ...intent.utterances.filter(item => item.model.length > 0)]);
+        setUtterances([{ raw: '', model: [] }, ...intent.utterances.filter(item => item.model.length > 0)]);
       } else {
         setUtterances([{ raw: '', model: [] }])
       }
@@ -68,6 +63,24 @@ function IntentDetails(props) {
     setSearchPhrase(term);
   }
 
+  const handleNameChange = (e) => {
+    let message =
+      'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
+    let isTextValid = simpleValidateInput(e.target.value, '^[A-Za-z](_?[A-Za-z])*_?$');
+    let doesSameIntentNameExist = props.intents.filter(item => (item.name === e.target.value) && item !== intent).length > 0;
+
+    if (!isTextValid) {
+      e.target.setCustomValidity(message);
+    } else if (doesSameIntentNameExist) {
+      e.target.setCustomValidity('Intent name must be unique')
+    } else {
+      e.target.setCustomValidity('');
+    }
+
+    e.target.reportValidity();
+    setName(e.target.value);
+  }
+
   if (intent) {
     return (
       <div className="convo-details">
@@ -82,17 +95,7 @@ function IntentDetails(props) {
                 placeholder="Intent name"
                 className="input input--item-name"
                 onKeyDown={(e) => preventSubmit(e)}
-                onChange={e => {
-                  let message =
-                    'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
-                  validateInput(
-                    e.target,
-                    e.target.value,
-                    '^[A-Za-z](_?[A-Za-z])*_?$',
-                    message
-                  );
-                  setName(e.target.value);
-                }}
+                onChange={e => handleNameChange(e)}
               />
             </div>
             {/* Entity words */}

@@ -8,6 +8,7 @@ const App = () => {
   const [view, setView] = useState('intent');
   const [intent, setIntent] = useState(null);
 
+
   useEffect(() => {
     setIntent(data.intents[1])
   }, [data])
@@ -22,6 +23,7 @@ const App = () => {
           {view === 'intent' ? 
           <IntentEditor
             intent={intent}
+            intents={data.intents}
             entities={[...data.entities, {name: 'test.entity.someVal', values: []}, {name: 'test.entity.more.dots', values: []}]}
             systemEntities={[]}
             onUpdate={(item, valid) => {console.log(item, valid)}}

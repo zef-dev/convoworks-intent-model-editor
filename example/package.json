@@ -10,7 +10,6 @@
     "eject": "node ../node_modules/react-scripts/bin/react-scripts.js eject"
   },
   "dependencies": {
-    "convoworks-intent-model-editor": "link:..",
     "lodash": "^4.17.20",
     "node-sass": "4.14.1",
     "prettier": "^2.2.1",

@@ -9,3 +9,8 @@ export const validateInput = (elem, term, regex, message) => {
 
   return reg.test(term);
 };
+
+export const simpleValidateInput = (term, regex) => {
+  let reg = new RegExp(regex);
+  return reg.test(term); 
+}

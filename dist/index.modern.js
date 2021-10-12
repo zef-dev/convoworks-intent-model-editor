@@ -269,6 +269,10 @@ const validateInput = (elem, term, regex, message) => {
   elem.reportValidity();
   return reg.test(term);
 };
+const simpleValidateInput = (term, regex) => {
+  let reg = new RegExp(regex);
+  return reg.test(term);
+};
 
 function EntityDetails(props) {
   const [entity, setEntity] = useState(null);
@@ -911,6 +915,23 @@ function IntentDetails(props) {
     setSearchPhrase(term);
   };
 
+  const handleNameChange = e => {
+    let message = 'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
+    let isTextValid = simpleValidateInput(e.target.value, '^[A-Za-z](_?[A-Za-z])*_?$');
+    let doesSameIntentNameExist = props.intents.filter(item => item.name === e.target.value && item !== intent).length > 0;
+
+    if (!isTextValid) {
+      e.target.setCustomValidity(message);
+    } else if (doesSameIntentNameExist) {
+      e.target.setCustomValidity('Intent name must be unique');
+    } else {
+      e.target.setCustomValidity('');
+    }
+
+    e.target.reportValidity();
+    setName(e.target.value);
+  };
+
   if (intent) {
     return /*#__PURE__*/React.createElement("div", {
       className: "convo-details"
@@ -926,11 +947,7 @@ function IntentDetails(props) {
       placeholder: "Intent name",
       className: "input input--item-name",
       onKeyDown: e => preventSubmit(e),
-      onChange: e => {
-        let message = 'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
-        validateInput(e.target, e.target.value, '^[A-Za-z](_?[A-Za-z])*_?$', message);
-        setName(e.target.value);
-      }
+      onChange: e => handleNameChange(e)
     })), /*#__PURE__*/React.createElement("div", {
       className: "margin--50--large"
     }, /*#__PURE__*/React.createElement("div", {
@@ -966,6 +983,7 @@ function IntentDetails(props) {
 
 const IntentEditor = props => {
   return /*#__PURE__*/React.createElement(IntentDetails, {
+    intents: props.intents,
     intent: props.intent,
     entities: props.entities,
     systemEntities: props.systemEntities,
