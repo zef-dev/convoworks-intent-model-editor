@@ -26,7 +26,7 @@ const App = () => {
             intents={data.intents}
             entities={[...data.entities, {name: 'test.entity.someVal', values: []}, {name: 'test.entity.more.dots', values: []}]}
             systemEntities={[]}
-            onUpdate={(item, valid) => {console.log(item, valid)}}
+            onUpdate={(item, valid) => {console.log('is it valid?', valid)}}
           />
     
           :

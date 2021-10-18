@@ -33,7 +33,7 @@ const IntentUtterances = (props) => {
 				{props.utterances.map((item, index) => {
 					return (
 						<li key={index} style={{ display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none' }}>
-							<Utterance key={index} utterances={props.utterances} utterance={item} index={index} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} slotValuePairs={props.slotValuePairs} handleNew={handleNew} />
+							<Utterance key={index} allUtterancesInIntents={props.allUtterancesInIntents} utterances={props.utterances} utterance={item} index={index} active={active} setActive={setActive} entities={props.entities} removeFromUtterances={removeFromUtterances} utterances={props.utterances} setUtterances={props.setUtterances} stateChange={props.stateChange} setStateChange={props.setStateChange} slotValuePairs={props.slotValuePairs} handleNew={handleNew} />
 						</li>
 					)
 				})}

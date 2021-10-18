@@ -719,16 +719,21 @@ const Utterance = React.memo(props => {
     if (whitelist && whitelist.nodes) {
       let nodes = whitelist.nodes;
       let textNodes = nodes.filter(item => !item.tagName);
+      let nodesMappedToString = nodes.map(item => {
+        if (item.dataset && item.dataset.type) return `${item.textContent.trim()} {${item.dataset.type}}`;
+        return item.textContent.trim();
+      }).join(' ');
+      if (props.index === 1) console.log(props.allUtterancesInIntents.filter(item => item === nodesMappedToString));
+      if (whitelist.tags.length > 0 && textNodes.length < 1) return true;
+      if (props.allUtterancesInIntents.filter(item => item === nodesMappedToString).length > 1) return false;
 
-      if (whitelist.tags.length > 0 && textNodes.length < 1) {
-        return true;
-      } else if (textNodes.length > 0) {
+      if (textNodes.length > 0) {
         let str = textNodes.map(item => item.textContent.trim()).join(' ');
         let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
         return reg.test(str.trim());
-      } else {
-        return true;
       }
+
+      return true;
     } else {
       return true;
     }
@@ -839,6 +844,7 @@ const IntentUtterances = props => {
         }
       }, /*#__PURE__*/React.createElement(Utterance, {
         key: index,
+        allUtterancesInIntents: props.allUtterancesInIntents,
         utterances: props.utterances,
         utterance: item,
         index: index,
@@ -932,6 +938,15 @@ function IntentDetails(props) {
     setName(e.target.value);
   };
 
+  const mapUtterancesAsString = items => {
+    return items.map(item => item.model.map(item => {
+      if (item.type) return `${item.text} {${item.type}}`;
+      return item.text;
+    }).join(' '));
+  };
+
+  const allUtterancesInIntents = [mapUtterancesAsString(props.intents.map(item => item.utterances).flat()), ...mapUtterancesAsString(utterances)];
+
   if (intent) {
     return /*#__PURE__*/React.createElement("div", {
       className: "convo-details"
@@ -968,6 +983,8 @@ function IntentDetails(props) {
     })), /*#__PURE__*/React.createElement("div", {
       className: "margin--24--large"
     }, /*#__PURE__*/React.createElement(IntentUtterances$1, {
+      intents: props.intents,
+      allUtterancesInIntents: allUtterancesInIntents,
       utterances: utterances,
       setUtterances: setUtterances,
       entities: [entities, ...systemEntities],

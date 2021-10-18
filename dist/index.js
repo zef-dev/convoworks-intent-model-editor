@@ -47,24 +47,28 @@ function _arrayLikeToArray(arr, len) {
 }
 
 function _createForOfIteratorHelperLoose(o, allowArrayLike) {
-  var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
-  if (it) return (it = it.call(o)).next.bind(it);
+  var it;
 
-  if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-    if (it) o = it;
-    var i = 0;
-    return function () {
-      if (i >= o.length) return {
-        done: true
+  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
+      var i = 0;
+      return function () {
+        if (i >= o.length) return {
+          done: true
+        };
+        return {
+          done: false,
+          value: o[i++]
+        };
       };
-      return {
-        done: false,
-        value: o[i++]
-      };
-    };
+    }
+
+    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
-  throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  it = o[Symbol.iterator]();
+  return it.next.bind(it);
 }
 
 var stringToColor = function stringToColor(value) {
@@ -867,18 +871,27 @@ var Utterance = React__default.memo(function (props) {
       var textNodes = nodes.filter(function (item) {
         return !item.tagName;
       });
+      var nodesMappedToString = nodes.map(function (item) {
+        if (item.dataset && item.dataset.type) return item.textContent.trim() + " {" + item.dataset.type + "}";
+        return item.textContent.trim();
+      }).join(' ');
+      if (props.index === 1) console.log(props.allUtterancesInIntents.filter(function (item) {
+        return item === nodesMappedToString;
+      }));
+      if (whitelist.tags.length > 0 && textNodes.length < 1) return true;
+      if (props.allUtterancesInIntents.filter(function (item) {
+        return item === nodesMappedToString;
+      }).length > 1) return false;
 
-      if (whitelist.tags.length > 0 && textNodes.length < 1) {
-        return true;
-      } else if (textNodes.length > 0) {
+      if (textNodes.length > 0) {
         var str = textNodes.map(function (item) {
           return item.textContent.trim();
         }).join(' ');
         var reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
         return reg.test(str.trim());
-      } else {
-        return true;
       }
+
+      return true;
     } else {
       return true;
     }
@@ -997,6 +1010,7 @@ var IntentUtterances = function IntentUtterances(props) {
         }
       }, /*#__PURE__*/React__default.createElement(Utterance, (_React$createElement = {
         key: index,
+        allUtterancesInIntents: props.allUtterancesInIntents,
         utterances: props.utterances,
         utterance: item,
         index: index,
@@ -1114,6 +1128,19 @@ function IntentDetails(props) {
     setName(e.target.value);
   };
 
+  var mapUtterancesAsString = function mapUtterancesAsString(items) {
+    return items.map(function (item) {
+      return item.model.map(function (item) {
+        if (item.type) return item.text + " {" + item.type + "}";
+        return item.text;
+      }).join(' ');
+    });
+  };
+
+  var allUtterancesInIntents = [mapUtterancesAsString(props.intents.map(function (item) {
+    return item.utterances;
+  }).flat())].concat(mapUtterancesAsString(utterances));
+
   if (intent) {
     return /*#__PURE__*/React__default.createElement("div", {
       className: "convo-details"
@@ -1156,6 +1183,8 @@ function IntentDetails(props) {
     })), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--24--large"
     }, /*#__PURE__*/React__default.createElement(IntentUtterances$1, {
+      intents: props.intents,
+      allUtterancesInIntents: allUtterancesInIntents,
       utterances: utterances,
       setUtterances: setUtterances,
       entities: [entities].concat(systemEntities),

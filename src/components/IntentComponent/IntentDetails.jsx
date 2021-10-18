@@ -81,6 +81,15 @@ function IntentDetails(props) {
     setName(e.target.value);
   }
 
+  const mapUtterancesAsString = (items) => {
+    return items.map(item => item.model.map(item => {
+      if (item.type) return `${item.text} {${item.type}}`
+      return item.text
+    }).join(' '))
+  }
+
+  const allUtterancesInIntents = [mapUtterancesAsString(props.intents.map(item => item.utterances).flat()), ...mapUtterancesAsString(utterances)];
+
   if (intent) {
     return (
       <div className="convo-details">
@@ -114,6 +123,8 @@ function IntentDetails(props) {
               </div>
               <div className="margin--24--large">
                 <IntentUtterances
+                  intents={props.intents}
+                  allUtterancesInIntents={allUtterancesInIntents}
                   utterances={utterances}
                   setUtterances={setUtterances}
                   entities={[entities, ...systemEntities]}

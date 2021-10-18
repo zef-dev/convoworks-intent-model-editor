@@ -169,7 +169,6 @@ const UtteranceInput = (props) => {
             props.setSelection(e.target);
           }
         }}
-
         onChange={(e) => {
           props.setRaw(e.target.value);
           cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
