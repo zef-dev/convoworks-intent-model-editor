@@ -10,8 +10,10 @@ export const Utterance = React.memo(props => {
   const [raw, setRaw] = useState('');
   const [selection, setSelection] = useState(null);
   const [valid, setValid] = useState(true);
+  const [validationMessage, setValidationMessage] = useState('');
 
   const wrapper = useRef(null);
+  const inputWrapper = useRef(null);
   const input = useRef(null);
 
   const whitelist = input.current && {
@@ -50,7 +52,6 @@ export const Utterance = React.memo(props => {
 
   useEffect(() => {
     let isValid = wrapper.current.querySelectorAll("[data-valid='false']").length < 1;
-
     setValid(isValid);
 
     if (whitelist && whitelist.nodes) {
@@ -78,27 +79,34 @@ export const Utterance = React.memo(props => {
     }
   }, [whitelist]);
 
+  const handleValidationMessage = (message) => {
+    if (validationMessage !== message) setValidationMessage(message);
+  }
+
   const validateInput = () => {
     if (whitelist && whitelist.nodes) {
       let nodes = whitelist.nodes;
       let textNodes = nodes.filter(item => !item.tagName);
-
       let nodesMappedToString = nodes.map(item => {
         if (item.dataset && item.dataset.type) return `${item.textContent.trim()} {${item.dataset.type}}`
         return item.textContent.trim()
       }).join(' ');
 
-      if (props.index === 1) console.log(props.allUtterancesInIntents.filter(item => item === nodesMappedToString))
-
-      if (whitelist.tags.length > 0 && textNodes.length < 1) return true;
-      if (props.allUtterancesInIntents.filter(item => item === nodesMappedToString).length > 1) return false;
+      if (props.allUtterancesInIntents.filter(item => item === nodesMappedToString).length > 1 && nodes.length > 0) {
+        handleValidationMessage('Utterance must be unique');
+        return false
+      }
       if (textNodes.length > 0) {
         let str = textNodes.map(item => item.textContent.trim()).join(' ');
         let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-        return reg.test(str.trim());
+        let strValid = reg.test(str.trim()) 
+        handleValidationMessage(strValid ? '' : "Utterance can't contain special characters");
+        return strValid;
       }
+      handleValidationMessage('');
       return true
     } else {
+      handleValidationMessage('');
       return true
     }
   }
@@ -114,8 +122,8 @@ export const Utterance = React.memo(props => {
           <div
             className='field__main'
           >
-            <div className='field__input' data-valid={validateInput() ? 'true' : 'false'}>
-              <UtteranceInput index={props.index} input={input} active={active} setActive={props.setActive} utterances={props.utterances} raw={raw} setRaw={setRaw} entities={props.entities} selection={selection} setSelection={setSelection} slotValuePairs={props.slotValuePairs} handleNew={props.handleNew} />
+            <div ref={inputWrapper} className='field__input' data-valid={validateInput() ? 'true' : 'false'}>
+              <UtteranceInput index={props.index} input={input} active={active} setActive={props.setActive} utterances={props.utterances} raw={raw} setRaw={setRaw} entities={props.entities} selection={selection} setSelection={setSelection} slotValuePairs={props.slotValuePairs} handleNew={props.handleNew} valid={valid} />
               <div className="field__actions">
                 {props.index !== 0 && props.utterances.length > 1 &&
                   <button type="button" onClick={() => {
@@ -145,6 +153,7 @@ export const Utterance = React.memo(props => {
               })}
             </ul>
           }
+          {validationMessage.length > 0 && <p className="field__error">{validationMessage}</p>}
         </div>
       </React.Fragment>
     )

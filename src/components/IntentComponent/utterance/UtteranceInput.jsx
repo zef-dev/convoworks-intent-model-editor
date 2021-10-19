@@ -153,7 +153,7 @@ const UtteranceInput = (props) => {
 
   useEffect(() => {
     if (keyPress === 13) {
-      props.handleNew();
+      props.handleNew(props.valid);
       setKeyPress('');
     }
   }, [keyPress])

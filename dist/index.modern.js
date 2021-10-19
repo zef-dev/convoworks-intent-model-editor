@@ -598,7 +598,7 @@ const UtteranceInput = props => {
   });
   useEffect(() => {
     if (keyPress === 13) {
-      props.handleNew();
+      props.handleNew(props.valid);
       setKeyPress('');
     }
   }, [keyPress]);
@@ -650,7 +650,9 @@ const Utterance = React.memo(props => {
   const [raw, setRaw] = useState('');
   const [selection, setSelection] = useState(null);
   const [valid, setValid] = useState(true);
+  const [validationMessage, setValidationMessage] = useState('');
   const wrapper = useRef(null);
+  const inputWrapper = useRef(null);
   const input = useRef(null);
   const whitelist = input.current && {
     tags: Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
@@ -715,6 +717,10 @@ const Utterance = React.memo(props => {
     }
   }, [whitelist]);
 
+  const handleValidationMessage = message => {
+    if (validationMessage !== message) setValidationMessage(message);
+  };
+
   const validateInput = () => {
     if (whitelist && whitelist.nodes) {
       let nodes = whitelist.nodes;
@@ -723,18 +729,24 @@ const Utterance = React.memo(props => {
         if (item.dataset && item.dataset.type) return `${item.textContent.trim()} {${item.dataset.type}}`;
         return item.textContent.trim();
       }).join(' ');
-      if (props.index === 1) console.log(props.allUtterancesInIntents.filter(item => item === nodesMappedToString));
-      if (whitelist.tags.length > 0 && textNodes.length < 1) return true;
-      if (props.allUtterancesInIntents.filter(item => item === nodesMappedToString).length > 1) return false;
+
+      if (props.allUtterancesInIntents.filter(item => item === nodesMappedToString).length > 1 && nodes.length > 0) {
+        handleValidationMessage('Utterance must be unique');
+        return false;
+      }
 
       if (textNodes.length > 0) {
         let str = textNodes.map(item => item.textContent.trim()).join(' ');
         let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-        return reg.test(str.trim());
+        let strValid = reg.test(str.trim());
+        handleValidationMessage(strValid ? '' : "Utterance can't contain special characters");
+        return strValid;
       }
 
+      handleValidationMessage('');
       return true;
     } else {
+      handleValidationMessage('');
       return true;
     }
   };
@@ -751,6 +763,7 @@ const Utterance = React.memo(props => {
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__main"
     }, /*#__PURE__*/React.createElement("div", {
+      ref: inputWrapper,
       className: "field__input",
       "data-valid": validateInput() ? 'true' : 'false'
     }, /*#__PURE__*/React.createElement(UtteranceInput$1, {
@@ -765,7 +778,8 @@ const Utterance = React.memo(props => {
       selection: selection,
       setSelection: setSelection,
       slotValuePairs: props.slotValuePairs,
-      handleNew: props.handleNew
+      handleNew: props.handleNew,
+      valid: valid
     }), /*#__PURE__*/React.createElement("div", {
       className: "field__actions"
     }, props.index !== 0 && props.utterances.length > 1 && /*#__PURE__*/React.createElement("button", {
@@ -802,7 +816,9 @@ const Utterance = React.memo(props => {
           setSelection(item.target);
         }, 220)
       }, item.type[0] === '@' ? '' : '@', item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
-    }))));
+    })), validationMessage.length > 0 && /*#__PURE__*/React.createElement("p", {
+      className: "field__error"
+    }, validationMessage)));
   } else {
     return null;
   }
@@ -818,21 +834,23 @@ const IntentUtterances = props => {
     props.setStateChange(!props.stateChange);
   };
 
-  const handleNew = () => {
-    if (props.utterances[0].model.length > 0) {
-      let newUtteranceField = {
-        raw: '',
-        model: []
-      };
-      let arr = [newUtteranceField, ...props.utterances];
-      props.setUtterances(arr);
-      props.setStateChange(!props.stateChange);
-    }
+  const handleNew = valid => {
+    if (valid) {
+      if (props.utterances[0].model.length > 0) {
+        let newUtteranceField = {
+          raw: '',
+          model: []
+        };
+        let arr = [newUtteranceField, ...props.utterances];
+        props.setUtterances(arr);
+        props.setStateChange(!props.stateChange);
+      }
 
-    setTimeout(() => {
-      let input = document.querySelectorAll('.taggable-text__input')[0];
-      input && input.focus();
-    }, 100);
+      setTimeout(() => {
+        let input = document.querySelectorAll('.taggable-text__input')[0];
+        input && input.focus();
+      }, 100);
+    }
   };
 
   if (props.utterances) {

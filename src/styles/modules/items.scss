@@ -34,8 +34,7 @@
         }
 
         .field__error {
-            visibility: visible;
-            opacity: 1;
+          display: block;
         }
     }
 
@@ -65,22 +64,23 @@
 }
 
 .field__error {
-    position: absolute;
+    position: static;
     top: 100%;
     left: 0;
-    transform: translateY(7.2px);
     line-height: 1.25;
     font-size: 14px;
     margin: 0;
     border: none;
+    padding: 8px 12px;
     background: $color-alert;
     color: $white;
-    border-radius: $input-radius;
-    padding: 8px 12px;
-    transition: $transition-time;
-    visibility: hidden;
-    opacity: 0;
+    width: 100%;
+    border-top: 1px solid $color-alert;
+    display: none;
     z-index: 1;
+    margin-top: 4px;
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
 }
 
 .field--error {

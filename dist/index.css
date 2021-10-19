@@ -868,8 +868,7 @@
       opacity: 0.85;
       visibility: visible; }
     .convo-details .field--active .field__error {
-      visibility: visible;
-      opacity: 1; }
+      display: block; }
     .convo-details .field .btn--remove:hover {
       opacity: 1; }
     .convo-details .field mark,
@@ -888,22 +887,23 @@
     .convo-details .field button.mark {
       padding: 0 2px; }
   .convo-details .field__error {
-    position: absolute;
+    position: static;
     top: 100%;
     left: 0;
-    transform: translateY(7.2px);
     line-height: 1.25;
     font-size: 14px;
     margin: 0;
     border: none;
+    padding: 8px 12px;
     background: #d9543e;
     color: #fafafa;
-    border-radius: 0.5rem;
-    padding: 8px 12px;
-    transition: 0.22s;
-    visibility: hidden;
-    opacity: 0;
-    z-index: 1; }
+    width: 100%;
+    border-top: 1px solid #d9543e;
+    display: none;
+    z-index: 1;
+    margin-top: 4px;
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem; }
   .convo-details .field--error {
     border-color: #d9543e; }
     .convo-details .field--error.field--active {
