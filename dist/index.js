@@ -1161,7 +1161,7 @@ function IntentDetails(props) {
   };
 
   var outsideIntentUtterances = props.intents.filter(function (obj) {
-    return obj !== props.intent;
+    return obj.name !== intent.name;
   }).map(function (intent) {
     return intent.utterances.map(function (utterance) {
       return {

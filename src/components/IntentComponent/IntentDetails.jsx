@@ -89,11 +89,11 @@ function IntentDetails(props) {
     }).join(' ');
   }
 
-  const outsideIntentUtterances = props.intents.filter(obj => obj !== props.intent).map(intent => intent.utterances.map(utterance => ({ intent: intent.name, string: mapUtterancesAsString(utterance.model) }))).flat();
+  const outsideIntentUtterances = props.intents.filter(obj => obj.name !== intent.name).map(intent => intent.utterances.map(utterance => ({ intent: intent.name, string: mapUtterancesAsString(utterance.model) }))).flat();
   const currentIntentUtterances = utterances.map(utterance => ({ intent: intent.name, string: mapUtterancesAsString(utterance.model) }));
   const allUtterancesInIntents = [...outsideIntentUtterances, ...currentIntentUtterances];
 
-  if (intent) {
+  if (intent) { 
     return (
       <div className="convo-details">
         <section className="layout--editor-content">

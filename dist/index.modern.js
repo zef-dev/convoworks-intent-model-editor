@@ -968,7 +968,7 @@ function IntentDetails(props) {
     }).join(' ');
   };
 
-  const outsideIntentUtterances = props.intents.filter(obj => obj !== props.intent).map(intent => intent.utterances.map(utterance => ({
+  const outsideIntentUtterances = props.intents.filter(obj => obj.name !== intent.name).map(intent => intent.utterances.map(utterance => ({
     intent: intent.name,
     string: mapUtterancesAsString(utterance.model)
   }))).flat();
