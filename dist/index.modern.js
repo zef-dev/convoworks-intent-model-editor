@@ -735,7 +735,7 @@ const Utterance = React.memo(props => {
       }).join(' ');
       let intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(item => item.string === nodesMappedToString);
 
-      if (intentsWithDuplicateUtterances.length > 1 && textNodes.length > 0) {
+      if (intentsWithDuplicateUtterances.length > 1 && nodes.length > 0) {
         handleValidationMessage(`Utterance must be unique across intents. This utterance appears in <strong>${intentsWithDuplicateUtterances[0].intent}</strong>.`);
         return false;
       } else if (textNodes.length > 0) {

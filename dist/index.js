@@ -48,24 +48,28 @@ function _arrayLikeToArray(arr, len) {
 }
 
 function _createForOfIteratorHelperLoose(o, allowArrayLike) {
-  var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
-  if (it) return (it = it.call(o)).next.bind(it);
+  var it;
 
-  if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-    if (it) o = it;
-    var i = 0;
-    return function () {
-      if (i >= o.length) return {
-        done: true
+  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
+      var i = 0;
+      return function () {
+        if (i >= o.length) return {
+          done: true
+        };
+        return {
+          done: false,
+          value: o[i++]
+        };
       };
-      return {
-        done: false,
-        value: o[i++]
-      };
-    };
+    }
+
+    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
-  throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  it = o[Symbol.iterator]();
+  return it.next.bind(it);
 }
 
 var stringToColor = function stringToColor(value) {
@@ -889,7 +893,7 @@ var Utterance = React__default.memo(function (props) {
         return item.string === nodesMappedToString;
       });
 
-      if (intentsWithDuplicateUtterances.length > 1 && textNodes.length > 0) {
+      if (intentsWithDuplicateUtterances.length > 1 && nodes.length > 0) {
         handleValidationMessage("Utterance must be unique across intents. This utterance appears in <strong>" + intentsWithDuplicateUtterances[0].intent + "</strong>.");
         return false;
       } else if (textNodes.length > 0) {
