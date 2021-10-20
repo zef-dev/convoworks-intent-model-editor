@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import IntentUtterances from './IntentUtterances.jsx';
-import _ from 'lodash';
+import _, { property } from 'lodash';
 import { simpleValidateInput, validateInput } from '../../helpers/validations.jsx';
 
 import { preventSubmit } from '../../helpers/common_constants.jsx';
@@ -89,11 +89,12 @@ function IntentDetails(props) {
     }).join(' ');
   }
 
-  const outsideIntentUtterances = props.intents.filter(obj => obj.name !== intent.name).map(intent => intent.utterances.map(utterance => ({ intent: intent.name, string: mapUtterancesAsString(utterance.model) }))).flat();
-  const currentIntentUtterances = utterances.map(utterance => ({ intent: intent.name, string: mapUtterancesAsString(utterance.model) }));
-  const allUtterancesInIntents = [...outsideIntentUtterances, ...currentIntentUtterances];
+  if (intent && props.intents) { 
 
-  if (intent) { 
+    const outsideIntentUtterances = props.intents.filter(obj => obj.name !== intent.name).map(intent => intent.utterances.map(utterance => ({ intent: intent.name, string: mapUtterancesAsString(utterance.model) }))).flat();
+    const currentIntentUtterances = utterances.map(utterance => ({ intent: intent.name, string: mapUtterancesAsString(utterance.model) }));
+    const allUtterancesInIntents = [...outsideIntentUtterances, ...currentIntentUtterances];
+
     return (
       <div className="convo-details">
         <section className="layout--editor-content">
