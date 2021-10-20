@@ -7,6 +7,7 @@ import useOnclickOutside from 'react-cool-onclickoutside';
 import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
 import sanitizeHtml from 'sanitize-html';
+import reactHtmlParser from 'react-html-parser';
 
 const stringToColor = value => {
   return value.getHashCode().intToHSL();
@@ -374,19 +375,22 @@ function EntityDetails(props) {
 }
 
 const UtteranceSlotValue = React.memo(props => {
+  const input = useRef(input);
   const [valid, setValid] = useState(true);
 
   const validateSlotValue = () => {
     let reg = /^[A-Za-z](_*[A-Za-z])*_*$/;
-    setValid(reg.test(props.target.dataset.slotValue));
+    let regTest = reg.test(props.target.dataset.slotValue);
+    input.current.setCustomValidity(regTest ? '' : 'Parameter name must not contain spaces or special characters');
+    setValid(regTest);
   };
 
   useEffect(() => {
     validateSlotValue();
   }, [props]);
   return /*#__PURE__*/React.createElement("input", {
+    ref: input,
     "data-valid": valid,
-    pattern: "^[A-Za-z](_*[A-Za-z])*_*$",
     value: props.slotValue,
     onKeyDown: e => preventSubmit(e),
     onChange: e => {
@@ -729,25 +733,24 @@ const Utterance = React.memo(props => {
         if (item.dataset && item.dataset.type) return `${item.textContent.trim()} {${item.dataset.type}}`;
         return item.textContent.trim();
       }).join(' ');
+      let intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(item => item.string === nodesMappedToString);
 
-      if (props.allUtterancesInIntents.filter(item => item === nodesMappedToString).length > 1 && nodes.length > 0) {
-        handleValidationMessage('Utterance must be unique');
+      if (intentsWithDuplicateUtterances.length > 1 && textNodes.length > 0) {
+        handleValidationMessage(`Utterance must be unique across intents. This utterance appears in <strong>${intentsWithDuplicateUtterances[0].intent}</strong>.`);
         return false;
-      }
-
-      if (textNodes.length > 0) {
+      } else if (textNodes.length > 0) {
         let str = textNodes.map(item => item.textContent.trim()).join(' ');
         let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
         let strValid = reg.test(str.trim());
         handleValidationMessage(strValid ? '' : "Utterance can't contain special characters");
         return strValid;
+      } else {
+        handleValidationMessage('');
+        return true;
       }
-
-      handleValidationMessage('');
-      return true;
     } else {
       handleValidationMessage('');
-      return true;
+      return false;
     }
   };
 
@@ -818,7 +821,7 @@ const Utterance = React.memo(props => {
       }, item.type[0] === '@' ? '' : '@', item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
     })), validationMessage.length > 0 && /*#__PURE__*/React.createElement("p", {
       className: "field__error"
-    }, validationMessage)));
+    }, reactHtmlParser(validationMessage))));
   } else {
     return null;
   }
@@ -925,13 +928,15 @@ function IntentDetails(props) {
   }, [utterances]);
   useEffect(() => {
     if (name && utterances) {
-      const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
-      let updatedIntent = {
-        name: name,
-        utterances: utterances.filter(item => item.model.length),
-        type: intent.type || 'custom'
-      };
-      props.onUpdate(updatedIntent, valid);
+      setTimeout(() => {
+        const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
+        let updatedIntent = {
+          name: name,
+          utterances: utterances.filter(item => item.model.length),
+          type: intent.type || 'custom'
+        };
+        props.onUpdate(updatedIntent, valid);
+      }, 5);
     }
   }, [name, utterances]);
 
@@ -956,14 +961,22 @@ function IntentDetails(props) {
     setName(e.target.value);
   };
 
-  const mapUtterancesAsString = items => {
-    return items.map(item => item.model.map(item => {
+  const mapUtterancesAsString = model => {
+    return model.map(item => {
       if (item.type) return `${item.text} {${item.type}}`;
       return item.text;
-    }).join(' '));
+    }).join(' ');
   };
 
-  const allUtterancesInIntents = [mapUtterancesAsString(props.intents.map(item => item.utterances).flat()), ...mapUtterancesAsString(utterances)];
+  const outsideIntentUtterances = props.intents.filter(obj => obj !== props.intent).map(intent => intent.utterances.map(utterance => ({
+    intent: intent.name,
+    string: mapUtterancesAsString(utterance.model)
+  }))).flat();
+  const currentIntentUtterances = utterances.map(utterance => ({
+    intent: intent.name,
+    string: mapUtterancesAsString(utterance.model)
+  }));
+  const allUtterancesInIntents = [...outsideIntentUtterances, ...currentIntentUtterances];
 
   if (intent) {
     return /*#__PURE__*/React.createElement("div", {

@@ -4,6 +4,7 @@ import { stringToColor } from '../../../helpers/common_constants'
 import UtteranceSlotValue from './UtteranceSlotValue'
 import UtteranceInput from './UtteranceInput'
 import { IconTrash } from '../../Icons/Icons'
+import reactHtmlParser from 'react-html-parser'
 
 export const Utterance = React.memo(props => {
 
@@ -92,22 +93,24 @@ export const Utterance = React.memo(props => {
         return item.textContent.trim()
       }).join(' ');
 
-      if (props.allUtterancesInIntents.filter(item => item === nodesMappedToString).length > 1 && nodes.length > 0) {
-        handleValidationMessage('Utterance must be unique');
+      let intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(item => item.string === nodesMappedToString);
+      if (intentsWithDuplicateUtterances.length > 1 && textNodes.length > 0) {
+        handleValidationMessage(`Utterance must be unique across intents. This utterance appears in <strong>${intentsWithDuplicateUtterances[0].intent}</strong>.`);
         return false
-      }
-      if (textNodes.length > 0) {
-        let str = textNodes.map(item => item.textContent.trim()).join(' ');
-        let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-        let strValid = reg.test(str.trim()) 
-        handleValidationMessage(strValid ? '' : "Utterance can't contain special characters");
-        return strValid;
-      }
-      handleValidationMessage('');
-      return true
+      } else
+        if (textNodes.length > 0) {
+          let str = textNodes.map(item => item.textContent.trim()).join(' ');
+          let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
+          let strValid = reg.test(str.trim())
+          handleValidationMessage(strValid ? '' : "Utterance can't contain special characters");
+          return strValid;
+        } else {
+          handleValidationMessage('');
+          return true
+        }
     } else {
       handleValidationMessage('');
-      return true
+      return false
     }
   }
 
@@ -153,7 +156,7 @@ export const Utterance = React.memo(props => {
               })}
             </ul>
           }
-          {validationMessage.length > 0 && <p className="field__error">{validationMessage}</p>}
+          {validationMessage.length > 0 && <p className="field__error">{reactHtmlParser(validationMessage)}</p>}
         </div>
       </React.Fragment>
     )

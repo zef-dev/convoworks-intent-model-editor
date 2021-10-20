@@ -10,6 +10,7 @@ var useOnclickOutside = _interopDefault(require('react-cool-onclickoutside'));
 var TextInput = _interopDefault(require('react-autocomplete-input'));
 require('react-autocomplete-input/dist/bundle.css');
 var sanitizeHtml = _interopDefault(require('sanitize-html'));
+var reactHtmlParser = _interopDefault(require('react-html-parser'));
 
 function _extends() {
   _extends = Object.assign || function (target) {
@@ -47,28 +48,24 @@ function _arrayLikeToArray(arr, len) {
 }
 
 function _createForOfIteratorHelperLoose(o, allowArrayLike) {
-  var it;
+  var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
+  if (it) return (it = it.call(o)).next.bind(it);
 
-  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
-    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-      if (it) o = it;
-      var i = 0;
-      return function () {
-        if (i >= o.length) return {
-          done: true
-        };
-        return {
-          done: false,
-          value: o[i++]
-        };
+  if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+    if (it) o = it;
+    var i = 0;
+    return function () {
+      if (i >= o.length) return {
+        done: true
       };
-    }
-
-    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+      return {
+        done: false,
+        value: o[i++]
+      };
+    };
   }
 
-  it = o[Symbol.iterator]();
-  return it.next.bind(it);
+  throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
 var stringToColor = function stringToColor(value) {
@@ -476,21 +473,25 @@ function EntityDetails(props) {
 }
 
 var UtteranceSlotValue = React__default.memo(function (props) {
+  var input = React.useRef(input);
+
   var _useState = React.useState(true),
       valid = _useState[0],
       setValid = _useState[1];
 
   var validateSlotValue = function validateSlotValue() {
     var reg = /^[A-Za-z](_*[A-Za-z])*_*$/;
-    setValid(reg.test(props.target.dataset.slotValue));
+    var regTest = reg.test(props.target.dataset.slotValue);
+    input.current.setCustomValidity(regTest ? '' : 'Parameter name must not contain spaces or special characters');
+    setValid(regTest);
   };
 
   React.useEffect(function () {
     validateSlotValue();
   }, [props]);
   return /*#__PURE__*/React__default.createElement("input", {
+    ref: input,
     "data-valid": valid,
-    pattern: "^[A-Za-z](_*[A-Za-z])*_*$",
     value: props.slotValue,
     onKeyDown: function onKeyDown(e) {
       return preventSubmit(e);
@@ -884,15 +885,14 @@ var Utterance = React__default.memo(function (props) {
         if (item.dataset && item.dataset.type) return item.textContent.trim() + " {" + item.dataset.type + "}";
         return item.textContent.trim();
       }).join(' ');
+      var intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(function (item) {
+        return item.string === nodesMappedToString;
+      });
 
-      if (props.allUtterancesInIntents.filter(function (item) {
-        return item === nodesMappedToString;
-      }).length > 1 && nodes.length > 0) {
-        handleValidationMessage('Utterance must be unique');
+      if (intentsWithDuplicateUtterances.length > 1 && textNodes.length > 0) {
+        handleValidationMessage("Utterance must be unique across intents. This utterance appears in <strong>" + intentsWithDuplicateUtterances[0].intent + "</strong>.");
         return false;
-      }
-
-      if (textNodes.length > 0) {
+      } else if (textNodes.length > 0) {
         var str = textNodes.map(function (item) {
           return item.textContent.trim();
         }).join(' ');
@@ -900,13 +900,13 @@ var Utterance = React__default.memo(function (props) {
         var strValid = reg.test(str.trim());
         handleValidationMessage(strValid ? '' : "Utterance can't contain special characters");
         return strValid;
+      } else {
+        handleValidationMessage('');
+        return true;
       }
-
-      handleValidationMessage('');
-      return true;
     } else {
       handleValidationMessage('');
-      return true;
+      return false;
     }
   };
 
@@ -979,7 +979,7 @@ var Utterance = React__default.memo(function (props) {
       }, item.type[0] === '@' ? '' : '@', item.type)), /*#__PURE__*/React__default.createElement("div", null, item.text));
     })), validationMessage.length > 0 && /*#__PURE__*/React__default.createElement("p", {
       className: "field__error"
-    }, validationMessage)));
+    }, reactHtmlParser(validationMessage))));
   } else {
     return null;
   }
@@ -1112,15 +1112,17 @@ function IntentDetails(props) {
   }, [utterances]);
   React.useEffect(function () {
     if (name && utterances) {
-      var valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
-      var updatedIntent = {
-        name: name,
-        utterances: utterances.filter(function (item) {
-          return item.model.length;
-        }),
-        type: intent.type || 'custom'
-      };
-      props.onUpdate(updatedIntent, valid);
+      setTimeout(function () {
+        var valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
+        var updatedIntent = {
+          name: name,
+          utterances: utterances.filter(function (item) {
+            return item.model.length;
+          }),
+          type: intent.type || 'custom'
+        };
+        props.onUpdate(updatedIntent, valid);
+      }, 5);
     }
   }, [name, utterances]);
 
@@ -1147,18 +1149,30 @@ function IntentDetails(props) {
     setName(e.target.value);
   };
 
-  var mapUtterancesAsString = function mapUtterancesAsString(items) {
-    return items.map(function (item) {
-      return item.model.map(function (item) {
-        if (item.type) return item.text + " {" + item.type + "}";
-        return item.text;
-      }).join(' ');
-    });
+  var mapUtterancesAsString = function mapUtterancesAsString(model) {
+    return model.map(function (item) {
+      if (item.type) return item.text + " {" + item.type + "}";
+      return item.text;
+    }).join(' ');
   };
 
-  var allUtterancesInIntents = [mapUtterancesAsString(props.intents.map(function (item) {
-    return item.utterances;
-  }).flat())].concat(mapUtterancesAsString(utterances));
+  var outsideIntentUtterances = props.intents.filter(function (obj) {
+    return obj !== props.intent;
+  }).map(function (intent) {
+    return intent.utterances.map(function (utterance) {
+      return {
+        intent: intent.name,
+        string: mapUtterancesAsString(utterance.model)
+      };
+    });
+  }).flat();
+  var currentIntentUtterances = utterances.map(function (utterance) {
+    return {
+      intent: intent.name,
+      string: mapUtterancesAsString(utterance.model)
+    };
+  });
+  var allUtterancesInIntents = [].concat(outsideIntentUtterances, currentIntentUtterances);
 
   if (intent) {
     return /*#__PURE__*/React__default.createElement("div", {

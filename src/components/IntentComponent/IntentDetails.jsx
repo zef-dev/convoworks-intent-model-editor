@@ -46,16 +46,17 @@ function IntentDetails(props) {
 
   useEffect(() => {
     if (name && utterances) {
+      // TODO: using a timeout is really hacky -> do better
+      setTimeout(() => {
+        const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
+        let updatedIntent = {
+          name: name,
+          utterances: utterances.filter(item => item.model.length),
+          type: intent.type || 'custom'
+        }
 
-      const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
-
-      let updatedIntent = {
-        name: name,
-        utterances: utterances.filter(item => item.model.length),
-        type: intent.type || 'custom'
-      }
-
-      props.onUpdate(updatedIntent, valid);
+        props.onUpdate(updatedIntent, valid);
+      }, 5)
     }
   }, [name, utterances]);
 
@@ -81,14 +82,16 @@ function IntentDetails(props) {
     setName(e.target.value);
   }
 
-  const mapUtterancesAsString = (items) => {
-    return items.map(item => item.model.map(item => {
+  const mapUtterancesAsString = (model) => {
+    return model.map(item => {
       if (item.type) return `${item.text} {${item.type}}`
       return item.text
-    }).join(' '))
+    }).join(' ');
   }
 
-  const allUtterancesInIntents = [mapUtterancesAsString(props.intents.map(item => item.utterances).flat()), ...mapUtterancesAsString(utterances)];
+  const outsideIntentUtterances = props.intents.filter(obj => obj !== props.intent).map(intent => intent.utterances.map(utterance => ({ intent: intent.name, string: mapUtterancesAsString(utterance.model) }))).flat();
+  const currentIntentUtterances = utterances.map(utterance => ({ intent: intent.name, string: mapUtterancesAsString(utterance.model) }));
+  const allUtterancesInIntents = [...outsideIntentUtterances, ...currentIntentUtterances];
 
   if (intent) {
     return (
