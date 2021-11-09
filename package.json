@@ -1,6 +1,6 @@
 {
   "name": "@zef-dev/convoworks-intent-model-editor",
-  "version": "1.4.5",
+  "version": "1.4.7",
   "description": "Intent and entity editors for the Convoworks framework",
   "author": "zef-dev",
   "license": "MIT",
