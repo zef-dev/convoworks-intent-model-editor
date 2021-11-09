@@ -169,6 +169,10 @@ const UtteranceInput = (props) => {
             props.setSelection(e.target);
           }
         }}
+        onPaste={(e) => {
+          props.setRaw(e.target.value);
+          cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+        }}
         onChange={(e) => {
           props.setRaw(e.target.value);
           cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
