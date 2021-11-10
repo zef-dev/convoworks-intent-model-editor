@@ -51,10 +51,12 @@
     "dist"
   ],
   "dependencies": {
+    "@notjosh/rangy-textrange": "^3.0.1",
     "@yaireo/tagify": "^3.21.5",
     "lodash": "^4.17.20",
     "node-sass": "4.14.1",
     "rangy": "^1.3.0",
+    "rangy2": "^2.1.0",
     "react-autocomplete-input": "^1.0.15",
     "react-contenteditable": "^3.3.5",
     "react-cool-onclickoutside": "^1.5.9",

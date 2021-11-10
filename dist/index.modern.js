@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import 'react-svg';
 import _ from 'lodash';
 import rangy from 'rangy';
+import 'rangy/lib/rangy-textrange';
 import ContentEditable from 'react-contenteditable';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import TextInput from 'react-autocomplete-input';
@@ -538,40 +539,13 @@ const UtteranceInput = props => {
   };
 
   const handleSelection = () => {
-    var sel;
-
-    if (window.getSelection && (sel = window.getSelection()).modify) {
-      sel = window.getSelection();
-
-      if (!sel.isCollapsed) {
-        var range = document.createRange();
-        range.setStart(sel.anchorNode, sel.anchorOffset);
-        range.setEnd(sel.focusNode, sel.focusOffset);
-        var backwards = range.collapsed;
-        range.detach();
-        var endNode = sel.focusNode,
-            endOffset = sel.focusOffset;
-        sel.collapse(sel.anchorNode, sel.anchorOffset);
-        var direction = [];
-
-        if (backwards) {
-          direction = ['backward', 'forward'];
-        } else {
-          direction = ['forward', 'backward'];
-        }
-
-        sel.modify('move', direction[0], 'character');
-        sel.modify('move', direction[1], 'word');
-        sel.extend(endNode, endOffset);
-        sel.modify('extend', direction[1], 'character');
-        sel.modify('extend', direction[0], 'word');
-      }
-    }
+    let sel = rangy.getSelection();
 
     if (sel.toString().length > 0) {
-      let _sel = rangy.getSelection();
-
-      props.setSelection(_sel);
+      sel.expand("word", {
+        trim: true
+      });
+      props.setSelection(sel);
     } else {
       props.setSelection(null);
     }
@@ -618,6 +592,10 @@ const UtteranceInput = props => {
         props.setSelection(e.target);
       }
     },
+    onPaste: e => {
+      props.setRaw(e.target.value);
+      cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+    },
     onChange: e => {
       props.setRaw(e.target.value);
       cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
@@ -633,7 +611,10 @@ const UtteranceInput = props => {
       }
     },
     onKeyUp: e => {
-      handleSelection();
+      if (e.keyCode === 16) {
+        handleSelection();
+      }
+
       cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
     },
     onFocus: () => {
@@ -667,7 +648,7 @@ const Utterance = React.memo(props => {
         color: item.dataset.color,
         target: item
       };
-    }).filter(item => item.text.trim().length),
+    }).filter(item => item.text.trim().length > 0),
     nodes: Array.from(input.current.childNodes).filter(item => item.textContent.trim().length > 0)
   };
   const active = props.active === props.index;
@@ -678,7 +659,7 @@ const Utterance = React.memo(props => {
       if (props.utterance.model.length) {
         str = props.utterance.model.map(item => {
           if (item.type) {
-            return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text.trim()}</mark>`;
+            return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text.trim()}</mark>`;
           } else {
             return item.text.trim();
           }
@@ -815,9 +796,7 @@ const Utterance = React.memo(props => {
         style: {
           background: item.color
         },
-        onClick: () => setTimeout(() => {
-          setSelection(item.target);
-        }, 220)
+        onClick: () => setSelection(item.target)
       }, item.type[0] === '@' ? '' : '@', item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
     })), validationMessage.length > 0 && /*#__PURE__*/React.createElement("p", {
       className: "field__error"
@@ -968,17 +947,16 @@ function IntentDetails(props) {
     }).join(' ');
   };
 
-  const outsideIntentUtterances = props.intents.filter(obj => obj.name !== intent.name).map(intent => intent.utterances.map(utterance => ({
-    intent: intent.name,
-    string: mapUtterancesAsString(utterance.model)
-  }))).flat();
-  const currentIntentUtterances = utterances.map(utterance => ({
-    intent: intent.name,
-    string: mapUtterancesAsString(utterance.model)
-  }));
-  const allUtterancesInIntents = [...outsideIntentUtterances, ...currentIntentUtterances];
-
-  if (intent) {
+  if (intent && props.intents) {
+    const outsideIntentUtterances = props.intents.filter(obj => obj.name !== intent.name).map(intent => intent.utterances.map(utterance => ({
+      intent: intent.name,
+      string: mapUtterancesAsString(utterance.model)
+    }))).flat();
+    const currentIntentUtterances = utterances.map(utterance => ({
+      intent: intent.name,
+      string: mapUtterancesAsString(utterance.model)
+    }));
+    const allUtterancesInIntents = [...outsideIntentUtterances, ...currentIntentUtterances];
     return /*#__PURE__*/React.createElement("div", {
       className: "convo-details"
     }, /*#__PURE__*/React.createElement("section", {

@@ -26,7 +26,7 @@ export const Utterance = React.memo(props => {
         color: item.dataset.color,
         target: item
       })
-    }).filter(item => item.text.trim().length),
+    }).filter(item => item.text.trim().length > 0),
     nodes: Array.from(input.current.childNodes).filter(item => item.textContent.trim().length > 0)
   }
 
@@ -38,7 +38,7 @@ export const Utterance = React.memo(props => {
       if (props.utterance.model.length) {
         str = props.utterance.model.map(item => {
           if (item.type) {
-            return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-text="${item.text}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text.trim()}</mark>`
+            return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text.trim()}</mark>`
           } else {
             return item.text.trim()
           }
@@ -149,7 +149,7 @@ export const Utterance = React.memo(props => {
                 return (
                   <li className="model-list__item" key={index}>
                     <UtteranceSlotValue key={index} index={index} target={item.target} slotValue={item.slot_value} whitelist={whitelist} updateRaw={updateRaw} />
-                    <div><button className="mark" type="button" style={{ background: item.color }} onClick={() => setTimeout(() => { setSelection(item.target) }, 220)}>{item.type[0] === '@' ? '' : '@'}{item.type}</button></div>
+                    <div><button className="mark" type="button" style={{ background: item.color }} onClick={() => setSelection(item.target) }>{item.type[0] === '@' ? '' : '@'}{item.type}</button></div>
                     <div>{item.text}</div>
                   </li>
                 )

@@ -1381,6 +1381,23 @@
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
 
+"@notjosh/rangy-core@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@notjosh/rangy-core/-/rangy-core-3.0.1.tgz#4cb3b97c7b5914219d871aa08a7549887a2ffe18"
+  integrity sha512-knsML3SCi5mUM7Z/9IcKDqL4QcFSj4ADErxnd9fd9xpxAoEGnbZ6kKB1jzzchZmRRs96mngceJaT0Sf9cYnGsg==
+  dependencies:
+    core-js "^3.0.1"
+    tslib "^2.2.0"
+
+"@notjosh/rangy-textrange@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@notjosh/rangy-textrange/-/rangy-textrange-3.0.1.tgz#8a8118fe3e56b6b69c9031e01a9448f1812e326d"
+  integrity sha512-u6xX+AC2a/bIA7W3h8yNIdCOaHNsEfksXjpgRwIHlGM+rYqQYIKYhnPDs8cS0fVrBpgzCVgWwO+P46hIBdN9Eg==
+  dependencies:
+    "@notjosh/rangy-core" "^3.0.1"
+    core-js "^3.0.1"
+    tslib "^2.2.0"
+
 "@rollup/plugin-alias@^3.0.1":
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-alias/-/plugin-alias-3.1.1.tgz#bb96cf37fefeb0a953a6566c284855c7d1cd290c"
@@ -3424,6 +3441,11 @@ core-js@^2.4.0:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
   integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
+
+core-js@^3.0.1:
+  version "3.19.1"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.19.1.tgz#f6f173cae23e73a7d88fa23b6e9da329276c6641"
+  integrity sha512-Tnc7E9iKd/b/ff7GFbhwPVzJzPztGrChB8X8GLqoYGdEOG8IpLnK1xPyo3ZoO3HsK6TodJS58VGPOxA+hLHQMg==
 
 core-js@^3.5.0:
   version "3.8.1"
@@ -9640,6 +9662,15 @@ range-parser@^1.2.1, range-parser@~1.2.1:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
+rangy2@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/rangy2/-/rangy2-2.1.0.tgz#9bbac04f838f3fda7c6005ccb6675aa5fca75afa"
+  integrity sha512-adQFx2kcuhCtHnWGevRHsrWbfMarbkh6tpftgTQaVwDD6kvm9izfZxd1pbr58EsSCYcXvHeqbRaOIM9XgnQB/A==
+  dependencies:
+    core-js "^3.0.1"
+    rangy2 "^2.1.0"
+    tslib "^1.9.3"
+
 rangy@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/rangy/-/rangy-1.3.0.tgz#b7c9a70aea05e5d8cdc74a8d4c8273d697271904"
@@ -11531,7 +11562,7 @@ tslib@1.10.0:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
   integrity sha512-qOebF53frne81cf0S9B41ByenJ3/IuH8yJKngAX35CmiZySA0khhkovshKK+jGCaMnVomla7gVlIcc3EvKPbTQ==
 
-tslib@^1.11.1, tslib@^1.8.1, tslib@^1.9.0:
+tslib@^1.11.1, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
@@ -11545,6 +11576,11 @@ tslib@^2.1.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.2.0.tgz#fb2c475977e35e241311ede2693cee1ec6698f5c"
   integrity sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==
+
+tslib@^2.2.0:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
+  integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
 
 tsutils@^3.17.1:
   version "3.17.1"

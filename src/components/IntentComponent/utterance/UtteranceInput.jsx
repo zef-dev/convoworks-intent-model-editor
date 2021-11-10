@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import rangy from 'rangy';
+import 'rangy/lib/rangy-textrange';
 import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
@@ -83,44 +84,10 @@ const UtteranceInput = (props) => {
   }
 
   const handleSelection = () => {
-    var sel
-    // Check for existence of window.getSelection() and that it has a
-    // modify() method. IE 9 has both selection APIs but no modify() method.
-    if (window.getSelection && (sel = window.getSelection()).modify) {
-      sel = window.getSelection()
-      if (!sel.isCollapsed) {
-        // Detect if selection is backwards
-        var range = document.createRange()
-        range.setStart(sel.anchorNode, sel.anchorOffset)
-        range.setEnd(sel.focusNode, sel.focusOffset)
-        var backwards = range.collapsed
-        range.detach()
-
-        // modify() works on the focus of the selection
-        var endNode = sel.focusNode,
-          endOffset = sel.focusOffset
-        sel.collapse(sel.anchorNode, sel.anchorOffset)
-
-        var direction = []
-        if (backwards) {
-          direction = ['backward', 'forward']
-        } else {
-          direction = ['forward', 'backward']
-        }
-
-        sel.modify('move', direction[0], 'character')
-        sel.modify('move', direction[1], 'word')
-        sel.extend(endNode, endOffset)
-        sel.modify('extend', direction[1], 'character')
-        sel.modify('extend', direction[0], 'word')
-      }
-    }
-
-    /* 
-    SET CURRENT SELECTION
-    */
+    let sel = rangy.getSelection();
     if (sel.toString().length > 0) {
-      let sel = rangy.getSelection()
+      // expand highlighted text to match whole words
+      sel.expand("word", { trim: true }); // use trim to ignore spaces 
       props.setSelection(sel)
     } else {
       props.setSelection(null);
@@ -189,7 +156,9 @@ const UtteranceInput = (props) => {
           }
         }}
         onKeyUp={(e) => {
-          handleSelection();
+          if (e.keyCode === 16) {
+            handleSelection();
+          }
           cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
         }}
         onFocus={() => {
