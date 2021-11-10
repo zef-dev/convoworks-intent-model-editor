@@ -724,8 +724,9 @@ var UtteranceInput = function UtteranceInput(props) {
       }
     },
     onPaste: function onPaste(e) {
-      props.setRaw(e.target.value);
-      cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+      e.preventDefault();
+      var text = e.clipboardData.getData("text/plain");
+      props.setRaw(text);
     },
     onChange: function onChange(e) {
       props.setRaw(e.target.value);
@@ -941,7 +942,7 @@ var Utterance = React__default.memo(function (props) {
     }, /*#__PURE__*/React__default.createElement("header", {
       className: "model-list__header"
     }, /*#__PURE__*/React__default.createElement("strong", null, "Parameter name"), /*#__PURE__*/React__default.createElement("strong", null, "Entity"), /*#__PURE__*/React__default.createElement("strong", null, "Resolved value")), whitelist.tags && whitelist.tags.map(function (item, index) {
-      return /*#__PURE__*/React__default.createElement("li", {
+      if (item.target) return /*#__PURE__*/React__default.createElement("li", {
         className: "model-list__item",
         key: index
       }, /*#__PURE__*/React__default.createElement(UtteranceSlotValue, {
@@ -960,7 +961,7 @@ var Utterance = React__default.memo(function (props) {
         onClick: function onClick() {
           return setSelection(item.target);
         }
-      }, item.type[0] === '@' ? '' : '@', item.type)), /*#__PURE__*/React__default.createElement("div", null, item.text));
+      }, item.type && item.type[0] === '@' ? '' : '@', item.type)), /*#__PURE__*/React__default.createElement("div", null, item.text));
     })), validationMessage.length > 0 && /*#__PURE__*/React__default.createElement("p", {
       className: "field__error"
     }, reactHtmlParser(validationMessage))));

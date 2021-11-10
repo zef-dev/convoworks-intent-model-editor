@@ -137,8 +137,9 @@ const UtteranceInput = (props) => {
           }
         }}
         onPaste={(e) => {
-          props.setRaw(e.target.value);
-          cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+          e.preventDefault();
+          var text = e.clipboardData.getData("text/plain");
+          props.setRaw(text)
         }}
         onChange={(e) => {
           props.setRaw(e.target.value);

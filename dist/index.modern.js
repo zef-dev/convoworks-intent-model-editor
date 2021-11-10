@@ -593,8 +593,9 @@ const UtteranceInput = props => {
       }
     },
     onPaste: e => {
-      props.setRaw(e.target.value);
-      cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+      e.preventDefault();
+      var text = e.clipboardData.getData("text/plain");
+      props.setRaw(text);
     },
     onChange: e => {
       props.setRaw(e.target.value);
@@ -780,7 +781,7 @@ const Utterance = React.memo(props => {
     }, /*#__PURE__*/React.createElement("header", {
       className: "model-list__header"
     }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.tags && whitelist.tags.map((item, index) => {
-      return /*#__PURE__*/React.createElement("li", {
+      if (item.target) return /*#__PURE__*/React.createElement("li", {
         className: "model-list__item",
         key: index
       }, /*#__PURE__*/React.createElement(UtteranceSlotValue, {
@@ -797,7 +798,7 @@ const Utterance = React.memo(props => {
           background: item.color
         },
         onClick: () => setSelection(item.target)
-      }, item.type[0] === '@' ? '' : '@', item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
+      }, item.type && item.type[0] === '@' ? '' : '@', item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
     })), validationMessage.length > 0 && /*#__PURE__*/React.createElement("p", {
       className: "field__error"
     }, reactHtmlParser(validationMessage))));
