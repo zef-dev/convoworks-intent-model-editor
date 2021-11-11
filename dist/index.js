@@ -665,7 +665,9 @@ var UtteranceInput = function UtteranceInput(props) {
       var newRaw = input.current.innerHTML + ("" + (lastChar === ' ' ? '' : ' '));
       props.setRaw(newRaw);
       props.setSelection(null);
-      cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
+      setTimeout(function () {
+        cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
+      }, 100);
     }
   };
 
@@ -723,18 +725,13 @@ var UtteranceInput = function UtteranceInput(props) {
         props.setSelection(e.target);
       }
     },
-    onPaste: function onPaste(e) {
-      e.preventDefault();
-      var text = e.clipboardData.getData("text/plain");
-      props.setRaw(text);
-    },
     onChange: function onChange(e) {
-      props.setRaw(e.target.value);
       cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+      setCaretPosition(input.current, cursorPosition.current);
+      props.setRaw(e.target.value);
     },
     onMouseUp: function onMouseUp() {
       handleSelection();
-      cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
     },
     onKeyDown: function onKeyDown(e) {
       if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
@@ -795,7 +792,7 @@ var Utterance = React__default.memo(function (props) {
         target: item
       };
     }).filter(function (item) {
-      return item.text.trim().length > 0;
+      return item.text.trim().length > 0 && item.type;
     }),
     nodes: Array.from(input.current.childNodes).filter(function (item) {
       return item.textContent.trim().length > 0;
@@ -942,7 +939,7 @@ var Utterance = React__default.memo(function (props) {
     }, /*#__PURE__*/React__default.createElement("header", {
       className: "model-list__header"
     }, /*#__PURE__*/React__default.createElement("strong", null, "Parameter name"), /*#__PURE__*/React__default.createElement("strong", null, "Entity"), /*#__PURE__*/React__default.createElement("strong", null, "Resolved value")), whitelist.tags && whitelist.tags.map(function (item, index) {
-      if (item.target) return /*#__PURE__*/React__default.createElement("li", {
+      if (item.target && item.type) return /*#__PURE__*/React__default.createElement("li", {
         className: "model-list__item",
         key: index
       }, /*#__PURE__*/React__default.createElement(UtteranceSlotValue, {
@@ -1107,7 +1104,7 @@ function IntentDetails(props) {
           type: intent.type || 'custom'
         };
         props.onUpdate(updatedIntent, valid);
-      }, 5);
+      }, 10);
     }
   }, [name, utterances]);
 

@@ -7,7 +7,6 @@ import { IconTrash } from '../../Icons/Icons'
 import reactHtmlParser from 'react-html-parser'
 
 export const Utterance = React.memo(props => {
-
   const [raw, setRaw] = useState('');
   const [selection, setSelection] = useState(null);
   const [valid, setValid] = useState(true);
@@ -26,7 +25,7 @@ export const Utterance = React.memo(props => {
         color: item.dataset.color,
         target: item
       })
-    }).filter(item => item.text.trim().length > 0),
+    }).filter(item => item.text.trim().length > 0 && item.type),
     nodes: Array.from(input.current.childNodes).filter(item => item.textContent.trim().length > 0)
   }
 
@@ -67,7 +66,7 @@ export const Utterance = React.memo(props => {
           return ({ text: item.textContent.trim() }
           )
         }
-      }).filter(item => item.text.length)
+      }).filter(item => item.text.length);
 
       let raw = model.map(item => item.text).join(' ');
       let utterances = [...props.utterances];
@@ -146,7 +145,7 @@ export const Utterance = React.memo(props => {
                 <strong>Resolved value</strong>
               </header>
               {whitelist.tags && whitelist.tags.map((item, index) => {
-                if (item.target) return (
+                if (item.target && item.type) return (
                   <li className="model-list__item" key={index}>
                     <UtteranceSlotValue key={index} index={index} target={item.target} slotValue={item.slot_value} whitelist={whitelist} updateRaw={updateRaw} />
                     <div>

@@ -534,7 +534,9 @@ const UtteranceInput = props => {
       let newRaw = input.current.innerHTML + `${lastChar === ' ' ? '' : ' '}`;
       props.setRaw(newRaw);
       props.setSelection(null);
-      cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
+      setTimeout(() => {
+        cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
+      }, 100);
     }
   };
 
@@ -592,18 +594,13 @@ const UtteranceInput = props => {
         props.setSelection(e.target);
       }
     },
-    onPaste: e => {
-      e.preventDefault();
-      var text = e.clipboardData.getData("text/plain");
-      props.setRaw(text);
-    },
     onChange: e => {
-      props.setRaw(e.target.value);
       cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+      setCaretPosition(input.current, cursorPosition.current);
+      props.setRaw(e.target.value);
     },
     onMouseUp: () => {
       handleSelection();
-      cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
     },
     onKeyDown: e => {
       if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
@@ -649,7 +646,7 @@ const Utterance = React.memo(props => {
         color: item.dataset.color,
         target: item
       };
-    }).filter(item => item.text.trim().length > 0),
+    }).filter(item => item.text.trim().length > 0 && item.type),
     nodes: Array.from(input.current.childNodes).filter(item => item.textContent.trim().length > 0)
   };
   const active = props.active === props.index;
@@ -781,7 +778,7 @@ const Utterance = React.memo(props => {
     }, /*#__PURE__*/React.createElement("header", {
       className: "model-list__header"
     }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.tags && whitelist.tags.map((item, index) => {
-      if (item.target) return /*#__PURE__*/React.createElement("li", {
+      if (item.target && item.type) return /*#__PURE__*/React.createElement("li", {
         className: "model-list__item",
         key: index
       }, /*#__PURE__*/React.createElement(UtteranceSlotValue, {
@@ -916,7 +913,7 @@ function IntentDetails(props) {
           type: intent.type || 'custom'
         };
         props.onUpdate(updatedIntent, valid);
-      }, 5);
+      }, 10);
     }
   }, [name, utterances]);
 

@@ -56,7 +56,7 @@ function IntentDetails(props) {
         }
 
         props.onUpdate(updatedIntent, valid);
-      }, 5)
+      }, 10)
     }
   }, [name, utterances]);
 

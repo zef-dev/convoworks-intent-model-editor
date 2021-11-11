@@ -78,8 +78,9 @@ const UtteranceInput = (props) => {
       let newRaw = input.current.innerHTML + `${lastChar === ' ' ? '' : ' '}`;
       props.setRaw(newRaw);
       props.setSelection(null);
-      cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
-
+      setTimeout(() => {
+        cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
+      }, 100)
     }
   }
 
@@ -123,7 +124,8 @@ const UtteranceInput = (props) => {
       props.handleNew(props.valid);
       setKeyPress('');
     }
-  }, [keyPress])
+  }, [keyPress]);
+
   return (
     <div className='taggable-text'>
       <ContentEditable
@@ -136,20 +138,14 @@ const UtteranceInput = (props) => {
             props.setSelection(e.target);
           }
         }}
-        onPaste={(e) => {
-          e.preventDefault();
-          var text = e.clipboardData.getData("text/plain");
-          props.setRaw(text)
-        }}
         onChange={(e) => {
-          props.setRaw(e.target.value);
           cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+          setCaretPosition(input.current, cursorPosition.current)
+          props.setRaw(e.target.value);
         }}
         onMouseUp={() => {
           handleSelection();
-          cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
         }}
-
         onKeyDown={(e) => {
           if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
             setKeyPress(e.keyCode);
