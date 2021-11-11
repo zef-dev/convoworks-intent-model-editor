@@ -827,7 +827,7 @@
       .convo-details .dropdown__items button:focus, .convo-details .dropdown__items button:active {
         border: 1px solid #2f74ea; }
       .convo-details .dropdown__items button.active {
-        font-weight: 500;
+        font-weight: 600;
         color: #2f74ea; }
   .convo-details .dropdown__header {
     padding: 1rem 0.5rem;
