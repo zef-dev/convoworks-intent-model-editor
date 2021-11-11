@@ -67,6 +67,7 @@ function Dropdown(props) {
 								style={{display: item.name.toLowerCase().includes(term.toLocaleLowerCase().trim()) ? 'block' : 'none'}}
 								key={i}
 								type="button"
+                className={props.selection && props.selection.dataset && props.selection.dataset.type === item.name ? 'active' : ''}
 								onClick={() => {
 									props.tagSelection(item.name)
 								}}

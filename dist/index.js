@@ -578,6 +578,7 @@ function Dropdown(props) {
         },
         key: i,
         type: "button",
+        className: props.selection && props.selection.dataset && props.selection.dataset.type === item.name ? 'active' : '',
         onClick: function onClick() {
           props.tagSelection(item.name);
         }
