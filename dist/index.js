@@ -672,7 +672,7 @@ var UtteranceInput = function UtteranceInput(props) {
   var handleSelection = function handleSelection() {
     var sel = rangy.getSelection();
 
-    if (sel.toString().length > 0) {
+    if (sel.toString().trim().length > 0) {
       sel.expand("word", {
         trim: true
       });

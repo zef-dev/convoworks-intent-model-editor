@@ -85,7 +85,7 @@ const UtteranceInput = (props) => {
 
   const handleSelection = () => {
     let sel = rangy.getSelection();
-    if (sel.toString().length > 0) {
+    if (sel.toString().trim().length > 0) {
       // expand highlighted text to match whole words
       sel.expand("word", { trim: true }); // use trim to ignore spaces 
       props.setSelection(sel)

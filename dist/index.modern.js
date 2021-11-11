@@ -541,7 +541,7 @@ const UtteranceInput = props => {
   const handleSelection = () => {
     let sel = rangy.getSelection();
 
-    if (sel.toString().length > 0) {
+    if (sel.toString().trim().length > 0) {
       sel.expand("word", {
         trim: true
       });
