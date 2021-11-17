@@ -11,7 +11,7 @@ var ContentEditable = _interopDefault(require('react-contenteditable'));
 var useOnclickOutside = _interopDefault(require('react-cool-onclickoutside'));
 var TextInput = _interopDefault(require('react-autocomplete-input'));
 require('react-autocomplete-input/dist/bundle.css');
-var sanitizeHtml = _interopDefault(require('sanitize-html'));
+var sanitizeHtml = _interopDefault(require('sanitize-html-react'));
 var reactHtmlParser = _interopDefault(require('react-html-parser'));
 
 function _extends() {
@@ -701,13 +701,14 @@ var UtteranceInput = function UtteranceInput(props) {
       }));
     }
   }, [props.selection, props.active]);
-  var sanitized = sanitizeHtml(props.raw, {
-    allowedTags: ['mark'],
-    allowedAttributes: false,
-    exclusiveFilter: function exclusiveFilter(frame) {
-      return !frame.text.trim();
-    }
-  });
+
+  var sanitize = function sanitize(string) {
+    return sanitizeHtml(string, {
+      allowedTags: ['mark'],
+      allowedAttributes: false
+    });
+  };
+
   React.useEffect(function () {
     if (keyPress === 13) {
       props.handleNew(props.valid);
@@ -720,7 +721,7 @@ var UtteranceInput = function UtteranceInput(props) {
     "data-placeholder": "Enter reference value",
     innerRef: input,
     className: "taggable-text__input",
-    html: sanitized,
+    html: props.raw,
     onClick: function onClick(e) {
       if (e.target.tagName === 'MARK') {
         props.setSelection(e.target);
@@ -728,8 +729,8 @@ var UtteranceInput = function UtteranceInput(props) {
     },
     onChange: function onChange(e) {
       cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+      props.setRaw(sanitize(e.target.value));
       setCaretPosition(input.current, cursorPosition.current);
-      props.setRaw(e.target.value);
     },
     onMouseUp: function onMouseUp() {
       handleSelection();
@@ -761,7 +762,7 @@ var UtteranceInput = function UtteranceInput(props) {
 
 var UtteranceInput$1 = React__default.memo(UtteranceInput);
 
-var Utterance = React__default.memo(function (props) {
+var Utterance = function Utterance(props) {
   var _useState = React.useState(''),
       raw = _useState[0],
       setRaw = _useState[1];
@@ -867,7 +868,7 @@ var Utterance = React__default.memo(function (props) {
         return !item.tagName;
       });
       var nodesMappedToString = nodes.map(function (item) {
-        if (item.dataset && item.dataset.type) return item.textContent.trim() + " {" + item.dataset.type + "}";
+        if (item.dataset && item.dataset.type) return item.textContent.trim() + " {" + item.dataset.type + "} ";
         return item.textContent.trim();
       }).join(' ');
       var intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(function (item) {
@@ -896,7 +897,9 @@ var Utterance = React__default.memo(function (props) {
   };
 
   var updateRaw = function updateRaw() {
-    setRaw(input.current.innerHTML);
+    setTimeout(function () {
+      return setRaw(input.current.innerHTML);
+    }, 0);
   };
 
   if (props) {
@@ -966,7 +969,7 @@ var Utterance = React__default.memo(function (props) {
   } else {
     return null;
   }
-});
+};
 
 var IntentUtterances = function IntentUtterances(props) {
   var _useState = React.useState(null),

@@ -4,7 +4,7 @@ import 'rangy/lib/rangy-textrange';
 import ContentEditable from 'react-contenteditable'
 import { getCaretCharacterOffsetWithin, stringToColor, setCaretPosition } from '../../../helpers/common_constants'
 import Dropdown from '../Dropdown'
-import sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from 'sanitize-html-react';
 
 const UtteranceInput = (props) => {
 
@@ -111,12 +111,9 @@ const UtteranceInput = (props) => {
     }
   }, [props.selection, props.active]);
 
-  const sanitized = sanitizeHtml(props.raw, {
+  const sanitize = (string) => sanitizeHtml(string, {
     allowedTags: ['mark'],
-    allowedAttributes: false,
-    exclusiveFilter: function (frame) {
-      return !frame.text.trim();
-    }
+    allowedAttributes: false
   });
 
   useEffect(() => {
@@ -132,7 +129,7 @@ const UtteranceInput = (props) => {
         data-placeholder="Enter reference value"
         innerRef={input}
         className='taggable-text__input'
-        html={sanitized}
+        html={props.raw}
         onClick={(e) => {
           if (e.target.tagName === 'MARK') {
             props.setSelection(e.target);
@@ -140,8 +137,8 @@ const UtteranceInput = (props) => {
         }}
         onChange={(e) => {
           cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
-          setCaretPosition(input.current, cursorPosition.current)
-          props.setRaw(e.target.value);
+          props.setRaw(sanitize(e.target.value));
+          setCaretPosition(input.current, cursorPosition.current);
         }}
         onMouseUp={() => {
           handleSelection();

@@ -7,7 +7,7 @@ import ContentEditable from 'react-contenteditable';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import TextInput from 'react-autocomplete-input';
 import 'react-autocomplete-input/dist/bundle.css';
-import sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from 'sanitize-html-react';
 import reactHtmlParser from 'react-html-parser';
 
 const stringToColor = value => {
@@ -570,13 +570,12 @@ const UtteranceInput = props => {
       });
     }
   }, [props.selection, props.active]);
-  const sanitized = sanitizeHtml(props.raw, {
+
+  const sanitize = string => sanitizeHtml(string, {
     allowedTags: ['mark'],
-    allowedAttributes: false,
-    exclusiveFilter: function (frame) {
-      return !frame.text.trim();
-    }
+    allowedAttributes: false
   });
+
   useEffect(() => {
     if (keyPress === 13) {
       props.handleNew(props.valid);
@@ -589,7 +588,7 @@ const UtteranceInput = props => {
     "data-placeholder": "Enter reference value",
     innerRef: input,
     className: "taggable-text__input",
-    html: sanitized,
+    html: props.raw,
     onClick: e => {
       if (e.target.tagName === 'MARK') {
         props.setSelection(e.target);
@@ -597,8 +596,8 @@ const UtteranceInput = props => {
     },
     onChange: e => {
       cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
+      props.setRaw(sanitize(e.target.value));
       setCaretPosition(input.current, cursorPosition.current);
-      props.setRaw(e.target.value);
     },
     onMouseUp: () => {
       handleSelection();
@@ -630,7 +629,7 @@ const UtteranceInput = props => {
 
 var UtteranceInput$1 = React.memo(UtteranceInput);
 
-const Utterance = React.memo(props => {
+const Utterance = props => {
   const [raw, setRaw] = useState('');
   const [selection, setSelection] = useState(null);
   const [valid, setValid] = useState(true);
@@ -710,7 +709,7 @@ const Utterance = React.memo(props => {
       let nodes = whitelist.nodes;
       let textNodes = nodes.filter(item => !item.tagName);
       let nodesMappedToString = nodes.map(item => {
-        if (item.dataset && item.dataset.type) return `${item.textContent.trim()} {${item.dataset.type}}`;
+        if (item.dataset && item.dataset.type) return `${item.textContent.trim()} {${item.dataset.type}} `;
         return item.textContent.trim();
       }).join(' ');
       let intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(item => item.string === nodesMappedToString);
@@ -735,7 +734,7 @@ const Utterance = React.memo(props => {
   };
 
   const updateRaw = () => {
-    setRaw(input.current.innerHTML);
+    setTimeout(() => setRaw(input.current.innerHTML), 0);
   };
 
   if (props) {
@@ -803,7 +802,7 @@ const Utterance = React.memo(props => {
   } else {
     return null;
   }
-});
+};
 
 const IntentUtterances = props => {
   const [active, setActive] = useState(null);

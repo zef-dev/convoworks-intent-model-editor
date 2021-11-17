@@ -6,7 +6,7 @@ import UtteranceInput from './UtteranceInput'
 import { IconTrash } from '../../Icons/Icons'
 import reactHtmlParser from 'react-html-parser'
 
-export const Utterance = React.memo(props => {
+export const Utterance = props => {
   const [raw, setRaw] = useState('');
   const [selection, setSelection] = useState(null);
   const [valid, setValid] = useState(true);
@@ -88,7 +88,7 @@ export const Utterance = React.memo(props => {
       let nodes = whitelist.nodes;
       let textNodes = nodes.filter(item => !item.tagName);
       let nodesMappedToString = nodes.map(item => {
-        if (item.dataset && item.dataset.type) return `${item.textContent.trim()} {${item.dataset.type}}`
+        if (item.dataset && item.dataset.type) return `${item.textContent.trim()} {${item.dataset.type}} `
         return item.textContent.trim()
       }).join(' ');
 
@@ -114,7 +114,7 @@ export const Utterance = React.memo(props => {
   }
 
   const updateRaw = () => {
-    setRaw(input.current.innerHTML);
+    setTimeout(() => setRaw(input.current.innerHTML), 0)
   }
 
   if (props) {
@@ -166,4 +166,4 @@ export const Utterance = React.memo(props => {
   } else {
     return null
   }
-})
+}
