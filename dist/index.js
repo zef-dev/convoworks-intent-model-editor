@@ -762,7 +762,7 @@ var UtteranceInput = function UtteranceInput(props) {
 
 var UtteranceInput$1 = React__default.memo(UtteranceInput);
 
-var Utterance = function Utterance(props) {
+var Utterance = React__default.memo(function (props) {
   var _useState = React.useState(''),
       raw = _useState[0],
       setRaw = _useState[1];
@@ -868,7 +868,7 @@ var Utterance = function Utterance(props) {
         return !item.tagName;
       });
       var nodesMappedToString = nodes.map(function (item) {
-        if (item.dataset && item.dataset.type) return item.textContent.trim() + " {" + item.dataset.type + "} ";
+        if (item.dataset && item.dataset.type) return item.textContent.trim() + " {" + item.dataset.type + "}";
         return item.textContent.trim();
       }).join(' ');
       var intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(function (item) {
@@ -897,9 +897,7 @@ var Utterance = function Utterance(props) {
   };
 
   var updateRaw = function updateRaw() {
-    setTimeout(function () {
-      return setRaw(input.current.innerHTML);
-    }, 0);
+    setRaw(input.current.innerHTML);
   };
 
   if (props) {
@@ -969,7 +967,7 @@ var Utterance = function Utterance(props) {
   } else {
     return null;
   }
-};
+});
 
 var IntentUtterances = function IntentUtterances(props) {
   var _useState = React.useState(null),

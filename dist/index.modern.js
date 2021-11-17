@@ -629,7 +629,7 @@ const UtteranceInput = props => {
 
 var UtteranceInput$1 = React.memo(UtteranceInput);
 
-const Utterance = props => {
+const Utterance = React.memo(props => {
   const [raw, setRaw] = useState('');
   const [selection, setSelection] = useState(null);
   const [valid, setValid] = useState(true);
@@ -709,7 +709,7 @@ const Utterance = props => {
       let nodes = whitelist.nodes;
       let textNodes = nodes.filter(item => !item.tagName);
       let nodesMappedToString = nodes.map(item => {
-        if (item.dataset && item.dataset.type) return `${item.textContent.trim()} {${item.dataset.type}} `;
+        if (item.dataset && item.dataset.type) return `${item.textContent.trim()} {${item.dataset.type}}`;
         return item.textContent.trim();
       }).join(' ');
       let intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(item => item.string === nodesMappedToString);
@@ -734,7 +734,7 @@ const Utterance = props => {
   };
 
   const updateRaw = () => {
-    setTimeout(() => setRaw(input.current.innerHTML), 0);
+    setRaw(input.current.innerHTML);
   };
 
   if (props) {
@@ -802,7 +802,7 @@ const Utterance = props => {
   } else {
     return null;
   }
-};
+});
 
 const IntentUtterances = props => {
   const [active, setActive] = useState(null);

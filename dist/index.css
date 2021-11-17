@@ -1199,9 +1199,9 @@
     background: rgba(217, 84, 62, 0.05); }
   .convo-details input[data-valid="false"] {
     color: #d9543e;
-    border-bottom: 1px dashed #d9543e; }
+    border-bottom: 1px solid #d9543e; }
     .convo-details input[data-valid="false"]:hover, .convo-details input[data-valid="false"]:focus {
-      border-bottom: 1px dashed #d9543e; }
+      border-bottom: 1px solid #d9543e; }
   .convo-details input:invalid {
     border-color: #d9543e;
     color: #d9543e;

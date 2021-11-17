@@ -471,11 +471,11 @@
 
 input[data-valid="false"] {
     color: $color-alert;
-    border-bottom: 1px dashed $color-alert;
+    border-bottom: 1px solid $color-alert;
 
     &:hover,
     &:focus {
-        border-bottom: 1px dashed $color-alert;
+        border-bottom: 1px solid $color-alert;
     }
 }
 
