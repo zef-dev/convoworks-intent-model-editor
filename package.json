@@ -1,6 +1,10 @@
 {
   "name": "@zef-dev/convoworks-intent-model-editor",
+<<<<<<< HEAD
   "version": "1.5.0",
+=======
+  "version": "1.5.1",
+>>>>>>> f733e83b834adecab00d28dfaf097e5a78823002
   "description": "Intent and entity editors for the Convoworks framework",
   "author": "zef-dev",
   "license": "MIT",
@@ -63,6 +67,6 @@
     "react-html-parser": "^2.0.2",
     "react-is": "^17.0.1",
     "react-svg": "^12.1.0",
-    "sanitize-html": "^2.3.0"
+    "sanitize-html-react": "^1.13"
   }
 }
