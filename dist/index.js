@@ -318,26 +318,19 @@ function EntityValues(props) {
     props.setValues(arr);
   }
 
-  var makeItems = function makeItems(items) {
-    if (items) {
-      return items.map(function (item, index) {
-        return /*#__PURE__*/React__default.createElement(React__default.Fragment, {
-          key: index
-        }, /*#__PURE__*/React__default.createElement(EntityValue, {
-          index: index,
-          item: item,
-          values: props.values,
-          removeValue: props.removeValue,
-          handleUpdate: handleUpdate,
-          activeValue: activeValue,
-          setActiveValue: setActiveValue
-        }));
-      });
-    }
-  };
-
   if (props.values) {
-    return /*#__PURE__*/React__default.createElement("div", null, makeItems(props.values));
+    return /*#__PURE__*/React__default.createElement("div", null, props.values.map(function (value, index) {
+      return /*#__PURE__*/React__default.createElement(EntityValue, {
+        key: value.value + "_" + index,
+        index: index,
+        item: value,
+        values: props.values,
+        removeValue: props.removeValue,
+        handleUpdate: handleUpdate,
+        activeValue: activeValue,
+        setActiveValue: setActiveValue
+      });
+    }));
   } else {
     return null;
   }
@@ -411,11 +404,10 @@ function EntityDetails(props) {
 
   var removeValue = function removeValue(index) {
     var arr = [].concat(values);
-
-    if (index !== -1) {
-      arr.splice(index, 1);
-      setValues(arr);
-    }
+    var filteredArr = arr.filter(function (item) {
+      return item !== arr[index];
+    });
+    setValues(filteredArr);
   };
 
   if (values) {

@@ -234,26 +234,19 @@ function EntityValues(props) {
     props.setValues(arr);
   }
 
-  const makeItems = items => {
-    if (items) {
-      return items.map((item, index) => {
-        return /*#__PURE__*/React.createElement(React.Fragment, {
-          key: index
-        }, /*#__PURE__*/React.createElement(EntityValue, {
-          index: index,
-          item: item,
-          values: props.values,
-          removeValue: props.removeValue,
-          handleUpdate: handleUpdate,
-          activeValue: activeValue,
-          setActiveValue: setActiveValue
-        }));
-      });
-    }
-  };
-
   if (props.values) {
-    return /*#__PURE__*/React.createElement("div", null, makeItems(props.values));
+    return /*#__PURE__*/React.createElement("div", null, props.values.map((value, index) => {
+      return /*#__PURE__*/React.createElement(EntityValue, {
+        key: `${value.value}_${index}`,
+        index: index,
+        item: value,
+        values: props.values,
+        removeValue: props.removeValue,
+        handleUpdate: handleUpdate,
+        activeValue: activeValue,
+        setActiveValue: setActiveValue
+      });
+    }));
   } else {
     return null;
   }
@@ -312,11 +305,8 @@ function EntityDetails(props) {
 
   const removeValue = index => {
     let arr = [...values];
-
-    if (index !== -1) {
-      arr.splice(index, 1);
-      setValues(arr);
-    }
+    let filteredArr = arr.filter(item => item !== arr[index]);
+    setValues(filteredArr);
   };
 
   if (values) {

@@ -55,10 +55,8 @@ function EntityDetails(props) {
 
 	const removeValue = (index) => {
 		let arr = [...values];
-		if (index !== -1) {
-			arr.splice(index, 1);
-			setValues(arr);
-		}
+    let filteredArr = arr.filter(item => item !== arr[index]);
+    setValues(filteredArr);
 	};
 
 	if (values) {
