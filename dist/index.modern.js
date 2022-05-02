@@ -10,7 +10,67 @@ import 'react-autocomplete-input/dist/bundle.css';
 import sanitizeHtml from 'sanitize-html-react';
 import reactHtmlParser from 'react-html-parser';
 
-const stringToColor = value => {
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
+}
+
+function _createForOfIteratorHelperLoose(o, allowArrayLike) {
+  var it;
+
+  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
+      var i = 0;
+      return function () {
+        if (i >= o.length) return {
+          done: true
+        };
+        return {
+          done: false,
+          value: o[i++]
+        };
+      };
+    }
+
+    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
+  it = o[Symbol.iterator]();
+  return it.next.bind(it);
+}
+
+var stringToColor = function stringToColor(value) {
   return value.getHashCode().intToHSL();
 };
 
@@ -30,7 +90,7 @@ Number.prototype.intToHSL = function () {
   var shortened = this % 220;
   return "hsl(" + shortened + ",100%, 80%)";
 };
-const getCaretCharacterOffsetWithin = element => {
+var getCaretCharacterOffsetWithin = function getCaretCharacterOffsetWithin(element) {
   var caretOffset = 0;
   var doc = element.ownerDocument || element.document;
   var win = doc.defaultView || doc.parentWindow;
@@ -56,14 +116,16 @@ const getCaretCharacterOffsetWithin = element => {
 
   return caretOffset;
 };
-const preventSubmit = event => {
+var preventSubmit = function preventSubmit(event) {
   if (event.keyCode == 13) {
     event.preventDefault();
     return false;
   }
 };
-const setCaretPosition = (el, pos) => {
-  for (var node of el.childNodes) {
+var setCaretPosition = function setCaretPosition(el, pos) {
+  for (var _iterator = _createForOfIteratorHelperLoose(el.childNodes), _step; !(_step = _iterator()).done;) {
+    var node = _step.value;
+
     if (node.nodeType == 3) {
       if (node.length >= pos) {
         var range = document.createRange(),
@@ -88,10 +150,10 @@ const setCaretPosition = (el, pos) => {
   return pos;
 };
 
-const iconSearch = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAABW0lEQVRIid3Uyy5sQRQG4A9DGhMSY7ehW5zZIXEZmnoavAQTvIHwCEJaTMToSPACBggibSgY7LXTrTm7q1sYWEllVWr/l6pVexW/PRaxjUs8xbjAFha+IjyCMl4bjEMMNys+i/sQuMYKxtEZYyLWbgJzj7+p4qN4COIOSgXYbuwG9k7iSfKy7KAtAd+GveAcNAIvqpalaOf10aNarvn6j+018+XI66g0YfCIjTqNT+MydjHWhHgeE8G9KAJVAtTVgkEpuB9O3v4Rm3S5/+O8FBlcRR5swWCoTuNTg3LkpRYMck65CLQgq+ONrIlSoxe3wZ1rBD4M4K60u+jAcXD2U3YzLGv73KSnANtbI/6MPykGMFNjcotVTMp+3xKmsKZalufIZ+hPNRmSvS2Nnut9TOOfaqMNpJqQvS2bOJc1USXmm95faN9XTFKjX1amV5x8h0Fucoqj7zL4+XgDjSNoKGD0WBAAAAAASUVORK5CYII=';
-const iconTrash = 'data:image/png;base64,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';
+var iconSearch = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAABW0lEQVRIid3Uyy5sQRQG4A9DGhMSY7ehW5zZIXEZmnoavAQTvIHwCEJaTMToSPACBggibSgY7LXTrTm7q1sYWEllVWr/l6pVexW/PRaxjUs8xbjAFha+IjyCMl4bjEMMNys+i/sQuMYKxtEZYyLWbgJzj7+p4qN4COIOSgXYbuwG9k7iSfKy7KAtAd+GveAcNAIvqpalaOf10aNarvn6j+018+XI66g0YfCIjTqNT+MydjHWhHgeE8G9KAJVAtTVgkEpuB9O3v4Rm3S5/+O8FBlcRR5swWCoTuNTg3LkpRYMck65CLQgq+ONrIlSoxe3wZ1rBD4M4K60u+jAcXD2U3YzLGv73KSnANtbI/6MPykGMFNjcotVTMp+3xKmsKZalufIZ+hPNRmSvS2Nnut9TOOfaqMNpJqQvS2bOJc1USXmm95faN9XTFKjX1amV5x8h0Fucoqj7zL4+XgDjSNoKGD0WBAAAAAASUVORK5CYII=';
+var iconTrash = 'data:image/png;base64,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';
 
-const IconTrash = () => {
+var IconTrash = function IconTrash() {
   return /*#__PURE__*/React.createElement("img", {
     src: iconTrash,
     alt: "Remove",
@@ -100,30 +162,42 @@ const IconTrash = () => {
   });
 };
 
-const EntityValue = props => {
-  const [value, setValue] = useState(props.item.value);
-  const [synonyms, setSynonyms] = useState(props.item.synonyms);
-  const [newSynonym, setNewSynonym] = useState('');
-  const [remove, setRemove] = useState(false);
-  const synonymInput = useRef(null);
-  let active = props.activeValue === props.index;
-  useEffect(() => {
-    props.handleUpdate([...props.values], props.index, {
+var EntityValue = function EntityValue(props) {
+  var _useState = useState(props.item.value),
+      value = _useState[0],
+      setValue = _useState[1];
+
+  var _useState2 = useState(props.item.synonyms),
+      synonyms = _useState2[0],
+      setSynonyms = _useState2[1];
+
+  var _useState3 = useState(''),
+      newSynonym = _useState3[0],
+      setNewSynonym = _useState3[1];
+
+  var _useState4 = useState(false),
+      remove = _useState4[0],
+      setRemove = _useState4[1];
+
+  var synonymInput = useRef(null);
+  var active = props.activeValue === props.index;
+  useEffect(function () {
+    props.handleUpdate([].concat(props.values), props.index, {
       value: value,
       synonyms: synonyms
     });
   }, [value, synonyms]);
-  useEffect(() => {
+  useEffect(function () {
     if (newSynonym) {
       if (synonyms) {
-        setSynonyms([...synonyms, newSynonym]);
+        setSynonyms([].concat(synonyms, [newSynonym]));
       } else {
         setSynonyms(newSynonym);
       }
     }
   }, [newSynonym]);
 
-  const handleNewSynonym = target => {
+  var handleNewSynonym = function handleNewSynonym(target) {
     if (target.current.value.length > 0) {
       setNewSynonym(target.current.value);
       target.current.value = '';
@@ -132,9 +206,9 @@ const EntityValue = props => {
     }
   };
 
-  const removeSynonym = value => {
-    let arr = [...synonyms];
-    let index = arr.indexOf(value);
+  var removeSynonym = function removeSynonym(value) {
+    var arr = [].concat(synonyms);
+    var index = arr.indexOf(value);
 
     if (index !== -1) {
       arr.splice(index, 1);
@@ -142,9 +216,9 @@ const EntityValue = props => {
     }
   };
 
-  const makeSynonyms = (items, isActive) => {
+  var makeSynonyms = function makeSynonyms(items, isActive) {
     if (items) {
-      return items && items.map((item, i) => {
+      return items && items.map(function (item, i) {
         if (item) {
           return /*#__PURE__*/React.createElement("div", {
             key: i,
@@ -152,7 +226,7 @@ const EntityValue = props => {
           }, item, isActive && /*#__PURE__*/React.createElement("button", {
             type: "button",
             className: "synonym__remove",
-            onClick: () => {
+            onClick: function onClick() {
               removeSynonym(item);
             }
           }, "\u2715"));
@@ -161,18 +235,18 @@ const EntityValue = props => {
     }
   };
 
-  const handleRemove = e => {
+  var handleRemove = function handleRemove(e) {
     e.stopPropagation();
     setRemove(true);
-    setTimeout(() => {
+    setTimeout(function () {
       props.removeValue(props.index);
       setRemove(false);
     }, 220);
   };
 
   return /*#__PURE__*/React.createElement("li", {
-    className: `field field--${active ? 'active' : 'inactive'} field--entity ${remove ? 'field--remove' : ''}`,
-    onClick: () => {
+    className: "field field--" + (active ? 'active' : 'inactive') + " field--entity " + (remove ? 'field--remove' : ''),
+    onClick: function onClick() {
       props.setActiveValue(props.index);
     }
   }, /*#__PURE__*/React.createElement("div", {
@@ -182,8 +256,10 @@ const EntityValue = props => {
     type: "text",
     defaultValue: value,
     placeholder: "Enter value",
-    onKeyDown: e => preventSubmit(e),
-    onChange: e => {
+    onKeyDown: function onKeyDown(e) {
+      return preventSubmit(e);
+    },
+    onChange: function onChange(e) {
       setValue(e.target.value);
     }
   }) : /*#__PURE__*/React.createElement("input", {
@@ -191,8 +267,10 @@ const EntityValue = props => {
     type: "text",
     defaultValue: value,
     placeholder: "Enter value",
-    onKeyDown: e => preventSubmit(e),
-    onChange: e => {
+    onKeyDown: function onKeyDown(e) {
+      return preventSubmit(e);
+    },
+    onChange: function onChange(e) {
       setValue(e.target.value);
     }
   })), /*#__PURE__*/React.createElement("div", {
@@ -203,7 +281,7 @@ const EntityValue = props => {
     style: {
       marginLeft: '0.625rem'
     },
-    onKeyDown: e => {
+    onKeyDown: function onKeyDown(e) {
       preventSubmit(e);
 
       if (e.keyCode == 13) {
@@ -217,14 +295,16 @@ const EntityValue = props => {
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn--remove btn--remove--main",
     type: "button",
-    onClick: e => {
+    onClick: function onClick(e) {
       handleRemove(e);
     }
   }, /*#__PURE__*/React.createElement(IconTrash, null))));
 };
 
 function EntityValues(props) {
-  const [activeValue, setActiveValue] = useState(null);
+  var _useState = useState(null),
+      activeValue = _useState[0],
+      setActiveValue = _useState[1];
 
   function handleUpdate(arr, index, item) {
     arr[index] = {
@@ -235,9 +315,9 @@ function EntityValues(props) {
   }
 
   if (props.values) {
-    return /*#__PURE__*/React.createElement("div", null, props.values.map((value, index) => {
+    return /*#__PURE__*/React.createElement("div", null, props.values.map(function (value, index) {
       return /*#__PURE__*/React.createElement(EntityValue, {
-        key: `${value.value}_${index}`,
+        key: value.value + "_" + index,
         index: index,
         item: value,
         values: props.values,
@@ -252,8 +332,8 @@ function EntityValues(props) {
   }
 }
 
-const validateInput = (elem, term, regex, message) => {
-  let reg = new RegExp(regex);
+var validateInput = function validateInput(elem, term, regex, message) {
+  var reg = new RegExp(regex);
 
   if (reg.test(term)) {
     elem.setCustomValidity('');
@@ -264,28 +344,43 @@ const validateInput = (elem, term, regex, message) => {
   elem.reportValidity();
   return reg.test(term);
 };
-const simpleValidateInput = (term, regex) => {
-  let reg = new RegExp(regex);
+var simpleValidateInput = function simpleValidateInput(term, regex) {
+  var reg = new RegExp(regex);
   return reg.test(term);
 };
 
 function EntityDetails(props) {
-  const [entity, setEntity] = useState(null);
-  const [name, setName] = useState(null);
-  const [values, setValues] = useState(null);
-  const [newValue, setNewValue] = useState(null);
-  const [valid, setValid] = useState(true);
-  const valueInput = useRef(null);
-  useEffect(() => {
+  var _useState = useState(null),
+      entity = _useState[0],
+      setEntity = _useState[1];
+
+  var _useState2 = useState(null),
+      name = _useState2[0],
+      setName = _useState2[1];
+
+  var _useState3 = useState(null),
+      values = _useState3[0],
+      setValues = _useState3[1];
+
+  var _useState4 = useState(null),
+      newValue = _useState4[0],
+      setNewValue = _useState4[1];
+
+  var _useState5 = useState(true),
+      valid = _useState5[0],
+      setValid = _useState5[1];
+
+  var valueInput = useRef(null);
+  useEffect(function () {
     if (!entity) {
       setEntity(props.entity);
     }
   }, [props.entity]);
-  useEffect(() => {
+  useEffect(function () {
     setName(props.entity.name);
     setValues(props.entity.values);
   }, [entity]);
-  useEffect(() => {
+  useEffect(function () {
     if (name && values) {
       props.onUpdate({
         name: name,
@@ -294,18 +389,20 @@ function EntityDetails(props) {
     }
   }, [name, values]);
 
-  const addNewValue = () => {
-    let val = {
+  var addNewValue = function addNewValue() {
+    var val = {
       value: newValue,
       synonyms: []
     };
-    let arr = [...values, val];
+    var arr = [].concat(values, [val]);
     setValues(arr);
   };
 
-  const removeValue = index => {
-    let arr = [...values];
-    let filteredArr = arr.filter(item => item !== arr[index]);
+  var removeValue = function removeValue(index) {
+    var arr = [].concat(values);
+    var filteredArr = arr.filter(function (item) {
+      return item !== arr[index];
+    });
     setValues(filteredArr);
   };
 
@@ -325,10 +422,12 @@ function EntityDetails(props) {
       defaultValue: name ? name : '',
       placeholder: "Entity name",
       className: "editor-input input--item-name",
-      onKeyDown: e => preventSubmit(e),
-      onChange: e => {
-        let message = 'Entity names shall begin with alphabetic characters from a to Z. The entity name may contain multiple underscores per word. Entity names shall not contain any numbers at all or soecial characters other than undersocres.';
-        let validate = validateInput(e.target, e.target.value, '^[A-Za-z](_*[A-Za-z])*_*$', message);
+      onKeyDown: function onKeyDown(e) {
+        return preventSubmit(e);
+      },
+      onChange: function onChange(e) {
+        var message = 'Entity names shall begin with alphabetic characters from a to Z. The entity name may contain multiple underscores per word. Entity names shall not contain any numbers at all or soecial characters other than undersocres.';
+        var validate = validateInput(e.target, e.target.value, '^[A-Za-z](_*[A-Za-z])*_*$', message);
         setValid(validate);
         setName(e.target.value);
       }
@@ -346,7 +445,7 @@ function EntityDetails(props) {
       type: "text",
       className: "editor-input input--add-field",
       placeholder: "Enter reference value",
-      onKeyDown: e => {
+      onKeyDown: function onKeyDown(e) {
         preventSubmit(e);
 
         if (e.keyCode === 13) {
@@ -357,7 +456,9 @@ function EntityDetails(props) {
           }
         }
       },
-      onChange: e => setNewValue(e.target.value),
+      onChange: function onChange(e) {
+        return setNewValue(e.target.value);
+      },
       ref: valueInput
     }))))));
   } else {
@@ -365,26 +466,31 @@ function EntityDetails(props) {
   }
 }
 
-const UtteranceSlotValue = React.memo(props => {
-  const input = useRef(input);
-  const [valid, setValid] = useState(true);
+var UtteranceSlotValue = React.memo(function (props) {
+  var input = useRef(input);
 
-  const validateSlotValue = () => {
-    let reg = /^[A-Za-z](_*[A-Za-z])*_*$/;
-    let regTest = reg.test(props.target.dataset.slotValue);
+  var _useState = useState(true),
+      valid = _useState[0],
+      setValid = _useState[1];
+
+  var validateSlotValue = function validateSlotValue() {
+    var reg = /^[A-Za-z](_*[A-Za-z])*_*$/;
+    var regTest = reg.test(props.target.dataset.slotValue);
     input.current.setCustomValidity(regTest ? '' : 'Parameter name must not contain spaces or special characters');
     setValid(regTest);
   };
 
-  useEffect(() => {
+  useEffect(function () {
     validateSlotValue();
   }, [props]);
   return /*#__PURE__*/React.createElement("input", {
     ref: input,
     "data-valid": valid,
     value: props.slotValue,
-    onKeyDown: e => preventSubmit(e),
-    onChange: e => {
+    onKeyDown: function onKeyDown(e) {
+      return preventSubmit(e);
+    },
+    onChange: function onChange(e) {
       props.target.dataset.slotValue = e.target.value;
       props.updateRaw();
     }
@@ -392,27 +498,37 @@ const UtteranceSlotValue = React.memo(props => {
 });
 
 function Dropdown(props) {
-  const [term, setTerm] = useState('');
-  const [entities, setEntities] = useState(props.entities);
-  const [entitiesNames, setEntitiesNames] = useState([]);
-  const input = useRef();
-  const modalRef = useOnclickOutside(() => {
+  var _useState = useState(''),
+      term = _useState[0],
+      setTerm = _useState[1];
+
+  var _useState2 = useState(props.entities),
+      entities = _useState2[0];
+
+  var _useState3 = useState([]),
+      entitiesNames = _useState3[0],
+      setEntitiesNames = _useState3[1];
+
+  var input = useRef();
+  var modalRef = useOnclickOutside(function () {
     props.setSelection(null);
   });
 
-  const filterEntities = str => {
+  var filterEntities = function filterEntities(str) {
     setTerm(str);
   };
 
-  useEffect(() => {
-    let arr = entities.flat().map(item => {
+  useEffect(function () {
+    var arr = entities.flat().map(function (item) {
       return item.name;
-    }).filter(item => item);
+    }).filter(function (item) {
+      return item;
+    });
     setEntitiesNames(arr);
   }, [entities]);
 
   if (entities) {
-    let dropdownStyles = {
+    var dropdownStyles = {
       position: 'absolute',
       top: '100%',
       transition: 'all 220ms ease-in-out',
@@ -432,8 +548,10 @@ function Dropdown(props) {
       options: entitiesNames,
       spaceRemovers: [],
       matchAny: true,
-      onKeyDown: e => preventSubmit(e),
-      onChange: e => {
+      onKeyDown: function onKeyDown(e) {
+        return preventSubmit(e);
+      },
+      onChange: function onChange(e) {
         filterEntities(e);
       },
       ref: input,
@@ -441,7 +559,7 @@ function Dropdown(props) {
       placeholder: "Filter entities"
     })), /*#__PURE__*/React.createElement("div", {
       className: "dropdown__items"
-    }, entities.length && entities.flat().map((item, i) => {
+    }, entities.length && entities.flat().map(function (item, i) {
       return /*#__PURE__*/React.createElement("button", {
         style: {
           display: item.name.toLowerCase().includes(term.toLocaleLowerCase().trim()) ? 'block' : 'none'
@@ -449,7 +567,7 @@ function Dropdown(props) {
         key: i,
         type: "button",
         className: props.selection && props.selection.dataset && props.selection.dataset.type === item.name ? 'active' : '',
-        onClick: () => {
+        onClick: function onClick() {
           props.tagSelection(item.name);
         }
       }, "@", item.name);
@@ -459,18 +577,24 @@ function Dropdown(props) {
   }
 }
 
-const UtteranceInput = props => {
-  const [dropdownState, setDropdownState] = useState({
+var UtteranceInput = function UtteranceInput(props) {
+  var _useState = useState({
     position: 0,
     active: false
-  });
-  const [keyPress, setKeyPress] = useState('');
-  const input = props.input;
-  const cursorPosition = useRef(null);
+  }),
+      dropdownState = _useState[0],
+      setDropdownState = _useState[1];
+
+  var _useState2 = useState(''),
+      keyPress = _useState2[0],
+      setKeyPress = _useState2[1];
+
+  var input = props.input;
+  var cursorPosition = useRef(null);
 
   function createNode(type, slot_value, text) {
-    let mark = document.createElement('mark');
-    let newTextNode = document.createTextNode(text);
+    var mark = document.createElement('mark');
+    var newTextNode = document.createTextNode(text);
     mark.appendChild(newTextNode);
     mark.textContent = mark.textContent.trim();
     mark.setAttribute('data-type', type);
@@ -481,33 +605,38 @@ const UtteranceInput = props => {
     return mark;
   }
 
-  const tagSelection = type => {
+  var tagSelection = function tagSelection(type) {
     if (props.selection) {
       if (!props.selection.tagName) {
-        const getSlotValue = type => {
-          let existingSlotValue = props.slotValuePairs.find(item => item.type === type);
+        var getSlotValue = function getSlotValue(type) {
+          var existingSlotValue = props.slotValuePairs.find(function (item) {
+            return item.type === type;
+          });
 
           if (existingSlotValue) {
             return existingSlotValue.slot_value;
           } else {
-            let arr = type.split('.');
-            let str = arr[arr.length - 1];
+            var arr = type.split('.');
+            var str = arr[arr.length - 1];
             return str;
           }
         };
 
-        let mark = createNode(type, getSlotValue(type), props.selection.toString());
+        var mark = createNode(type, getSlotValue(type), props.selection.toString());
 
         if (mark) {
           props.selection.getRangeAt(0).extractContents();
           props.selection.getRangeAt(0).insertNode(mark);
 
           if (mark.parentElement.tagName === "MARK") {
-            mark.parentElement.replaceWith(...mark.parentElement.childNodes);
+            var _mark$parentElement;
+
+            (_mark$parentElement = mark.parentElement).replaceWith.apply(_mark$parentElement, mark.parentElement.childNodes);
+
             mark.innerHTML = mark.textContent.trim();
           }
 
-          input.current.childNodes.forEach(item => {
+          input.current.childNodes.forEach(function (item) {
             if (item.tagName === "MARK") {
               if (item.innerHTML.slice(-1).includes(' ')) {
                 item.innerHTML = item.innerHTML.trim();
@@ -516,23 +645,23 @@ const UtteranceInput = props => {
           });
         }
       } else {
-        let mark = props.selection;
-        mark.style.outline = "none";
-        mark.dataset.type = type;
+        var _mark = props.selection;
+        _mark.style.outline = "none";
+        _mark.dataset.type = type;
       }
 
-      let lastChar = input.current.innerHTML[input.current.innerHTML.length - 1];
-      let newRaw = input.current.innerHTML + `${lastChar === ' ' ? '' : ' '}`;
+      var lastChar = input.current.innerHTML[input.current.innerHTML.length - 1];
+      var newRaw = input.current.innerHTML + ("" + (lastChar === ' ' ? '' : ' '));
       props.setRaw(newRaw);
       props.setSelection(null);
-      setTimeout(() => {
+      setTimeout(function () {
         cursorPosition.current && setCaretPosition(input.current, cursorPosition.current);
       }, 100);
     }
   };
 
-  const handleSelection = () => {
-    let sel = rangy.getSelection();
+  var handleSelection = function handleSelection() {
+    var sel = rangy.getSelection();
 
     if (sel.toString().trim().length > 0) {
       sel.expand("word", {
@@ -544,29 +673,31 @@ const UtteranceInput = props => {
     }
   };
 
-  useEffect(() => {
-    let s = window.getSelection();
+  useEffect(function () {
+    var s = window.getSelection();
 
     if (s && s.rangeCount > 0) {
-      let oRange = s.getRangeAt(0);
-      let oRect = oRange.getBoundingClientRect();
+      var oRange = s.getRangeAt(0);
+      var oRect = oRange.getBoundingClientRect();
       setDropdownState({
         position: oRect.x / 2,
         active: props.selection !== null
       });
     } else {
-      setDropdownState({ ...dropdownState,
+      setDropdownState(_extends({}, dropdownState, {
         active: false
-      });
+      }));
     }
   }, [props.selection, props.active]);
 
-  const sanitize = string => sanitizeHtml(string, {
-    allowedTags: ['mark'],
-    allowedAttributes: false
-  });
+  var sanitize = function sanitize(string) {
+    return sanitizeHtml(string, {
+      allowedTags: ['mark'],
+      allowedAttributes: false
+    });
+  };
 
-  useEffect(() => {
+  useEffect(function () {
     if (keyPress === 13) {
       props.handleNew(props.valid);
       setKeyPress('');
@@ -579,33 +710,33 @@ const UtteranceInput = props => {
     innerRef: input,
     className: "taggable-text__input",
     html: props.raw,
-    onClick: e => {
+    onClick: function onClick(e) {
       if (e.target.tagName === 'MARK') {
         props.setSelection(e.target);
       }
     },
-    onChange: e => {
+    onChange: function onChange(e) {
       cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
       props.setRaw(sanitize(e.target.value));
       setCaretPosition(input.current, cursorPosition.current);
     },
-    onMouseUp: () => {
+    onMouseUp: function onMouseUp() {
       handleSelection();
     },
-    onKeyDown: e => {
+    onKeyDown: function onKeyDown(e) {
       if (e.keyCode === 13 || e.keyCode === 40 || e.keyCode === 38) {
         setKeyPress(e.keyCode);
         e.preventDefault();
       }
     },
-    onKeyUp: e => {
+    onKeyUp: function onKeyUp(e) {
       if (e.keyCode === 16) {
         handleSelection();
       }
 
       cursorPosition.current = getCaretCharacterOffsetWithin(input.current);
     },
-    onFocus: () => {
+    onFocus: function onFocus() {
       props.setActive(props.index);
     }
   }), props.active && /*#__PURE__*/React.createElement(Dropdown, {
@@ -619,16 +750,30 @@ const UtteranceInput = props => {
 
 var UtteranceInput$1 = React.memo(UtteranceInput);
 
-const Utterance = React.memo(props => {
-  const [raw, setRaw] = useState('');
-  const [selection, setSelection] = useState(null);
-  const [valid, setValid] = useState(true);
-  const [validationMessage, setValidationMessage] = useState('');
-  const wrapper = useRef(null);
-  const inputWrapper = useRef(null);
-  const input = useRef(null);
-  const whitelist = input.current && {
-    tags: Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
+var Utterance = React.memo(function (props) {
+  var _useState = useState(''),
+      raw = _useState[0],
+      setRaw = _useState[1];
+
+  var _useState2 = useState(null),
+      selection = _useState2[0],
+      setSelection = _useState2[1];
+
+  var _useState3 = useState(true),
+      valid = _useState3[0],
+      setValid = _useState3[1];
+
+  var _useState4 = useState(''),
+      validationMessage = _useState4[0],
+      setValidationMessage = _useState4[1];
+
+  var wrapper = useRef(null);
+  var inputWrapper = useRef(null);
+  var input = useRef(null);
+  var whitelist = input.current && {
+    tags: Array.from(input.current.childNodes).filter(function (item) {
+      return item.dataset;
+    }).map(function (item) {
       return {
         type: item.dataset.type,
         slot_value: item.dataset.slotValue,
@@ -636,34 +781,38 @@ const Utterance = React.memo(props => {
         color: item.dataset.color,
         target: item
       };
-    }).filter(item => item.text.trim().length > 0 && item.type),
-    nodes: Array.from(input.current.childNodes).filter(item => item.textContent.trim().length > 0)
+    }).filter(function (item) {
+      return item.text.trim().length > 0 && item.type;
+    }),
+    nodes: Array.from(input.current.childNodes).filter(function (item) {
+      return item.textContent.trim().length > 0;
+    })
   };
-  const active = props.active === props.index;
-  useEffect(() => {
+  var active = props.active === props.index;
+  useEffect(function () {
     if (props.utterance.model) {
-      let str = '';
+      var str = '';
 
       if (props.utterance.model.length) {
-        str = props.utterance.model.map(item => {
+        str = props.utterance.model.map(function (item) {
           if (item.type) {
-            return `<mark data-type="${item.type}" data-slot-value="${item.slot_value}" data-color="${stringToColor(item.text)}" style="background:${stringToColor(item.text)}">${item.text.trim()}</mark>`;
+            return "<mark data-type=\"" + item.type + "\" data-slot-value=\"" + item.slot_value + "\" data-color=\"" + stringToColor(item.text) + "\" style=\"background:" + stringToColor(item.text) + "\">" + item.text.trim() + "</mark>";
           } else {
             return item.text.trim();
           }
         }).join(' ');
       }
 
-      let lastChar = str[str.length - 1];
-      setRaw(str + `${lastChar === '>' ? ' ' : ''}`);
+      var lastChar = str[str.length - 1];
+      setRaw(str + ("" + (lastChar === '>' ? ' ' : '')));
     }
   }, [props.stateChange]);
-  useEffect(() => {
-    let isValid = wrapper.current.querySelectorAll("[data-valid='false']").length < 1;
+  useEffect(function () {
+    var isValid = wrapper.current.querySelectorAll("[data-valid='false']").length < 1;
     setValid(isValid);
 
     if (whitelist && whitelist.nodes) {
-      let model = whitelist.nodes.map(item => {
+      var model = whitelist.nodes.map(function (item) {
         if (item.dataset) {
           return {
             type: item.dataset.type,
@@ -675,11 +824,17 @@ const Utterance = React.memo(props => {
             text: item.textContent.trim()
           };
         }
-      }).filter(item => item.text.length);
-      let raw = model.map(item => item.text).join(' ');
-      let utterances = [...props.utterances];
-      let newUtterance = {
-        raw: raw,
+      }).filter(function (item) {
+        return item.text.length;
+      });
+
+      var _raw = model.map(function (item) {
+        return item.text;
+      }).join(' ');
+
+      var utterances = [].concat(props.utterances);
+      var newUtterance = {
+        raw: _raw,
         model: model
       };
 
@@ -690,27 +845,33 @@ const Utterance = React.memo(props => {
     }
   }, [whitelist]);
 
-  const handleValidationMessage = message => {
+  var handleValidationMessage = function handleValidationMessage(message) {
     if (validationMessage !== message) setValidationMessage(message);
   };
 
-  const validateInput = () => {
+  var validateInput = function validateInput() {
     if (whitelist && whitelist.nodes) {
-      let nodes = whitelist.nodes;
-      let textNodes = nodes.filter(item => !item.tagName);
-      let nodesMappedToString = nodes.map(item => {
-        if (item.dataset && item.dataset.type) return `${item.textContent.trim()} {${item.dataset.type}}`;
+      var nodes = whitelist.nodes;
+      var textNodes = nodes.filter(function (item) {
+        return !item.tagName;
+      });
+      var nodesMappedToString = nodes.map(function (item) {
+        if (item.dataset && item.dataset.type) return item.textContent.trim() + " {" + item.dataset.type + "}";
         return item.textContent.trim();
       }).join(' ');
-      let intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(item => item.string === nodesMappedToString);
+      var intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(function (item) {
+        return item.string === nodesMappedToString;
+      });
 
       if (intentsWithDuplicateUtterances.length > 1 && nodes.length > 0) {
-        handleValidationMessage(`Utterance must be unique across intents. This utterance appears in <strong>${intentsWithDuplicateUtterances[0].intent}</strong>.`);
+        handleValidationMessage("Utterance must be unique across intents. This utterance appears in <strong>" + intentsWithDuplicateUtterances[0].intent + "</strong>.");
         return false;
       } else if (textNodes.length > 0) {
-        let str = textNodes.map(item => item.textContent.trim()).join(' ');
-        let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
-        let strValid = reg.test(str.trim());
+        var str = textNodes.map(function (item) {
+          return item.textContent.trim();
+        }).join(' ');
+        var reg = /^[a-zA-Z][a-zA-Z/\s/./_/'/-]*$/;
+        var strValid = reg.test(str.trim());
         handleValidationMessage(strValid ? '' : "Utterance can't contain special characters");
         return strValid;
       } else {
@@ -723,15 +884,15 @@ const Utterance = React.memo(props => {
     }
   };
 
-  const updateRaw = () => {
+  var updateRaw = function updateRaw() {
     setRaw(input.current.innerHTML);
   };
 
   if (props) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       ref: wrapper,
-      "data-field-valid": `${valid}`,
-      className: `field field--intent ${active ? 'field--active' : ''}`
+      "data-field-valid": "" + valid,
+      className: "field field--intent " + (active ? 'field--active' : '')
     }, /*#__PURE__*/React.createElement("div", {
       className: "field__main"
     }, /*#__PURE__*/React.createElement("div", {
@@ -756,18 +917,18 @@ const Utterance = React.memo(props => {
       className: "field__actions"
     }, props.index !== 0 && props.utterances.length > 1 && /*#__PURE__*/React.createElement("button", {
       type: "button",
-      onClick: () => {
+      onClick: function onClick() {
         props.removeFromUtterances(props.utterance);
         document.querySelectorAll('.taggable-text__input')[0].focus();
       }
-    }, /*#__PURE__*/React.createElement(IconTrash, null))))), !props.new && whitelist && whitelist.tags.length > 0 && /*#__PURE__*/React.createElement("ul", {
+    }, /*#__PURE__*/React.createElement(IconTrash, null))))), !props["new"] && whitelist && whitelist.tags.length > 0 && /*#__PURE__*/React.createElement("ul", {
       className: "model-list",
       style: {
         display: active ? 'block' : 'none'
       }
     }, /*#__PURE__*/React.createElement("header", {
       className: "model-list__header"
-    }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.tags && whitelist.tags.map((item, index) => {
+    }, /*#__PURE__*/React.createElement("strong", null, "Parameter name"), /*#__PURE__*/React.createElement("strong", null, "Entity"), /*#__PURE__*/React.createElement("strong", null, "Resolved value")), whitelist.tags && whitelist.tags.map(function (item, index) {
       if (item.target && item.type) return /*#__PURE__*/React.createElement("li", {
         className: "model-list__item",
         key: index
@@ -784,7 +945,9 @@ const Utterance = React.memo(props => {
         style: {
           background: item.color
         },
-        onClick: () => setSelection(item.target)
+        onClick: function onClick() {
+          return setSelection(item.target);
+        }
       }, item.type && item.type[0] === '@' ? '' : '@', item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
     })), validationMessage.length > 0 && /*#__PURE__*/React.createElement("p", {
       className: "field__error"
@@ -794,43 +957,49 @@ const Utterance = React.memo(props => {
   }
 });
 
-const IntentUtterances = props => {
-  const [active, setActive] = useState(null);
+var IntentUtterances = function IntentUtterances(props) {
+  var _useState = useState(null),
+      active = _useState[0],
+      setActive = _useState[1];
 
-  const removeFromUtterances = object => {
-    let arr = props.utterances.filter(item => item !== object);
+  var removeFromUtterances = function removeFromUtterances(object) {
+    var arr = props.utterances.filter(function (item) {
+      return item !== object;
+    });
     props.setUtterances(arr);
     setActive(null);
     props.setStateChange(!props.stateChange);
   };
 
-  const handleNew = valid => {
+  var handleNew = function handleNew(valid) {
     if (valid) {
       if (props.utterances[0].model.length > 0) {
-        let newUtteranceField = {
+        var newUtteranceField = {
           raw: '',
           model: []
         };
-        let arr = [newUtteranceField, ...props.utterances];
+        var arr = [newUtteranceField].concat(props.utterances);
         props.setUtterances(arr);
         props.setStateChange(!props.stateChange);
       }
 
-      setTimeout(() => {
-        let input = document.querySelectorAll('.taggable-text__input')[0];
+      setTimeout(function () {
+        var input = document.querySelectorAll('.taggable-text__input')[0];
         input && input.focus();
       }, 100);
     }
   };
 
   if (props.utterances) {
-    return /*#__PURE__*/React.createElement("ul", null, props.utterances.map((item, index) => {
+    return /*#__PURE__*/React.createElement("ul", null, props.utterances.map(function (item, index) {
+      var _React$createElement;
+
       return /*#__PURE__*/React.createElement("li", {
         key: index,
         style: {
           display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none'
         }
-      }, /*#__PURE__*/React.createElement(Utterance, {
+      }, /*#__PURE__*/React.createElement(Utterance, (_React$createElement = {
         key: index,
         allUtterancesInIntents: props.allUtterancesInIntents,
         utterances: props.utterances,
@@ -839,14 +1008,8 @@ const IntentUtterances = props => {
         active: active,
         setActive: setActive,
         entities: props.entities,
-        removeFromUtterances: removeFromUtterances,
-        utterances: props.utterances,
-        setUtterances: props.setUtterances,
-        stateChange: props.stateChange,
-        setStateChange: props.setStateChange,
-        slotValuePairs: props.slotValuePairs,
-        handleNew: handleNew
-      }));
+        removeFromUtterances: removeFromUtterances
+      }, _React$createElement["utterances"] = props.utterances, _React$createElement.setUtterances = props.setUtterances, _React$createElement.stateChange = props.stateChange, _React$createElement.setStateChange = props.setStateChange, _React$createElement.slotValuePairs = props.slotValuePairs, _React$createElement.handleNew = handleNew, _React$createElement)));
     }));
   } else {
     return null;
@@ -856,15 +1019,33 @@ const IntentUtterances = props => {
 var IntentUtterances$1 = React.memo(IntentUtterances);
 
 function IntentDetails(props) {
-  const [intent] = useState(props.intent);
-  const entities = props.entities;
-  const systemEntities = props.systemEntities;
-  const [stateChange, setStateChange] = useState(false);
-  const [name, setName] = useState('');
-  const [utterances, setUtterances] = useState([]);
-  const [slotValuePairs, setSlotValuePairs] = useState([]);
-  const [searchPhrase, setSearchPhrase] = useState('');
-  useEffect(() => {
+  var _useState = useState(props.intent),
+      intent = _useState[0];
+
+  var entities = props.entities;
+  var systemEntities = props.systemEntities;
+
+  var _useState2 = useState(false),
+      stateChange = _useState2[0],
+      setStateChange = _useState2[1];
+
+  var _useState3 = useState(''),
+      name = _useState3[0],
+      setName = _useState3[1];
+
+  var _useState4 = useState([]),
+      utterances = _useState4[0],
+      setUtterances = _useState4[1];
+
+  var _useState5 = useState([]),
+      slotValuePairs = _useState5[0],
+      setSlotValuePairs = _useState5[1];
+
+  var _useState6 = useState(''),
+      searchPhrase = _useState6[0],
+      setSearchPhrase = _useState6[1];
+
+  useEffect(function () {
     if (intent) {
       setName(intent.name);
 
@@ -872,7 +1053,9 @@ function IntentDetails(props) {
         setUtterances([{
           raw: '',
           model: []
-        }, ...intent.utterances.filter(item => item.model.length > 0)]);
+        }].concat(intent.utterances.filter(function (item) {
+          return item.model.length > 0;
+        })));
       } else {
         setUtterances([{
           raw: '',
@@ -882,24 +1065,32 @@ function IntentDetails(props) {
     }
   }, [intent]);
 
-  const setInitialSlotValuePairs = () => {
-    let arr = utterances.map(item => item.model).flat().filter(item => item.slot_value).map(item => ({
-      type: item.type,
-      slot_value: item.slot_value
-    }));
+  var setInitialSlotValuePairs = function setInitialSlotValuePairs() {
+    var arr = utterances.map(function (item) {
+      return item.model;
+    }).flat().filter(function (item) {
+      return item.slot_value;
+    }).map(function (item) {
+      return {
+        type: item.type,
+        slot_value: item.slot_value
+      };
+    });
     setSlotValuePairs(arr);
   };
 
-  useEffect(() => {
+  useEffect(function () {
     setInitialSlotValuePairs();
   }, [utterances]);
-  useEffect(() => {
+  useEffect(function () {
     if (name && utterances) {
-      setTimeout(() => {
-        const valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
-        let updatedIntent = {
+      setTimeout(function () {
+        var valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
+        var updatedIntent = {
           name: name,
-          utterances: utterances.filter(item => item.model.length),
+          utterances: utterances.filter(function (item) {
+            return item.model.length;
+          }),
           type: intent.type || 'custom'
         };
         props.onUpdate(updatedIntent, valid);
@@ -907,14 +1098,16 @@ function IntentDetails(props) {
     }
   }, [name, utterances]);
 
-  const handleSearch = term => {
+  var handleSearch = function handleSearch(term) {
     setSearchPhrase(term);
   };
 
-  const handleNameChange = e => {
-    let message = 'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
-    let isTextValid = simpleValidateInput(e.target.value, '^[A-Za-z](_?[A-Za-z])*_?$');
-    let doesSameIntentNameExist = props.intents.filter(item => item.name === e.target.value && item !== intent).length > 0;
+  var handleNameChange = function handleNameChange(e) {
+    var message = 'Intent names shall begin with alphabetic characters from a to Z. The intent name may contain 1 underscore per word. Intent names shall not contain any numbers at all.';
+    var isTextValid = simpleValidateInput(e.target.value, '^[A-Za-z](_?[A-Za-z])*_?$');
+    var doesSameIntentNameExist = props.intents.filter(function (item) {
+      return item.name === e.target.value && item !== intent;
+    }).length > 0;
 
     if (!isTextValid) {
       e.target.setCustomValidity(message);
@@ -928,23 +1121,31 @@ function IntentDetails(props) {
     setName(e.target.value);
   };
 
-  const mapUtterancesAsString = model => {
-    return model.map(item => {
-      if (item.type) return `${item.text} {${item.type}}`;
+  var mapUtterancesAsString = function mapUtterancesAsString(model) {
+    return model.map(function (item) {
+      if (item.type) return item.text + " {" + item.type + "}";
       return item.text;
     }).join(' ');
   };
 
   if (intent && props.intents) {
-    const outsideIntentUtterances = props.intents.filter(obj => obj.name !== intent.name).map(intent => intent.utterances.map(utterance => ({
-      intent: intent.name,
-      string: mapUtterancesAsString(utterance.model)
-    }))).flat();
-    const currentIntentUtterances = utterances.map(utterance => ({
-      intent: intent.name,
-      string: mapUtterancesAsString(utterance.model)
-    }));
-    const allUtterancesInIntents = [...outsideIntentUtterances, ...currentIntentUtterances];
+    var outsideIntentUtterances = props.intents.filter(function (obj) {
+      return obj.name !== intent.name;
+    }).map(function (intent) {
+      return intent.utterances.map(function (utterance) {
+        return {
+          intent: intent.name,
+          string: mapUtterancesAsString(utterance.model)
+        };
+      });
+    }).flat();
+    var currentIntentUtterances = utterances.map(function (utterance) {
+      return {
+        intent: intent.name,
+        string: mapUtterancesAsString(utterance.model)
+      };
+    });
+    var allUtterancesInIntents = [].concat(outsideIntentUtterances, currentIntentUtterances);
     return /*#__PURE__*/React.createElement("div", {
       className: "convo-details"
     }, /*#__PURE__*/React.createElement("section", {
@@ -958,25 +1159,31 @@ function IntentDetails(props) {
       defaultValue: name ? name : '',
       placeholder: "Intent name",
       className: "input input--item-name",
-      onKeyDown: e => preventSubmit(e),
-      onChange: e => handleNameChange(e)
+      onKeyDown: function onKeyDown(e) {
+        return preventSubmit(e);
+      },
+      onChange: function onChange(e) {
+        return handleNameChange(e);
+      }
     })), /*#__PURE__*/React.createElement("div", {
       className: "margin--50--large"
     }, /*#__PURE__*/React.createElement("div", {
       className: "search-wrapper"
     }, /*#__PURE__*/React.createElement("h3", null, "Utterances"), /*#__PURE__*/React.createElement("input", {
       style: {
-        background: `url(${iconSearch}) no-repeat 12px center`,
+        background: "url(" + iconSearch + ") no-repeat 12px center",
         backgroundSize: '18px',
         paddingLeft: '42px'
       },
       className: "input input--search",
       type: "text",
       placeholder: "Search utterances",
-      onChange: e => {
+      onChange: function onChange(e) {
         handleSearch(e.target.value);
       },
-      onKeyDown: e => preventSubmit(e)
+      onKeyDown: function onKeyDown(e) {
+        return preventSubmit(e);
+      }
     })), /*#__PURE__*/React.createElement("div", {
       className: "margin--24--large"
     }, /*#__PURE__*/React.createElement(IntentUtterances$1, {
@@ -984,7 +1191,7 @@ function IntentDetails(props) {
       allUtterancesInIntents: allUtterancesInIntents,
       utterances: utterances,
       setUtterances: setUtterances,
-      entities: [entities, ...systemEntities],
+      entities: [entities].concat(systemEntities),
       stateChange: stateChange,
       setStateChange: setStateChange,
       searchPhrase: searchPhrase,
@@ -995,7 +1202,7 @@ function IntentDetails(props) {
   }
 }
 
-const IntentEditor = props => {
+var IntentEditor = function IntentEditor(props) {
   return /*#__PURE__*/React.createElement(IntentDetails, {
     intents: props.intents,
     intent: props.intent,
@@ -1004,7 +1211,7 @@ const IntentEditor = props => {
     onUpdate: props.onUpdate
   });
 };
-const EntityEditor = props => {
+var EntityEditor = function EntityEditor(props) {
   return /*#__PURE__*/React.createElement(EntityDetails, {
     entity: props.entity,
     onUpdate: props.onUpdate
