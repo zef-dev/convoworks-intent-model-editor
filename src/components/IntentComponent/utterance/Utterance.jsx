@@ -99,7 +99,7 @@ export const Utterance = React.memo(props => {
       } else
         if (textNodes.length > 0) {
           let str = textNodes.map(item => item.textContent.trim()).join(' ');
-          let reg = /^[a-zA-Z][a-zA-Z/"/'/`/\s]*$/;
+          let reg = /^[a-zA-Z][a-zA-Z/\s/./_/'/-]*$/;
           let strValid = reg.test(str.trim())
           handleValidationMessage(strValid ? '' : "Utterance can't contain special characters");
           return strValid;
