@@ -27,7 +27,7 @@ const EntityValue = (props) => {
 				if (synonyms) {
 					setSynonyms([...synonyms, newSynonym]);
 				} else {
-					setSynonyms(newSynonym);
+					setSynonyms([newSynonym]);
 				}
 			}
 			// eslint-disable-next-line react-hooks/exhaustive-deps
