@@ -196,7 +196,7 @@ var EntityValue = function EntityValue(props) {
       if (synonyms) {
         setSynonyms([].concat(synonyms, [newSynonym]));
       } else {
-        setSynonyms(newSynonym);
+        setSynonyms([newSynonym]);
       }
     }
   }, [newSynonym]);
