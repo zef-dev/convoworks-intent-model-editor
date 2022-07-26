@@ -1086,13 +1086,15 @@ function IntentDetails(props) {
     if (name && utterances) {
       setTimeout(function () {
         var valid = document.querySelectorAll('[data-field-valid="false"]').length < 1;
-        var updatedIntent = {
+
+        var updatedIntent = _extends({}, intent, {
           name: name,
           utterances: utterances.filter(function (item) {
             return item.model.length;
           }),
           type: intent.type || 'custom'
-        };
+        });
+
         props.onUpdate(updatedIntent, valid);
       }, 10);
     }
@@ -1150,7 +1152,9 @@ function IntentDetails(props) {
       className: "convo-details"
     }, /*#__PURE__*/React.createElement("section", {
       className: "layout--editor-content"
-    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", null, intent.parent_intent && /*#__PURE__*/React.createElement("span", {
+      className: "text-muted"
+    }, "Child of ", intent.parent_intent), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("div", {
       className: "margin--30--large"
     }, /*#__PURE__*/React.createElement("h3", {
       className: "margin--10--large"
