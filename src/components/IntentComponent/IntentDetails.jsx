@@ -101,7 +101,6 @@ function IntentDetails(props) {
         <section className="layout--editor-content">
           <div>
             {/* Entity name value */}
-            {intent.parent_intent && <span className='text-muted'>Child of {intent.parent_intent}</span>}
             <hr />
             <div className="margin--30--large">
               <h3 className="margin--10--large">Intent name</h3>
