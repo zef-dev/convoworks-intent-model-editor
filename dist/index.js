@@ -1156,9 +1156,7 @@ function IntentDetails(props) {
       className: "convo-details"
     }, /*#__PURE__*/React__default.createElement("section", {
       className: "layout--editor-content"
-    }, /*#__PURE__*/React__default.createElement("div", null, intent.parent_intent && /*#__PURE__*/React__default.createElement("span", {
-      className: "text-muted"
-    }, "Child of ", intent.parent_intent), /*#__PURE__*/React__default.createElement("hr", null), /*#__PURE__*/React__default.createElement("div", {
+    }, /*#__PURE__*/React__default.createElement("div", null, /*#__PURE__*/React__default.createElement("hr", null), /*#__PURE__*/React__default.createElement("div", {
       className: "margin--30--large"
     }, /*#__PURE__*/React__default.createElement("h3", {
       className: "margin--10--large"
