@@ -992,14 +992,12 @@ var IntentUtterances = function IntentUtterances(props) {
 
   if (props.utterances) {
     return /*#__PURE__*/React.createElement("ul", null, props.utterances.map(function (item, index) {
-      var _React$createElement;
-
       return /*#__PURE__*/React.createElement("li", {
         key: index,
         style: {
           display: item.raw.toLowerCase().includes(props.searchPhrase) ? 'block' : 'none'
         }
-      }, /*#__PURE__*/React.createElement(Utterance, (_React$createElement = {
+      }, /*#__PURE__*/React.createElement(Utterance, {
         key: index,
         allUtterancesInIntents: props.allUtterancesInIntents,
         utterances: props.utterances,
@@ -1008,8 +1006,13 @@ var IntentUtterances = function IntentUtterances(props) {
         active: active,
         setActive: setActive,
         entities: props.entities,
-        removeFromUtterances: removeFromUtterances
-      }, _React$createElement["utterances"] = props.utterances, _React$createElement.setUtterances = props.setUtterances, _React$createElement.stateChange = props.stateChange, _React$createElement.setStateChange = props.setStateChange, _React$createElement.slotValuePairs = props.slotValuePairs, _React$createElement.handleNew = handleNew, _React$createElement)));
+        removeFromUtterances: removeFromUtterances,
+        setUtterances: props.setUtterances,
+        stateChange: props.stateChange,
+        setStateChange: props.setStateChange,
+        slotValuePairs: props.slotValuePairs,
+        handleNew: handleNew
+      }));
     }));
   } else {
     return null;
@@ -1132,7 +1135,7 @@ function IntentDetails(props) {
 
   if (intent && props.intents) {
     var outsideIntentUtterances = props.intents.filter(function (obj) {
-      return obj.name !== intent.name;
+      return obj.name !== intent.name && !intent.parent_intent;
     }).map(function (intent) {
       return intent.utterances.map(function (utterance) {
         return {
