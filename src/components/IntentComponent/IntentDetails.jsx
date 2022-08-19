@@ -92,7 +92,10 @@ function IntentDetails(props) {
 
   if (intent && props.intents) { 
 
-    const outsideIntentUtterances = props.intents.filter(obj => obj.name !== intent.name).map(intent => intent.utterances.map(utterance => ({ intent: intent.name, string: mapUtterancesAsString(utterance.model) }))).flat();
+    const outsideIntentUtterances = props.intents
+                                         .filter(obj => obj.name !== intent.name && !intent.parent_intent)
+                                         .map(intent => intent.utterances.map(utterance => ({ intent: intent.name, string: mapUtterancesAsString(utterance.model) })))
+                                         .flat();
     const currentIntentUtterances = utterances.map(utterance => ({ intent: intent.name, string: mapUtterancesAsString(utterance.model) }));
     const allUtterancesInIntents = [...outsideIntentUtterances, ...currentIntentUtterances];
 
