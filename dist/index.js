@@ -1132,7 +1132,7 @@ function IntentDetails(props) {
 
   var mapUtterancesAsString = function mapUtterancesAsString(model) {
     return model.map(function (item) {
-      if (item.type) return item.text + " {" + item.type + "}";
+      if (item.type) return "{" + item.type + "}";
       return item.text;
     }).join(' ');
   };
@@ -1147,12 +1147,16 @@ function IntentDetails(props) {
           string: mapUtterancesAsString(utterance.model)
         };
       });
-    }).flat();
+    }).flat().filter(function (utterance) {
+      return utterance.string !== "";
+    });
     var currentIntentUtterances = utterances.map(function (utterance) {
       return {
         intent: intent.name,
         string: mapUtterancesAsString(utterance.model)
       };
+    }).filter(function (utterance) {
+      return utterance.string !== "";
     });
     var allUtterancesInIntents = [].concat(outsideIntentUtterances, currentIntentUtterances);
     return /*#__PURE__*/React__default.createElement("div", {
