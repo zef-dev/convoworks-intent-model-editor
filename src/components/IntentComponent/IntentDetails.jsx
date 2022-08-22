@@ -85,7 +85,7 @@ function IntentDetails(props) {
 
   const mapUtterancesAsString = (model) => {
     return model.map(item => {
-      if (item.type) return `${item.text} {${item.type}}`
+      if (item.type) return `{${item.type}}`
       return item.text
     }).join(' ');
   }
