@@ -860,7 +860,7 @@ var Utterance = React__default.memo(function (props) {
         return !item.tagName;
       });
       var nodesMappedToString = nodes.map(function (item) {
-        if (item.dataset && item.dataset.type) return item.textContent.trim() + " {" + item.dataset.type + "}";
+        if (item.dataset && item.dataset.type) return "{" + item.dataset.type + "}";
         return item.textContent.trim();
       }).join(' ');
       var intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(function (item) {
@@ -1139,7 +1139,7 @@ function IntentDetails(props) {
 
   if (intent && props.intents) {
     var outsideIntentUtterances = props.intents.filter(function (obj) {
-      return obj.name !== intent.name && !intent.parent_intent;
+      return obj.name !== intent.name && !obj.parent_intent;
     }).map(function (intent) {
       return intent.utterances.map(function (utterance) {
         return {
