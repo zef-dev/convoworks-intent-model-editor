@@ -88,7 +88,7 @@ export const Utterance = React.memo(props => {
       let nodes = whitelist.nodes;
       let textNodes = nodes.filter(item => !item.tagName);
       let nodesMappedToString = nodes.map(item => {
-        if (item.dataset && item.dataset.type) return `${item.textContent.trim()} {${item.dataset.type}}`
+        if (item.dataset && item.dataset.type) return `{${item.dataset.type}}`
         return item.textContent.trim()
       }).join(' ');
 
