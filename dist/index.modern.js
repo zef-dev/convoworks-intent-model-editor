@@ -1134,7 +1134,7 @@ function IntentDetails(props) {
   };
 
   if (intent && props.intents) {
-    var outsideIntentUtterances = props.intents.filter(function (obj) {
+    var outsideIntentUtterances = !intent.parent_intent ? props.intents.filter(function (obj) {
       return obj.name !== intent.name && !obj.parent_intent;
     }).map(function (intent) {
       return intent.utterances.map(function (utterance) {
@@ -1145,7 +1145,7 @@ function IntentDetails(props) {
       });
     }).flat().filter(function (utterance) {
       return utterance.string !== "";
-    });
+    }) : [];
     var currentIntentUtterances = utterances.map(function (utterance) {
       return {
         intent: intent.name,
