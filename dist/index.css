@@ -668,9 +668,6 @@
     .convo-details input::-moz-placeholder {
       opacity: 1;
       color: rgba(0, 0, 0, 0.36); }
-    .convo-details input:-ms-input-placeholder {
-      opacity: 1;
-      color: rgba(0, 0, 0, 0.36); }
     .convo-details input::placeholder {
       opacity: 1;
       color: rgba(0, 0, 0, 0.36); }
