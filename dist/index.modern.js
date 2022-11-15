@@ -867,8 +867,8 @@ var Utterance = React.memo(function (props) {
         }).join(' ');
         var reg = /^[a-zA-Z][a-zA-Z/\s/./_/'/-]*$/;
         var strValid = reg.test(str.trim());
-        handleValidationMessage(strValid ? '' : "Utterance can't contain special characters");
-        return strValid;
+        handleValidationMessage(strValid ? '' : "Warning: Utterance can't contain special characters when working with Amazon Alexa");
+        return true;
       } else {
         handleValidationMessage('');
         return true;
