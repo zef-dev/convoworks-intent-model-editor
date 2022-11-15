@@ -101,8 +101,9 @@ export const Utterance = React.memo(props => {
           let str = textNodes.map(item => item.textContent.trim()).join(' ');
           let reg = /^[a-zA-Z][a-zA-Z/\s/./_/'/-]*$/;
           let strValid = reg.test(str.trim())
-          handleValidationMessage(strValid ? '' : "Utterance can't contain special characters");
-          return strValid;
+          handleValidationMessage(strValid ? '' : "Warning: Utterance can't contain special characters when working with Amazon Alexa");
+//          return strValid;
+          return true;
         } else {
           handleValidationMessage('');
           return true
