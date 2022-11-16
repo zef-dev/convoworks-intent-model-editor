@@ -9,7 +9,14 @@ const App = () => {
   const [intent, setIntent] = useState(null);
   const [valid, setValid] = useState(false);
 
-
+  const validator = ( str) => {
+    let reg = /^[a-zA-Z][a-zA-Z/\s/./_/'/-]*$/;
+    let valid = reg.test( str.trim());
+    if ( valid) {
+        return true;    
+    }
+    return "Warning: Utterance can't contain special characters when working with Amazon Alexa";
+};
   useEffect(() => {
     setIntent(data.intents[0])
   }, [data])
@@ -28,6 +35,7 @@ const App = () => {
           </nav>
           {view === 'intent' ? 
           <IntentEditor
+            validator={validator}
             intent={intent}
             intents={data.intents}
             entities={[...data.entities, {name: 'test.entity.someVal', values: []}, {name: 'test.entity.more.dots', values: []}]}
