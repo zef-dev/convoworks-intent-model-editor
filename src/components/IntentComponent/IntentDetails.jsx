@@ -136,6 +136,7 @@ function IntentDetails(props) {
               </div>
               <div className="margin--24--large">
                 <IntentUtterances
+                  validator={props.validator}
                   intents={props.intents}
                   allUtterancesInIntents={allUtterancesInIntents}
                   utterances={utterances}

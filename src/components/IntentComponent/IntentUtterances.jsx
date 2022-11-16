@@ -39,6 +39,7 @@ const IntentUtterances = (props) => {
                 key={index}
                 allUtterancesInIntents={props.allUtterancesInIntents}
                 utterances={props.utterances}
+                validator={props.validator}
                 utterance={item}
                 index={index}
                 active={active}

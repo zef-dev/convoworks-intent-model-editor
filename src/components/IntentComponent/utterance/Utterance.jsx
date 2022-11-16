@@ -98,10 +98,22 @@ export const Utterance = React.memo(props => {
         return false
       } else
         if (textNodes.length > 0) {
-          let str = textNodes.map(item => item.textContent.trim()).join(' ');
-          let reg = /^[a-zA-Z][a-zA-Z/\s/./_/'/-]*$/;
-          let strValid = reg.test(str.trim())
-          handleValidationMessage(strValid ? '' : "Warning: Utterance can't contain special characters when working with Amazon Alexa");
+            if ( props.validator) {
+                let str = textNodes.map(item => item.textContent.trim()).join(' ');
+                let strValid = props.validator( str);
+                if ( strValid === true) {
+                    handleValidationMessage( '');
+                    return true;
+                } else {
+                    handleValidationMessage( strValid);
+                    return false;
+                }
+            }
+            
+//          let str = textNodes.map(item => item.textContent.trim()).join(' ');
+//          let reg = /^[a-zA-Z][a-zA-Z/\s/./_/'/-]*$/;
+//          let strValid = reg.test(str.trim());
+//          handleValidationMessage(strValid ? '' : "Warning: Utterance can't contain special characters when working with Amazon Alexa");
 //          return strValid;
           return true;
         } else {
