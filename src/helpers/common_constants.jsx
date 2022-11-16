@@ -9,7 +9,7 @@ export const getRandomColor = () => {
 };
 
 export const stringToColor = (value) => {
-	return value.getHashCode().intToHSL();
+	return value.toLowerCase().getHashCode().intToHSL();
 }
 
 String.prototype.getHashCode = function () {
