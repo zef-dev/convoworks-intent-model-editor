@@ -2,7 +2,7 @@
 
 > Intent and entity editors for the Convoworks framework
 
-[![NPM](https://img.shields.io/npm/v/convoworks-intent-model-editor.svg)](https://www.npmjs.com/package/@zef-dev/convoworks-intent-model-editor) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/@zef-dev/convoworks-intent-model-editor.svg)](https://www.npmjs.com/package/@zef-dev/convoworks-intent-model-editor) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Install
 
