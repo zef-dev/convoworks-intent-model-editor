@@ -66,7 +66,7 @@ function _createForOfIteratorHelperLoose(o, allowArrayLike) {
 }
 
 var stringToColor = function stringToColor(value) {
-  return value.getHashCode().intToHSL();
+  return value.toLowerCase().getHashCode().intToHSL();
 };
 
 String.prototype.getHashCode = function () {
@@ -862,12 +862,21 @@ var Utterance = React.memo(function (props) {
         handleValidationMessage("Utterance must be unique across intents. This utterance appears in <strong>" + intentsWithDuplicateUtterances[0].intent + "</strong>.");
         return false;
       } else if (textNodes.length > 0) {
-        var str = textNodes.map(function (item) {
-          return item.textContent.trim();
-        }).join(' ');
-        var reg = /^[a-zA-Z][a-zA-Z/\s/./_/'/-]*$/;
-        var strValid = reg.test(str.trim());
-        handleValidationMessage(strValid ? '' : "Warning: Utterance can't contain special characters when working with Amazon Alexa");
+        if (props.validator) {
+          var str = textNodes.map(function (item) {
+            return item.textContent.trim();
+          }).join(' ');
+          var strValid = props.validator(str);
+
+          if (strValid === true) {
+            handleValidationMessage('');
+            return true;
+          } else {
+            handleValidationMessage(strValid);
+            return false;
+          }
+        }
+
         return true;
       } else {
         handleValidationMessage('');
@@ -996,6 +1005,7 @@ var IntentUtterances = function IntentUtterances(props) {
         key: index,
         allUtterancesInIntents: props.allUtterancesInIntents,
         utterances: props.utterances,
+        validator: props.validator,
         utterance: item,
         index: index,
         active: active,
@@ -1191,6 +1201,7 @@ function IntentDetails(props) {
     })), /*#__PURE__*/React.createElement("div", {
       className: "margin--24--large"
     }, /*#__PURE__*/React.createElement(IntentUtterances$1, {
+      validator: props.validator,
       intents: props.intents,
       allUtterancesInIntents: allUtterancesInIntents,
       utterances: utterances,
@@ -1212,7 +1223,8 @@ var IntentEditor = function IntentEditor(props) {
     intent: props.intent,
     entities: props.entities,
     systemEntities: props.systemEntities,
-    onUpdate: props.onUpdate
+    onUpdate: props.onUpdate,
+    validator: props.validator
   });
 };
 var EntityEditor = function EntityEditor(props) {
