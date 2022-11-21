@@ -84,7 +84,9 @@ export const Utterance = React.memo(props => {
   }
 
   const validateInput = () => {
-    if (whitelist && whitelist.nodes) {
+    
+    if ( whitelist && whitelist.nodes) 
+    {
       let nodes = whitelist.nodes;
       let textNodes = nodes.filter(item => !item.tagName);
       let nodesMappedToString = nodes.map(item => {
@@ -93,34 +95,30 @@ export const Utterance = React.memo(props => {
       }).join(' ');
 
       let intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(item => item.string === nodesMappedToString);
-      if (intentsWithDuplicateUtterances.length > 1 && nodes.length > 0) {
+      
+      if ( intentsWithDuplicateUtterances.length > 1 && nodes.length > 0) 
+      {
         handleValidationMessage(`Utterance must be unique across intents. This utterance appears in <strong>${intentsWithDuplicateUtterances[0].intent}</strong>.`);
         return false
-      } else
-        if (textNodes.length > 0) {
+      }
+      else if ( textNodes.length > 0) 
+      {
             if ( props.validator) {
                 let str = textNodes.map(item => item.textContent.trim()).join(' ');
-                let strValid = props.validator( str);
-                if ( strValid === true) {
-                    handleValidationMessage( '');
-                    return true;
-                } else {
-                    handleValidationMessage( strValid);
-                    return false;
-                }
+                let result = props.validator( str)
+                handleValidationMessage( result.message);
+                return result.valid;
             }
-            
-//          let str = textNodes.map(item => item.textContent.trim()).join(' ');
-//          let reg = /^[a-zA-Z][a-zA-Z/\s/./_/'/-]*$/;
-//          let strValid = reg.test(str.trim());
-//          handleValidationMessage(strValid ? '' : "Warning: Utterance can't contain special characters when working with Amazon Alexa");
-//          return strValid;
-          return true;
-        } else {
-          handleValidationMessage('');
-          return true
-        }
-    } else {
+            return true;
+      } 
+      else 
+      {
+        handleValidationMessage('');
+        return true
+      }
+    } 
+    else 
+    {
       handleValidationMessage('');
       return false
     }

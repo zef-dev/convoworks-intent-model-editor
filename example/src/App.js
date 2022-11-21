@@ -13,9 +13,14 @@ const App = () => {
     let reg = /^[a-zA-Z][a-zA-Z/\s/./_/'/-]*$/;
     let valid = reg.test( str.trim());
     if ( valid) {
-        return true;    
+        return {
+            valid : true
+        };    
     }
-    return "Warning: Utterance can't contain special characters when working with Amazon Alexa";
+    return {
+        valid : false,
+        message : "Warning: Utterance can't contain special characters when working with Amazon Alexa"
+    };   
 };
   useEffect(() => {
     setIntent(data.intents[0])
