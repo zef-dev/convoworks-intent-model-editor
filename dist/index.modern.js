@@ -746,6 +746,11 @@ var UtteranceInput = function UtteranceInput(props) {
 var UtteranceInput$1 = React.memo(UtteranceInput);
 
 var Utterance = React.memo(function (props) {
+  var OK = {
+    valid: true,
+    message: ''
+  };
+
   var _useState = useState(''),
       raw = _useState[0],
       setRaw = _useState[1];
@@ -758,9 +763,9 @@ var Utterance = React.memo(function (props) {
       valid = _useState3[0],
       setValid = _useState3[1];
 
-  var _useState4 = useState(''),
-      validationMessage = _useState4[0],
-      setValidationMessage = _useState4[1];
+  var _useState4 = useState(OK),
+      validationResult = _useState4[0],
+      setValidationResult = _useState4[1];
 
   var wrapper = useRef(null);
   var inputWrapper = useRef(null);
@@ -840,52 +845,55 @@ var Utterance = React.memo(function (props) {
     }
   }, [whitelist]);
 
-  var handleValidationMessage = function handleValidationMessage(message) {
-    if (validationMessage !== message) setValidationMessage(message);
+  var handleValidationResult = function handleValidationResult(result) {
+    if (validationResult.valid !== result.valid || validationResult.message !== result.message) {
+      setValidationResult(result);
+    }
+
+    return validationResult.valid;
   };
 
   var validateInput = function validateInput() {
-    if (whitelist && whitelist.nodes) {
-      var nodes = whitelist.nodes;
-      var textNodes = nodes.filter(function (item) {
-        return !item.tagName;
+    if (!(whitelist && whitelist.nodes)) {
+      return handleValidationResult({
+        valid: false,
+        message: ''
       });
-      var nodesMappedToString = nodes.map(function (item) {
-        if (item.dataset && item.dataset.type) return "{" + item.dataset.type + "}";
+    }
+
+    var nodes = whitelist.nodes;
+    var textNodes = nodes.filter(function (item) {
+      return !item.tagName;
+    });
+
+    if (textNodes.length === 0) {
+      return handleValidationResult(OK);
+    }
+
+    var nodesMappedToString = nodes.map(function (item) {
+      if (item.dataset && item.dataset.type) return "{" + item.dataset.type + "}";
+      return item.textContent.trim();
+    }).join(' ');
+    var intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(function (item) {
+      return item.string === nodesMappedToString;
+    });
+
+    if (intentsWithDuplicateUtterances.length > 1 && nodes.length > 0) {
+      return handleValidationResult({
+        valid: false,
+        message: "Utterance must be unique across intents. This utterance appears in <strong>" + intentsWithDuplicateUtterances[0].intent + "</strong>."
+      });
+    }
+
+    if (props.validator) {
+      var str = textNodes.map(function (item) {
         return item.textContent.trim();
       }).join(' ');
-      var intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(function (item) {
-        return item.string === nodesMappedToString;
-      });
-
-      if (intentsWithDuplicateUtterances.length > 1 && nodes.length > 0) {
-        handleValidationMessage("Utterance must be unique across intents. This utterance appears in <strong>" + intentsWithDuplicateUtterances[0].intent + "</strong>.");
-        return false;
-      } else if (textNodes.length > 0) {
-        if (props.validator) {
-          var str = textNodes.map(function (item) {
-            return item.textContent.trim();
-          }).join(' ');
-          var strValid = props.validator(str);
-
-          if (strValid === true) {
-            handleValidationMessage('');
-            return true;
-          } else {
-            handleValidationMessage(strValid);
-            return false;
-          }
-        }
-
-        return true;
-      } else {
-        handleValidationMessage('');
-        return true;
-      }
-    } else {
-      handleValidationMessage('');
-      return false;
+      var result = props.validator(str);
+      return handleValidationResult(result);
     }
+
+    return handleValidationResult(OK);
   };
 
   var updateRaw = function updateRaw() {
@@ -953,9 +961,9 @@ var Utterance = React.memo(function (props) {
           return setSelection(item.target);
         }
       }, item.type && item.type[0] === '@' ? '' : '@', item.type)), /*#__PURE__*/React.createElement("div", null, item.text));
-    })), validationMessage.length > 0 && /*#__PURE__*/React.createElement("p", {
-      className: "field__error"
-    }, reactHtmlParser(validationMessage))));
+    })), validationResult.message.length > 0 && /*#__PURE__*/React.createElement("p", {
+      className: validationResult.valid ? 'field__warning' : 'field__error'
+    }, reactHtmlParser(validationResult.message))));
   } else {
     return null;
   }
