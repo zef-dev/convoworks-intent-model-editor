@@ -7,14 +7,18 @@ import { IconTrash } from '../../Icons/Icons'
 import reactHtmlParser from 'react-html-parser'
 
 export const Utterance = React.memo(props => {
+  
+  const OK = {valid:true,message:''};
+  
   const [raw, setRaw] = useState('');
   const [selection, setSelection] = useState(null);
   const [valid, setValid] = useState(true);
-  const [validationMessage, setValidationMessage] = useState('');
+  const [validationResult, setValidationResult] = useState( OK);
 
   const wrapper = useRef(null);
   const inputWrapper = useRef(null);
   const input = useRef(null);
+  
 
   const whitelist = input.current && {
     tags: Array.from(input.current.childNodes).filter(item => item.dataset).map(item => {
@@ -79,49 +83,52 @@ export const Utterance = React.memo(props => {
     }
   }, [whitelist]);
 
-  const handleValidationMessage = (message) => {
-    if (validationMessage !== message) setValidationMessage(message);
+  const handleValidationResult = ( result) => {
+    if (validationResult.valid !== result.valid || validationResult.message !== result.message) { 
+        setValidationResult( result);
+    }
+    return validationResult.valid;
   }
 
   const validateInput = () => {
     
-    if ( whitelist && whitelist.nodes) 
-    {
-      let nodes = whitelist.nodes;
-      let textNodes = nodes.filter(item => !item.tagName);
-      let nodesMappedToString = nodes.map(item => {
-        if (item.dataset && item.dataset.type) return `{${item.dataset.type}}`
-        return item.textContent.trim()
-      }).join(' ');
-
-      let intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(item => item.string === nodesMappedToString);
-      
-      if ( intentsWithDuplicateUtterances.length > 1 && nodes.length > 0) 
-      {
-        handleValidationMessage(`Utterance must be unique across intents. This utterance appears in <strong>${intentsWithDuplicateUtterances[0].intent}</strong>.`);
-        return false
-      }
-      else if ( textNodes.length > 0) 
-      {
-            if ( props.validator) {
-                let str = textNodes.map(item => item.textContent.trim()).join(' ');
-                let result = props.validator( str)
-                handleValidationMessage( result.message);
-                return result.valid;
-            }
-            return true;
-      } 
-      else 
-      {
-        handleValidationMessage('');
-        return true
-      }
-    } 
-    else 
-    {
-      handleValidationMessage('');
-      return false
+    if ( !( whitelist && whitelist.nodes)) {
+        // No utterances at all
+        return handleValidationResult( {
+            valid : false,
+            message : ''
+        });
     }
+    
+    let nodes = whitelist.nodes;
+    let textNodes = nodes.filter(item => !item.tagName);
+    
+    if ( textNodes.length === 0) {
+        // No free text to validate
+        return handleValidationResult( OK);
+    } 
+    
+    let nodesMappedToString = nodes.map(item => {
+    if (item.dataset && item.dataset.type) return `{${item.dataset.type}}`
+        return item.textContent.trim()
+    }).join(' ');
+    
+    let intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(item => item.string === nodesMappedToString);
+      
+    if ( intentsWithDuplicateUtterances.length > 1 && nodes.length > 0) {
+        return handleValidationResult( {
+            valid : false,
+            message : `Utterance must be unique across intents. This utterance appears in <strong>${intentsWithDuplicateUtterances[0].intent}</strong>.` 
+        });
+    }
+    
+    if ( props.validator) {
+        let str = textNodes.map(item => item.textContent.trim()).join(' ');
+        let result = props.validator( str);
+        return handleValidationResult( result);
+    }
+
+    return handleValidationResult( OK);
   }
 
   const updateRaw = () => {
@@ -170,7 +177,7 @@ export const Utterance = React.memo(props => {
               })}
             </ul>
           }
-          {validationMessage.length > 0 && <p className="field__error">{reactHtmlParser(validationMessage)}</p>}
+          {validationResult.message.length > 0 && <p className={validationResult.valid ? 'field__warning':'field__error'}>{reactHtmlParser(validationResult.message)}</p>}
         </div>
       </React.Fragment>
     )
