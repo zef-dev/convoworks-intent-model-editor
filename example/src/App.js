@@ -12,15 +12,24 @@ const App = () => {
   const validator = ( str) => {
     let reg = /^[a-zA-Z][a-zA-Z/\s/./_/'/-]*$/;
     let valid = reg.test( str.trim());
-    if ( valid) {
+    if ( !valid) {
         return {
-            valid : true
-        };    
+            valid : false,
+            message : "Error: Utterance can't contain special characters when working with Amazon Alexa"
+        };   
     }
+    
+    if ( str === 'PERO') {
+        console.log( str);
+        return {
+            valid : true,
+            message : "Warinign: PERO is here!"
+        };    
+    }    
     return {
-        valid : false,
-        message : "Warning: Utterance can't contain special characters when working with Amazon Alexa"
-    };   
+        valid : true,
+        message : ""
+    };
 };
   useEffect(() => {
     setIntent(data.intents[0])
