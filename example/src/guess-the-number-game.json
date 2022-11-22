@@ -70,6 +70,32 @@
         }
       ],
       "type": "custom"
+    }, {
+      "name": "Demo2",
+      "utterances": [
+        {
+          "raw": "this utterance has a number slot two",
+          "model": [
+            {
+              "text": "this utterance has a number slot"
+            },
+            {
+              "type": "convo-core.number",
+              "text": "two",
+              "slot_value": "number"
+            }
+          ]
+        },
+        {
+          "raw": "this is an utterance without slots",
+          "model": [
+            {
+              "text": "this is an utterance without slots"
+            }
+          ]
+        }
+      ],
+      "type": "custom"
     }
   ],
   "blocks": [

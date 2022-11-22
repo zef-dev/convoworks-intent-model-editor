@@ -53,7 +53,7 @@ const App = () => {
             intent={intent}
             intents={data.intents}
             entities={[...data.entities, {name: 'test.entity.someVal', values: []}, {name: 'test.entity.more.dots', values: []}]}
-            systemEntities={[]}
+            systemEntities={[ { name : 'convo-core.number', platforms : ['amazon']}, { name : 'convo-core.person', platforms : ['amazon']} ]}
             onUpdate={(item, valid) => {setValid(valid)}}
           />
     
