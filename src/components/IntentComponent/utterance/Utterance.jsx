@@ -109,12 +109,13 @@ export const Utterance = React.memo(props => {
     } 
     
     let nodesMappedToString = nodes.map(item => {
-    if (item.dataset && item.dataset.type) return `{${item.dataset.type}}`
-        return item.textContent.trim()
+//        if (item.dataset) {
+//            return `{${item.dataset.text}}`;
+//        }
+        return item.textContent.trim();
     }).join(' ');
     
-    let intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(item => item.string === nodesMappedToString);
-      
+    let intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(item => item.stringRaw === nodesMappedToString);
     if ( intentsWithDuplicateUtterances.length > 1 && nodes.length > 0) {
         return handleValidationResult( {
             valid : false,
