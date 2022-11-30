@@ -1,4 +1,4 @@
-# convoworks-intent-model-editor
+# Convoworks Intent Model Editor
 
 > Intent and entity editors for the Convoworks framework
 
