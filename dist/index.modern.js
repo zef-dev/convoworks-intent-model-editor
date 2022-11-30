@@ -871,11 +871,10 @@ var Utterance = React.memo(function (props) {
     }
 
     var nodesMappedToString = nodes.map(function (item) {
-      if (item.dataset && item.dataset.type) return "{" + item.dataset.type + "}";
       return item.textContent.trim();
     }).join(' ');
     var intentsWithDuplicateUtterances = props.allUtterancesInIntents.filter(function (item) {
-      return item.string === nodesMappedToString;
+      return item.stringRaw === nodesMappedToString;
     });
 
     if (intentsWithDuplicateUtterances.length > 1 && nodes.length > 0) {
@@ -1146,6 +1145,12 @@ function IntentDetails(props) {
     }).join(' ');
   };
 
+  var mapUtterancesAsRawString = function mapUtterancesAsRawString(model) {
+    return model.map(function (item) {
+      return item.text;
+    }).join(' ');
+  };
+
   if (intent && props.intents) {
     var outsideIntentUtterances = !intent.parent_intent ? props.intents.filter(function (obj) {
       return obj.name !== intent.name && !obj.parent_intent;
@@ -1153,7 +1158,8 @@ function IntentDetails(props) {
       return intent.utterances.map(function (utterance) {
         return {
           intent: intent.name,
-          string: mapUtterancesAsString(utterance.model)
+          string: mapUtterancesAsString(utterance.model),
+          stringRaw: mapUtterancesAsRawString(utterance.model)
         };
       });
     }).flat().filter(function (utterance) {
@@ -1162,7 +1168,8 @@ function IntentDetails(props) {
     var currentIntentUtterances = utterances.map(function (utterance) {
       return {
         intent: intent.name,
-        string: mapUtterancesAsString(utterance.model)
+        string: mapUtterancesAsString(utterance.model),
+        stringRaw: mapUtterancesAsRawString(utterance.model)
       };
     }).filter(function (utterance) {
       return utterance.string !== "";
